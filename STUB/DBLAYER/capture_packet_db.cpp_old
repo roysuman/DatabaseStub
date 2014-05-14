@@ -1,0 +1,152 @@
+
+// * =====================================================================================
+// *
+// *       Filename:  capture_packet_db.cpp
+// *
+// *    Description:  implementation of capture_packet.hpp
+// *
+// *        Version:  1.0
+// *        Created:  Wednesday 06 November 2013 02:39:13  IST
+// *       Revision:  none
+// *       Compiler:  gcc
+// *
+// *         Author:  Suman Roy (),
+// *   Organization:  Cognizant Technological solutions
+// *
+// * =====================================================================================
+// */
+
+//#include "capture_packet_db.hpp"
+////
+//// 	CLASS ------ CaptureDbSetting-----------
+////
+//captureDb::CaptureDbSetting::CaptureDbSetting() {}; //constructor
+//captureDb::CaptureDbSetting::~CaptureDbSetting(){}; // destructor
+//bool captureDb::CaptureDbSetting::insertCaptureConfiguration ( ){
+//	captureQuery::CaptureDbSettingQuery capSetting;
+//	return ( capSetting.insertCaptureConfiguration (  ) );
+//}
+////
+////     CLASS------------------- RemoteServer -----------------------------
+////
+//captureDb::RemoteServer::RemoteServer( ) {}
+//captureDb::RemoteServer::~RemoteServer() {}
+
+//bool captureDb::RemoteServer::addNewServerInfo( void ){
+//	captureQuery::RemoteServerQuery remoteServer;
+//	return ( remoteServer.addNewServerInfo() );
+//}
+
+//serverStruct * captureDb::RemoteServer::displayServerTable( void ){
+//	captureQuery::RemoteServerQuery remoteServer;
+//	return ( remoteServer.displayServerTable() );
+
+//}
+
+
+
+////
+////     CLASS STORERAWPACKET-----------------------------------
+////     -----------------------------------------------------------------
+//bool captureDb::firstPush = true ;
+//int captureQuery::firstfourPacket = 1;
+//captureDb::StoreRawPacket::StoreRawPacket(){}
+
+//captureDb::StoreRawPacket::~StoreRawPacket(){}
+///*
+//bool captureDb::StoreRawPacket::packetHandler (  ){
+//	std::cout<<"Push flag == "<<rawData.tcpFlag.PSH <<std::endl;
+//	if ( captureDb::firstPush ) {
+//		if (  rawData.tcpFlag.PSH ==  1  ){
+//			std::cout<<"first PSH set packet \n";
+//			captureDb::firstPush = false ;
+//			return true ;
+			
+//		}
+//		else return true;
+//	}
+//	 bool server = false;
+//	 bool next PacketServerDb = false;
+//	 captureQuery::StoreRawPacketQuery callQuery;
+//	 int newPacket = 0; //new packet is the packet ID
+//	 int oldSequenceNumber ;
+//	if ( rawData.sourcePort != 3306 ){//packet coming from APP server
+//		server = true;
+//		std::cout<<"packet ciming form APP \n";
+//		server = true ;
+//		//select query
+//		newPacket = callQuery.selectPacketSetting ( true ); // new packet is the packet ID
+//		if (  newPacket != 0 ){ // if db return minimal one row
+//			std::cout<<"not first packet \n";
+//			if ( rawData.tcpFlag.PSH == 1 ){ //SYN set mnz it is last packet
+//				std::cout<<"last packet\n";
+//				//update ack and sequence for db matching
+//				// update the future sequence and acknowledge no.
+//				oldSequenceNumber = rawData.sequenceNumber;
+//				rawData.sequenceNumber = rawData.acknowledgeNumber ;
+//				rawData.acknowledgeNumber = rawData.length + oldSequenceNumber ;
+//				callQuery.updatePacketSettingApp( true , newPacket , 1 );
+//			}
+//			else { // this is not the last packet
+//				std::cout<<"not last packet\n";
+//				callQuery.updatePacketSettingApp ( true , newPacket , 0 );
+//			}
+//		}
+//		else {// if new packet ( no row selected from DB
+//			std::cout<<" starting packet no row selected \n";
+//			if ( rawData.tcpFlag.PSH == 1){ // last packet and first packet
+//				//update the ack seq
+//				oldSequenceNumber = rawData.sequenceNumber;
+//				rawData.sequenceNumber = rawData.acknowledgeNumber ;
+//				rawData.acknowledgeNumber = rawData.length + oldSequenceNumber ;
+
+//				std::cout<<"last packet\n";
+//				newPacket = callQuery.insertPacketSetting ( server , 1 );
+				
+//			}
+//			else{
+//				std::cout<<"not last packet \n";
+//				newPacket = callQuery.insertPacketSetting ( server , 0 );
+//			}
+
+//		}
+//		std::cout<<"INSERT PACKET\n";
+//		callQuery.insertPacket ( true , newPacket ); // have to convert raw data to string and have to pass
+//	//	exit ( 0 );
+//		}
+//	else {  // it's a DB packet
+//		server = false ;
+//		std::cout<<"packet coming from DB\n";
+
+//		newPacket = callQuery.selectPacketSetting ( false ); // new packet is the packet ID
+//		if ( newPacket != 0 ){ // return minimal one row
+//			std::cout<<" it's not first packet\n";
+
+//			if ( rawData.tcpFlag.PSH  == 1){
+//				std::cout<<"last pack\n";
+
+//				callQuery.updatePacketSettingApp( false , newPacket , 1 );
+				
+//			}
+//			else{
+//				//oldSequenceNumber = rawData.sequenceNumber;
+//				//rawData.sequenceNumber = rawData.acknowledgeNumber ;
+//				//rawData.acknowledgeNumber = rawData.length + oldSequenceNumber ;
+//				callQuery.updatePacketSettingApp( false , newPacket , 0 );
+//			}
+//		}
+//		else{
+//			std::cout<<"db have to find some data error\n";
+//			return false;
+//		}
+//				//do nothing
+
+			
+//				std::cout<<"Insert packet DB \n";
+//				callQuery.insertPacket ( false , newPacket );
+
+
+//		}
+////	exit ( 0 );
+//	}
+

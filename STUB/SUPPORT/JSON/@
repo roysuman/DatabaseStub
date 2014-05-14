@@ -1,0 +1,149 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  rawdata_structure.hpp
+ *
+ *    Description:  all the structures for processing RAW data
+ *
+ *        Version:  1.0
+ *        Created:  Thursday 07 November 2013 03:24:16  IST
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Suman Roy (), 
+ *   Organization:  Cognizant Technological solutions
+ *
+ * =====================================================================================
+ */
+
+#ifndef RAWDATA_STRUCTURE_HPP_
+#define RAWDATA_STRUCTURE_HPP_
+#include <iostream>
+#include<string.h>
+#include<stdlib.h>
+#include <stdint.h>
+#include <unordered_map>
+//
+//structure that contains eatch packet raw data and tcp headers.
+//
+
+typedef struct _tcpFlag tcpFlagStruct;
+struct _tcpFlag{
+	bool URG;
+	bool ACK;
+	bool PSH;
+	bool RST;
+	bool SYN;
+	bool FIN ;
+
+};
+
+
+typedef struct _rawData rawDataStruct;
+struct _rawData{
+	uint16_t sourcePort;
+	uint16_t destinationPort;
+	uint32_t sequenceNumber;
+	uint32_t acknowledgeNumber;
+	tcpFlagStruct tcpFlag;
+	const u_char * data;
+	uint32_t length;
+
+};
+extern rawDataStruct rawData;
+//
+//for storing previous data information
+
+typedef struct _prevPacket prevPacket;
+struct _prevPacket{
+	uint32_t prevSequenceNumber;
+	uint32_t prevAcknowledgeNumber;
+	uint32_t prevLength;
+	tcpFlagStruct tcpFlag;
+	
+};
+
+
+extern prevPacket pastData;
+
+typedef struct _conversation conversation;
+struct _conversation{
+	int conversationId;
+	prevPacket *allPreviousPacketApp  ;
+	prevPacket *allPreviousPacketDb ;
+	int currentPositionAppArray ;
+
+	int currentPositionDbArray ;
+};
+
+extern conversation conversationDiary[ 1000 ];
+
+extern bool init();
+
+extern void  printData( int );
+	
+/* 
+ * structures for loading raw data from 
+ * DATABASE for DUMMY SERVER
+ * ********************************/
+
+typedef struct _actRawDataStruct actRawDataStruct;
+
+struct _actRawDataStruct{
+        int appServer ; // to indicte this data is for server or db
+        int packetNumber; // on which number this packet came
+        char *data; //the raw dat
+        int length ; // length of the data
+};
+
+typedef struct _actSeriesStruct actSeriesStruct;
+struct _actSeriesStruct {
+    int converationId;
+    int seqNumber; // basically
+	int noOfPacket;
+	actRawDataStruct *actRawData;
+};
+extern bool initDataStructure ();
+extern bool initServer();
+extern actSeriesStruct actConversationDiary [ 1000 ];
+//function that will coppy one conversation untill a packet no. from  a packet no. ( actrawDataStruct packet no)
+extern bool copyConversationPartially(actSeriesStruct *& ,  actSeriesStruct* , int , int , int , int); // conversation id , from packet , to packet , last packet until offset.
+
+//a structure to know the query type any query data from a raw packet
+//this two data have to update at database , after finishing capture packet.
+typedef struct _queryData queryData;
+
+struct _queryData {
+	int packetNo;
+	std::string queryType;
+	std::string query;
+	
+};
+
+//map for storing query data
+typedef std::unordered_map < int , std::string > _colDetails ;
+//another map to store _colDetails with respect to filed name.
+typedef std::unordered_map < int ,std::string  > _colInfo;
+
+//one datastructure needed to handle query for update and insert new quety using Json
+typedef struct _queryPacketJson queryPacketJson;
+struct _queryPacketJson{
+        std::string query;
+	std::string queryType;
+	int flag;  // if  needed in fur=ture
+        _colDetails colNames;
+        _colInfo  colInfo;
+
+};
+extern queryPacketJson QueryPacket;
+//the following structure for all the columns data that will be insert one by one.
+//as my mysql genarate packet code is old one, and was taking data from console one
+//by one, so we will store one by one data ito a STL map colInfo.
+typedef struct _insertRowValues insertRowValues;
+struct  _insertRowValues{
+	int totalRow;
+	_colInfo colInfo;
+};
+
+#endif
+

@@ -1,0 +1,1679 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  proto_mysql.cpp
+ *
+ *    Description:  definatuion of proto mysql.hpp
+ *
+ *        Version:  1.0
+ *        Created:  Wednesday 11 December 2013 10:53:56  IST
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Suman Roy (), 
+ *   Organization:  Cognizant Technological solutions
+ *
+ * =====================================================================================
+ */
+
+#include"proto_mysql.hpp"
+#include<stdio.h>
+#include "jsoncpp/json.h"
+#include "jsoncpp/writer.h"
+#include <fstream>
+int JSON = 1;
+ std::fstream fileHandler;//("/home/chetana/TCPStub/jon.txt",std::ios::out);
+int rowCount = 0;
+
+ int hf_mysql_caps_server = -1;
+
+ int hf_mysql_caps_client = -1;
+
+ int hf_mysql_cap_long_password = -1;
+
+ int hf_mysql_cap_found_rows = -1;
+
+ int hf_mysql_cap_long_flag = -1;
+
+ int hf_mysql_cap_connect_with_db = -1;
+
+ int hf_mysql_cap_no_schema = -1;
+
+ int hf_mysql_cap_compress = -1;
+
+ int hf_mysql_cap_odbc = -1;
+
+ int hf_mysql_cap_local_files = -1;
+
+ int hf_mysql_cap_ignore_space = -1;
+
+ int hf_mysql_cap_change_user = -1;
+
+ int hf_mysql_cap_interactive = -1;
+
+ int hf_mysql_cap_ssl = -1;
+
+ int hf_mysql_cap_ignore_sigpipe = -1;
+
+ int hf_mysql_cap_transactions = -1;
+
+ int hf_mysql_cap_reserved = -1;
+
+ int hf_mysql_cap_secure_connect = -1;
+
+ int hf_mysql_extcaps_client = -1;
+
+ int hf_mysql_cap_multi_statements = -1;
+
+ int hf_mysql_cap_multi_results = -1;
+
+ int hf_mysql_server_language = -1;
+
+ int hf_mysql_server_status = -1;
+
+ int hf_mysql_stat_it = -1;
+
+ int hf_mysql_stat_ac = -1;
+
+ int hf_mysql_stat_mr = -1;
+
+ int hf_mysql_stat_mu = -1;
+
+ int hf_mysql_stat_bi = -1;
+
+ int hf_mysql_stat_ni = -1;
+
+ int hf_mysql_stat_cr = -1;
+
+ int hf_mysql_stat_lr = -1;
+
+ int hf_mysql_stat_dr = -1;
+
+ int hf_mysql_stat_bs = -1;
+
+ int hf_mysql_refresh = -1;
+
+ int hf_mysql_rfsh_grants = -1;
+
+ int hf_mysql_rfsh_log = -1;
+
+ int hf_mysql_rfsh_tables = -1;
+
+ int hf_mysql_rfsh_hosts = -1;
+
+ int hf_mysql_rfsh_status = -1;
+
+ int hf_mysql_rfsh_threads = -1;
+
+ int hf_mysql_rfsh_slave = -1;
+
+ int hf_mysql_rfsh_master = -1;
+
+ int hf_mysql_packet_length = -1;
+
+ int hf_mysql_packet_number = -1;
+
+ int hf_mysql_request = -1;
+
+ int hf_mysql_command = -1;
+
+ int hf_mysql_error_code = -1;
+
+ int hf_mysql_error_string = -1;
+
+ int hf_mysql_sqlstate = -1;
+
+ int hf_mysql_message = -1;
+
+ int hf_mysql_payload = -1;
+
+ int hf_mysql_server_greeting = -1;
+
+ int hf_mysql_protocol = -1;
+
+ int hf_mysql_version  = -1;
+
+ int hf_mysql_login_request = -1;
+
+ int hf_mysql_max_packet = -1;
+
+ int hf_mysql_user = -1;
+
+ int hf_mysql_table_name = -1;
+
+ int hf_mysql_schema = -1;
+
+ int hf_mysql_thread_id  = -1;
+
+ int hf_mysql_salt = -1;
+
+ int hf_mysql_salt2 = -1;
+
+ int hf_mysql_charset = -1;
+
+ int hf_mysql_passwd = -1;
+
+ int hf_mysql_unused = -1;
+
+ int hf_mysql_affected_rows = -1;
+
+ int hf_mysql_insert_id = -1;
+
+ int hf_mysql_num_warn = -1;
+
+ int hf_mysql_thd_id = -1;
+
+ int hf_mysql_stmt_id = -1;
+
+ int hf_mysql_query = -1;
+
+ int hf_mysql_shutdown = -1;
+
+ int hf_mysql_option = -1;
+
+ int hf_mysql_num_rows = -1;
+
+ int hf_mysql_param = -1;
+
+ int hf_mysql_num_params = -1;
+
+ int hf_mysql_exec_flags4 = -1;
+
+ int hf_mysql_exec_flags5 = -1;
+
+ int hf_mysql_exec_iter = -1;
+
+ int hf_mysql_binlog_position = -1;
+
+ int hf_mysql_binlog_flags = -1;
+
+ int hf_mysql_binlog_server_id = -1;
+
+ int hf_mysql_binlog_file_name = -1;
+
+ int hf_mysql_eof = -1;
+
+ int hf_mysql_num_fields = -1;
+
+ int hf_mysql_extra = -1;
+
+ int hf_mysql_fld_catalog  = -1;
+
+ int hf_mysql_fld_db = -1;
+
+ int hf_mysql_fld_table = -1;
+
+ int hf_mysql_fld_org_table = -1;
+
+ int hf_mysql_fld_name = -1;
+
+ int hf_mysql_fld_org_name = -1;
+
+ int hf_mysql_fld_charsetnr = -1;
+
+ int hf_mysql_fld_length = -1;
+
+ int hf_mysql_fld_type = -1;
+
+ int hf_mysql_fld_flags = -1;
+
+ int hf_mysql_fld_not_null = -1;
+
+ int hf_mysql_fld_primary_key = -1;
+
+ int hf_mysql_fld_unique_key = -1;
+
+ int hf_mysql_fld_multiple_key = -1;
+
+ int hf_mysql_fld_blob = -1;
+
+ int hf_mysql_fld_unsigned = -1;
+
+ int hf_mysql_fld_zero_fill = -1;
+
+ int hf_mysql_fld_binary = -1;
+
+ int hf_mysql_fld_enum = -1;
+
+ int hf_mysql_fld_auto_increment = -1;
+
+ int hf_mysql_fld_timestamp = -1;
+
+ int hf_mysql_fld_set = -1;
+
+ int hf_mysql_fld_decimals = -1;
+
+ int hf_mysql_fld_default = -1;
+
+ int hf_mysql_row_text = -1;
+
+ int hf_mysql_new_parameter_bound_flag = -1;
+
+ int hf_mysql_exec_param = -1;
+
+ int hf_mysql_exec_unsigned = -1;
+
+ int hf_mysql_exec_field_longlong = -1;
+
+ int hf_mysql_exec_field_string = -1;
+
+ int hf_mysql_exec_field_double = -1;
+
+ int hf_mysql_exec_field_datetime_length = -1;
+
+ int hf_mysql_exec_field_year = -1;
+
+ int hf_mysql_exec_field_month = -1;
+
+ int hf_mysql_exec_field_day = -1;
+
+ int hf_mysql_exec_field_hour = -1;
+
+ int hf_mysql_exec_field_minute = -1;
+
+ int hf_mysql_exec_field_second = -1;
+
+ int hf_mysql_exec_field_second_b = -1;
+
+ int hf_mysql_exec_field_long = -1;
+
+ int hf_mysql_exec_field_tiny = -1;
+
+ int hf_mysql_exec_field_short = -1;
+
+ int hf_mysql_exec_field_float = -1;
+
+ int hf_mysql_exec_field_time_length = -1;
+
+ int hf_mysql_exec_field_time_sign = -1;
+
+ int hf_mysql_exec_field_time_days = -1;
+
+
+// FOR JSON
+Json::Value event;
+int noOfFielde = 0;
+void Mysql::print_error ( proto::field_info * field_info , int index ){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+        std::cout<<__FUNCTION__<<"error at protocol-------------"<<std::endl;
+        std::cout<<field_info [ index ].name<<std::endl;
+        return;
+}
+
+bool Mysql::initialize( void  ) {
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	std::cout<<__FUNCTION__<<"register mysql protocol\n";
+	//initialize function pointer for dynamic binding
+	proto::fpStruct functionStructure ;
+	functionStructure.fp1 =Mysql::dissect_mysql;// ( actRawDataStruct * , int );
+	functionStructure.fp2= Mysql::getQueryOnly;// ( actRawDataStruct * , queryData *& );
+    //functionStructure.noDissector = 132;
+	bool ( *p) (  );
+	// p=& Mysql::dissect_mysql( actRawDataStruct ) ;
+	//call the function to register mysql
+	if ( ! proto::Proto::register_proto ( 3306 , &functionStructure ,132 ) ){
+		std::cerr<<__FUNCTION__<<"CAnt register myssql protocol \n";
+		return false;
+	}else{
+		//initialize dissectors protocols
+		static proto::packet_info pi[]={
+			{ &hf_mysql_packet_length,
+				{ "Packet Length", "mysql.packet_length",
+					types::FT_UINT24, types::BASE_DEC, 0x0,
+						NULL }},
+				{ &hf_mysql_packet_number,
+					{ "Packet Number", "mysql.packet_number",
+						types::FT_UINT8, types::BASE_DEC,0x0,
+						NULL}},
+				{ &hf_mysql_request,
+					{ "Request Command", "mysql.request",
+						types::FT_NONE, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_command,
+					{ "Command", "mysql.command",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_error_code,
+					{ "Error Code", "mysql.error_code",
+						types::FT_UINT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_error_string,
+					{ "Error message", "mysql.error.message",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Error string in case of MySQL error message" }},
+				{ &hf_mysql_sqlstate,
+					{ "SQL state", "mysql.sqlstate",
+						types::FT_STRING, types::BASE_NONE,0x0,
+						NULL}},
+				{ &hf_mysql_message,
+					{ "Message", "mysql.message",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_server_greeting,
+					{ "Server Greeting", "mysql.server_greeting",
+						types::FT_NONE, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_protocol,
+					{ "Protocol", "mysql.protocol",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						"Protocol Version" }},
+				{ &hf_mysql_version,
+					{ "Version", "mysql.version",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"MySQL Version" }},
+				{ &hf_mysql_caps_server,
+					{ "Server Capabilities", "mysql.caps.server",
+						types::FT_UINT16, types::BASE_HEX, 0x0,
+						"MySQL Capabilities" }},
+				{ &hf_mysql_caps_client,
+					{ "Client Capabilities", "mysql.caps.client",
+						types::FT_UINT16, types::BASE_HEX, 0x0,
+						"MySQL Capabilities" }},
+				{ &hf_mysql_cap_long_password,
+					{ "Long Password","mysql.caps.lp",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_LP,
+						NULL}},
+				{ &hf_mysql_cap_found_rows,
+					{ "Found Rows","mysql.caps.fr",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_FR,
+						NULL}},
+				{ &hf_mysql_cap_long_flag,
+					{ "Long Column Flags","mysql.caps.lf",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_LF,
+						NULL}},
+				{ &hf_mysql_cap_connect_with_db,
+					{ "Connect With Database","mysql.caps.cd",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_CD,
+						NULL}},
+				{ &hf_mysql_cap_no_schema,
+					{ "Don't Allow database.table.column","mysql.caps.ns",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_NS,
+						NULL}},
+				{ &hf_mysql_cap_compress,
+					{ "Can use compression protocol","mysql.caps.cp",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_CP,
+						NULL}},
+				{ &hf_mysql_cap_odbc,
+					{ "ODBC Client","mysql.caps.ob",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_OB,
+						NULL}},
+				{ &hf_mysql_cap_local_files,
+					{ "Can Use LOAD DATA LOCAL","mysql.caps.li",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_LI,
+						NULL}},
+				{ &hf_mysql_cap_ignore_space,
+					{ "Ignore Spaces before '('","mysql.caps.is",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_IS,
+						NULL}},
+				{ &hf_mysql_cap_change_user,
+					{ "Speaks 4.1 protocol (new flag)","mysql.caps.cu",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_CU,
+						NULL}},
+				{ &hf_mysql_cap_interactive,
+					{ "Interactive Client","mysql.caps.ia",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_IA,
+						NULL}},
+				{ &hf_mysql_cap_ssl,
+					{ "Switch to SSL after handshake","mysql.caps.sl",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_SL,
+						NULL}},
+				{ &hf_mysql_cap_ignore_sigpipe,
+					{ "Ignore sigpipes","mysql.caps.ii",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_II,
+						NULL}},
+				{ &hf_mysql_cap_transactions,
+					{ "Knows about transactions","mysql.caps.ta",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_TA,
+						NULL}},
+				{ &hf_mysql_cap_reserved,
+					{ "Speaks 4.1 protocol (old flag)","mysql.caps.rs",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_RS,
+						NULL }},
+				{ &hf_mysql_cap_secure_connect,
+					{ "Can do 4.1 authentication","mysql.caps.sc",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_SC,
+						NULL}},
+				{ &hf_mysql_extcaps_client,
+					{ "Extended Client Capabilities", "mysql.extcaps.client",
+						types::FT_UINT16, types::BASE_HEX, 0x0,
+						"MySQL Extended Capabilities" }},
+				{ &hf_mysql_cap_multi_statements,
+					{ "Supports multiple statements","mysql.caps.ms",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_MS,
+						NULL}},
+				{ &hf_mysql_cap_multi_results,
+					{ "Supports multiple results","mysql.caps.mr",
+						types::FT_BOOLEAN, 16, MYSQL_CAPS_MR,
+						NULL }},
+				{ &hf_mysql_login_request,
+					{ "Login Request", "mysql.login_request",
+						types::FT_NONE, types::BASE_NONE,  0x0,
+						NULL}},
+				{ &hf_mysql_max_packet,
+					{ "MAX Packet", "mysql.max_packet",
+						types::FT_UINT24, types::BASE_DEC,  0x0,
+						"MySQL Max packet" }},
+				{ &hf_mysql_charset,
+					{ "Charset", "mysql.charset",
+						types::FT_UINT8, types::BASE_DEC,  0x0,
+						"MySQL Charset" }},
+				{ &hf_mysql_table_name,
+					{ "Table Name", "mysql.table_name",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_user,
+					{ "Username", "mysql.user",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Login Username" }},
+				{ &hf_mysql_schema,
+					{ "Schema", "mysql.schema",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Login Schema" }},
+				{ &hf_mysql_salt,
+					{ "Salt", "mysql.salt",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_salt2,
+					{ "Salt", "mysql.salt2",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_thread_id,
+					{ "Thread ID", "mysql.thread_id",
+						types::FT_UINT32, types::BASE_DEC,  0x0,
+						"MySQL Thread ID" }},
+				{ &hf_mysql_server_language,
+					{ "Server Language", "mysql.server_language",
+						types::FT_UINT8, types::BASE_DEC,  0x0,
+						"MySQL Charset" }},
+				{ &hf_mysql_server_status,
+					{ "Server Status", "mysql.server_status",
+						types::FT_UINT16, types::BASE_HEX,  0x0,
+						"MySQL Status" }},
+				{ &hf_mysql_stat_it,
+					{ "In transaction", "mysql.stat.it",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_IT,
+						NULL}},
+				{ &hf_mysql_stat_ac,
+					{ "AUTO_COMMIT", "mysql.stat.ac",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_AC,
+						NULL}},
+				{ &hf_mysql_stat_mr,
+					{ "More results", "mysql.stat.mr",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_MR,
+						NULL}},
+				{ &hf_mysql_stat_mu,
+					{ "Multi query - more resultsets", "mysql.stat.mu",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_MU,
+						NULL}},
+				{ &hf_mysql_stat_bi,
+					{ "Bad index used", "mysql.stat.bi",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_BI,
+						NULL}},
+				{ &hf_mysql_stat_ni,
+					{ "No index used", "mysql.stat.ni",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_NI,
+						NULL}},
+				{ &hf_mysql_stat_cr,
+					{ "Cursor exists", "mysql.stat.cr",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_CR,
+						NULL}},
+				{ &hf_mysql_stat_lr,
+					{ "Last row sebd", "mysql.stat.lr",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_LR,
+						NULL}},
+				{ &hf_mysql_stat_dr,
+					{ "database dropped", "mysql.stat.dr",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_DR,
+						NULL}},
+				{ &hf_mysql_stat_bs,
+					{ "No backslash escapes", "mysql.stat.bs",
+						types::FT_BOOLEAN, 16, MYSQL_STAT_BS,
+						NULL}},
+				{ &hf_mysql_refresh,
+					{ "Refresh Option", "mysql.refresh",
+						types::FT_UINT8, types::BASE_HEX,  0x0,
+						NULL}},
+				{ &hf_mysql_rfsh_grants,
+					{ "reload permissions", "mysql.rfsh.grants",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_GRANT,
+						NULL }},
+				{ &hf_mysql_rfsh_log,
+					{ "flush logfiles", "mysql.rfsh.log",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_LOG,
+						NULL }},
+				{ &hf_mysql_rfsh_tables,
+					{ "flush tables", "mysql.rfsh.tables",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_TABLES,
+						NULL}},
+				{ &hf_mysql_rfsh_hosts,
+					{ "flush hosts", "mysql.rfsh.hosts",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_HOSTS,
+						NULL}},
+				{ &hf_mysql_rfsh_status,
+					{ "reset statistics", "mysql.rfsh.status",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_STATUS,
+						NULL}},
+				{ &hf_mysql_rfsh_threads,
+					{ "empty thread cache", "mysql.rfsh.threads",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_THREADS,
+						NULL}},
+				{ &hf_mysql_rfsh_slave,
+					{ "flush slave status", "mysql.rfsh.slave",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_SLAVE,
+						NULL}},
+				{ &hf_mysql_rfsh_master,
+					{ "flush master status", "mysql.rfsh.master",
+						types::FT_BOOLEAN, 8, MYSQL_RFSH_MASTER,
+						NULL}},
+				{ &hf_mysql_unused,
+					{ "Unused", "mysql.unused",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_passwd,
+					{ "Password", "mysql.passwd",
+						types::FT_BYTES, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_payload,
+					{ "Payload", "mysql.payload",
+						types::FT_BYTES, types::BASE_NONE, 0x0,
+						"Additional Payload" }},
+				{ &hf_mysql_affected_rows,
+					{ "Affected Rows", "mysql.affected_rows",
+						types::FT_UINT64, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_insert_id,
+					{ "Last INSERT ID", "mysql.insert_id",
+						types::FT_UINT64, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_num_warn,
+					{ "Warnings", "mysql.warnings",
+						types::FT_UINT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_thd_id,
+					{ "Thread ID", "mysql.thd_id",
+						types::FT_UINT32, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_stmt_id,
+					{ "Statement ID", "mysql.stmt_id",
+						types::FT_UINT32, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_query,
+					{ "Statement", "mysql.query",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_shutdown,
+					{ "Shutdown Level", "mysql.shutdown",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_option,
+					{ "Option", "mysql.option",
+						types::FT_UINT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_param,
+					{ "Parameter", "mysql.param",
+						types::FT_UINT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_num_params,
+					{ "Number of parameter", "mysql.num_params",
+						types::FT_UINT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_num_rows,
+					{ "Rows to fetch", "mysql.num_rows",
+						types::FT_UINT32, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_flags4,
+					{ "Flags (unused)", "mysql.exec_flags",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL }},
+				{ &hf_mysql_exec_flags5,
+					{ "Flags", "mysql.exec_flags",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_new_parameter_bound_flag,
+					{ "New parameter bound flag", "mysql.new_parameter_bound_flag",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_iter,
+					{ "Iterations (unused)", "mysql.exec_iter",
+						types::FT_UINT32, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_binlog_position,
+					{ "Binlog Position", "mysql.binlog.position",
+						types::FT_UINT32, types::BASE_DEC, 0x0,
+						"Position to start at" }},
+				{ &hf_mysql_binlog_flags,
+					{ "Binlog Flags", "mysql.binlog.flags",
+						types::FT_UINT16, types::BASE_HEX, 0x0,
+						"(currently not used; always 0)" }},
+				{ &hf_mysql_binlog_server_id,
+					{ "Binlog server id", "mysql.binlog.server_id",
+						types::FT_UINT16, types::BASE_HEX, 0x0,
+						"server_id of the slave" }},
+				{ &hf_mysql_binlog_file_name,
+					{ "Binlog file name", "mysql.binlog.file_name",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_eof,
+					{ "EOF marker", "mysql.eof",
+						types::FT_UINT8, types::BASE_DEC,  0x0,
+						NULL}},
+				{ &hf_mysql_num_fields,
+					{ "Number of fields", "mysql.num_fields",
+						types::FT_UINT64, types::BASE_DEC,  0x0,
+						NULL}},
+				{ &hf_mysql_extra,
+					{ "Extra data", "mysql.extra",
+						types::FT_UINT64, types::BASE_DEC,  0x0,
+						NULL }},
+				{ &hf_mysql_fld_catalog,
+					{ "Catalog", "mysql.field.catalog",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: catalog" }},
+				{ &hf_mysql_fld_db,
+					{ "Database", "mysql.field.db",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: database"}},
+				{ &hf_mysql_fld_table,
+					{ "Table", "mysql.field.table",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: table" }},
+				{ &hf_mysql_fld_org_table,
+					{ "Original table", "mysql.field.org_table",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: original table" }},
+				{ &hf_mysql_fld_name,
+					{ "Name", "mysql.field.name",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: name" }},
+				{ &hf_mysql_fld_org_name,
+					{ "Original name", "mysql.field.org_name",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: original name" }},
+				{ &hf_mysql_fld_charsetnr,
+					{ "Charset number", "mysql.field.charsetnr",
+						types::FT_UINT16, types::BASE_DEC, 0x0,
+						"Field: charset number"}},
+				{ &hf_mysql_fld_length,
+					{ "Length", "mysql.field.length",
+						types::FT_UINT32, types::BASE_DEC, 0x0,
+						"Field: length"}},
+				{ &hf_mysql_fld_type,
+					{ "Type", "mysql.field.type",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						"Field: type" }},
+				{ &hf_mysql_fld_flags,
+					{ "Flags", "mysql.field.flags",
+						types::FT_UINT16, types::BASE_HEX, 0x0,
+						"Field: flags" }},
+				{ &hf_mysql_fld_not_null,
+					{ "Not null", "mysql.field.flags.not_null",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_NOT_NULL_FLAG,
+						"Field: flag not null"}},
+				{ &hf_mysql_fld_primary_key,
+					{ "Primary key", "mysql.field.flags.primary_key",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_PRI_KEY_FLAG,
+						"Field: flag primary key"}},
+				{ &hf_mysql_fld_unique_key,
+					{ "Unique key", "mysql.field.flags.unique_key",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_UNIQUE_KEY_FLAG,
+						"Field: flag unique key"}},
+				{ &hf_mysql_fld_multiple_key,
+					{ "Multiple key", "mysql.field.flags.multiple_key",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_MULTIPLE_KEY_FLAG,
+						"Field: flag multiple key"}},
+				{ &hf_mysql_fld_blob,
+					{ "Blob", "mysql.field.flags.blob",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_BLOB_FLAG,
+						"Field: flag blob"}},
+				{ &hf_mysql_fld_unsigned,
+					{ "Unsigned", "mysql.field.flags.unsigned",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_UNSIGNED_FLAG,
+						"Field: flag unsigned"}},
+				{ &hf_mysql_fld_zero_fill,
+					{ "Zero fill", "mysql.field.flags.zero_fill",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_ZEROFILL_FLAG,
+						"Field: flag zero fill" }},
+				{ &hf_mysql_fld_binary,
+					{ "Binary", "mysql.field.flags.binary",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_BINARY_FLAG,
+						"Field: flag binary" }},
+				{ &hf_mysql_fld_enum,
+					{ "Enum", "mysql.field.flags.enum",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_ENUM_FLAG,
+						"Field: flag enum" }},
+				{ &hf_mysql_fld_auto_increment,
+					{ "Auto increment", "mysql.field.flags.auto_increment",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_AUTO_INCREMENT_FLAG,
+						"Field: flag auto increment" }},
+				{ &hf_mysql_fld_timestamp,
+					{ "Timestamp", "mysql.field.flags.timestamp",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_TIMESTAMP_FLAG,
+						"Field: flag timestamp" }},
+				{ &hf_mysql_fld_set,
+					{ "Set", "mysql.field.flags.set",
+						types::FT_BOOLEAN, 16, MYSQL_FLD_SET_FLAG,
+						"Field: flag set"}},
+				{ &hf_mysql_fld_decimals,
+					{ "Decimals", "mysql.field.decimals",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						"Field: decimals" }},
+				{ &hf_mysql_fld_default,
+					{ "Default", "mysql.field.default",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: default" }},
+				{ &hf_mysql_row_text,
+					{ "text", "mysql.row.text",
+						types::FT_STRING, types::BASE_NONE, 0x0,
+						"Field: row packet text" }},
+				{ &hf_mysql_exec_param,
+					{ "Parameter", "mysql.exec_param",
+						types::FT_NONE, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_unsigned,
+					{ "Unsigned", "mysql.exec.unsigned",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_longlong,
+					{ "Value", "mysql.exec.field.longlong",
+						types::FT_INT64, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_string,
+					{ "Value", "mysql.exec.field.string",
+						types::FT_UINT_STRING, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_double,
+					{ "Value", "mysql.exec.field.double",
+						types::FT_DOUBLE, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_datetime_length,
+					{ "Length", "mysql.exec.field.datetime.length",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_year,
+					{ "Year", "mysql.exec.field.year",
+						types::FT_INT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_month,
+					{ "Month", "mysql.exec.field.month",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_day,
+					{ "Day", "mysql.exec.field.day",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_hour,
+					{ "Hour", "mysql.exec.field.hour",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_minute,
+					{ "Minute", "mysql.exec.field.minute",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL }},
+				{ &hf_mysql_exec_field_second,
+					{ "Second", "mysql.exec.field.second",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_second_b,
+					{ "Billionth of a second", "mysql.exec.field.secondb",
+						types::FT_INT32, types::BASE_DEC, 0x0,
+						NULL }},
+				{ &hf_mysql_exec_field_long,
+					{ "Value", "mysql.exec.field.long",
+						types::FT_INT32, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_tiny,
+					{ "Value", "mysql.exec.field.tiny",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_short,
+					{ "Value", "mysql.exec.field.short",
+						types::FT_INT16, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_float,
+					{ "Value", "mysql.exec.field.float",
+						types::FT_FLOAT, types::BASE_NONE, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_time_length,
+					{ "Length", "mysql.exec.field.time.length",
+						types::FT_INT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_time_sign,
+					{ "Flags", "mysql.exec.field.time.sign",
+						types::FT_UINT8, types::BASE_DEC, 0x0,
+						NULL}},
+				{ &hf_mysql_exec_field_time_days,
+					{ "Days", "mysql.exec.field.time.days",
+						types::FT_INT32, types::BASE_DEC, 0x0,
+						NULL}},
+				
+			};
+		//call the function to register different dissector protocols
+		if ( ! proto::Proto::insert_dissector_proto ( 3306 , ( sizeof ( pi ) / sizeof ( proto::packet_info ) ) , pi ) ){
+			return false;	
+		}
+	}
+    return true;
+}
+
+std::string responseDataTogetherForRow; //need to be in a proper way
+//disset row packet
+int Mysql::mysql_dissect_row_packets ( actRawDataStruct *rawDataPacket , int offset , proto::field_info *field_info  ){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	guint64 lelen;
+	guint8 isNull = 0;
+	offset+=tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	std::cout<<__FUNCTION__<<"length of data is "<<(int)lelen<<std::endl;
+	if ( !buff::Buffer::Read ( rawDataPacket , field_info , hf_mysql_row_text , offset , ( int ) lelen , ENC_NA ) ){
+		std::cerr<<__FUNCTION__<<"error to read row data\n";
+		return offset;
+	}
+	if ( JSON != 1 ){
+		std::string dataValue1;
+		dataValue1.clear();
+		dataValue1 = types::get_string ( (u_char*)rawDataPacket->data , buff::Buffer::tvb_length , offset , (int)lelen );
+		responseDataTogetherForRow = responseDataTogetherForRow + dataValue1 + ";" ;
+	}
+	offset +=(int)lelen;
+	std::cout<<__FUNCTION__<<"offset = "<<offset<<std::endl;
+	return offset;
+}
+
+
+// dissect server status flags
+int Mysql::mysql_dissect_server_status (  int offset ){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	return ( offset + 2 );
+}
+
+//dissect field packet
+int Mysql::mysql_dissect_field_packet( actRawDataStruct *rawDataPacket , int offset , proto::field_info * field_info ){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	guint64 lelen;
+	guint8 isNull = 0;
+	offset += tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	buff::Buffer::Read ( rawDataPacket, field_info , hf_mysql_fld_catalog ,offset , (int)lelen , ENC_NA );
+	offset+=lelen;
+	isNull = 0;
+	lelen = 0;
+	offset += tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	buff::Buffer::Read ( rawDataPacket, field_info ,  hf_mysql_fld_db,offset , (int)lelen , ENC_NA );
+	offset+=lelen;
+	isNull = 0;
+	lelen = 0;
+	offset += tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	buff::Buffer::Read ( rawDataPacket, field_info ,  hf_mysql_fld_table,offset , (int)lelen , ENC_NA );
+	offset+=lelen;
+	isNull = 0;
+	lelen = 0;
+	offset += tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	buff::Buffer::Read ( rawDataPacket, field_info ,  hf_mysql_fld_org_table ,offset , (int)lelen , ENC_NA );
+	offset+=lelen;
+	isNull = 0;
+	lelen = 0;
+	offset += tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	buff::Buffer::Read ( rawDataPacket, field_info ,  hf_mysql_fld_name ,offset , (int)lelen , ENC_NA );
+	offset+=lelen;
+	isNull = 0;
+	lelen = 0;
+	offset += tvb_get_fle( rawDataPacket, offset, &lelen, &isNull);
+	buff::Buffer::Read ( rawDataPacket, field_info ,  hf_mysql_fld_org_name ,offset , (int)lelen , ENC_NA );
+	//edited on 27, for json
+	std::string dataValue1;
+	dataValue1.clear();
+	std::cout<<__FUNCTION__<<"for json = "<<dataValue1<<std::endl;
+	dataValue1 = types::get_string ( (u_char*)rawDataPacket->data , buff::Buffer::tvb_length , offset , (int)lelen );
+	std::cout<<__FUNCTION__<<"data = "<<dataValue1<<std::endl;
+	//for json
+	if ( JSON != 0 ){
+		dataValue1 = dataValue1 + ";";
+		QueryPacket.colNames.insert ( std::make_pair ( 1 , dataValue1 ) );
+	}
+	event["PACKET/MySQL"]["Query"]="ENTER NEW QUERY";
+	event["PACKET/MySQL"]["Response"][dataValue1]="ENTER NEW VALUE";
+	//fileHandler<<event<<std::endl;
+	offset +=(int)lelen;
+	offset ++ ; //filler
+	buff::Buffer::Read ( rawDataPacket , field_info , hf_mysql_fld_charsetnr , offset , 2 , ENC_LITTLE_INDIAN );
+	offset += 2;
+	buff::Buffer::Read ( rawDataPacket , field_info , hf_mysql_fld_length , offset , 4 , ENC_LITTLE_INDIAN );
+	offset += 4 ;
+	buff::Buffer::Read ( rawDataPacket , field_info , hf_mysql_fld_type , offset , 1 , ENC_NA );
+	// guint8 types = (guint8)buff::Buffer::get_guint8( rawDataPacket , offset  );
+	// std::cout<<"TYPES = "<<types <<std::endl;
+	//dissect each flags 
+	switch ( (guint8)buff::Buffer::get_guint8( rawDataPacket , offset  ) ){ // read types and dissect it
+		case  0x00 :
+			std::cout<<__FUNCTION__<<" FIELD_TYPE_DECIMAL\n";
+			break;
+
+        case 0x01:
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_TINY\n";
+			break;
+        case  0x02 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_SHORT\n";
+			break;
+        case 0x03 : 
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_LONG\n";
+			break;
+        case 0x04 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_FLOAT\n";
+			break;
+        case 0x05:
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_DOUBLE\n";
+			break;
+        case 0x06 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_NULL\n";
+			break;
+        case 0x07 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_TIMESTAMP\n";
+			break;
+			
+  	case  0x08 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_LONGLONG\n";
+			break;
+        case 0x09  :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_INT24\n";
+			break;
+        case 0x0a :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_DATE\n";
+			break;
+        case 0x0b  :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_TIME\n";
+			break;
+        case  0x0c :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_DATETIME\n";
+			break;
+        case 0x0d :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_YEAR\n";
+			break;
+        case 0x0e:
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_NEWDATE\n";
+			break;
+        case  0x0f:
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_VARCHAR (new in MySQL 5.0)\n";
+			break;
+        case  0x10  :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_BIT (new in MySQL 5.0)\n";
+			break;
+
+        case  0xf6:
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_NEWDECIMAL (new in MYSQL 5.0)\n";
+			break;
+
+        case 0xf7 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_ENUM\n";
+			break;
+        case  0xf8  :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_SET\n";
+			break;
+        case  0xf9 :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_TINY_BLOB\n";
+			break;
+        case  0xfa  :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_MEDIUM_BLOB\n";
+			break;
+        case 0xfb :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_LONG_BLOB\n";
+			break;
+			
+     	case   0xfc :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_BLOB\n";
+			break;
+        case 0xfd: 
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_VAR_STRING\n";
+			break;
+        case  0xfe:
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_STRING\n";
+			break;
+
+        case 0xff :
+			std::cout<<__FUNCTION__<<"FIELD_TYPE_GEOMETRY \n";
+			break;
+		}
+	offset +=1;
+	//read flags 2 bytes                                                            
+	guint32 flagValue = types::get_guint ( (u_char * )rawDataPacket->data , rawDataPacket->length , offset , 2 , ENC_LITTLE_INDIAN );
+	std::cout<<__FUNCTION__<<"FLAGVALUE"<<flagValue<<std::endl;
+	//dissect each flags
+	switch ( types::get_guint ( ( u_char *)rawDataPacket->data , rawDataPacket->length , offset , 2 , ENC_LITTLE_INDIAN ) ){
+		case 0001 :
+			std::cout<<__FUNCTION__<<"NOT_NULL_FLAG\n";
+			break;
+			
+		case 0002:
+			std::cout<<__FUNCTION__<<"PRI_KEY_FLAG\n";
+			break;
+		case 0004 :
+			std::cout<<__FUNCTION__<<"UNIQUE_KEY_FLAG\n";
+			break;
+			//        case 0008:
+			//            std::xout<<"MULTIPLE_KEY_FLAG"<<std::endl;
+			//            break;
+			
+		case 0010 :
+			std::cout<<__FUNCTION__<<"BLOB_FLAG\n";
+			break;
+		case 0020:
+			std::cout<<__FUNCTION__<<"UNSIGNED_FLAG\n";
+			break;
+		case 0040:
+			std::cout<<__FUNCTION__<<"ZEROFILL_FLAG\n";
+			break;
+			//        case 0080 :
+			//            std::cout<<"BINARY_FLAG"<<std::endl;
+			//            break;
+			
+		case 0100:
+			std::cout<<__FUNCTION__<<" ENUM_FLAG\n";
+			break;
+			
+		case 0200:
+			std::cout<<__FUNCTION__<<"AUTO_INCREMENT_FLAG\n";
+			break;
+			
+		case 0400:
+			std::cout<<__FUNCTION__<<"TIMESTAMP_FLAG\n";
+			break;
+			//       case 0800 :
+			//            std::cout<<"SET_FLAG"<<std::endl;
+			//            break;
+			
+		default:
+			std::cout<<__FUNCTION__<<"combination of 8 creating prob\n";
+			break;
+		}
+	offset += 2 ;
+	buff::Buffer::Read ( rawDataPacket , field_info , hf_mysql_fld_decimals , offset , 1 , ENC_NA );
+	offset +=1;
+	offset +=2; // filler
+	//  std::cout<<"offset before some extra data "<<offset<<std::endl;
+	// now data should be ended but there may be some raw data
+	// so check remainng length is there or not.
+	if ( buff::Buffer::get_remaining_length( offset ) )std::cout<<__FUNCTION__<<"SOME EXTRA DATA\n";
+	// return offset - 4 ; // have to return offset only not -4 
+	return offset;
+	
+}
+/*
+//read length encoded string
+int Mysql::mysql_field_add_lestring(  int offset ,){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	guint64 lelen;
+//	guint8 is_null = 0;
+	std::cout<<__FUNCTION__<<"offset === "<<offset<<std::endl;
+	std::cout<<__FUNCTION__<<"offset ## "<<offset<<"length = "<<(int)lelen<<std::endl;
+	return offset+(int)lelen;
+}
+*/
+int Mysql::tvb_get_fle(actRawDataStruct * rawDataPacket, int offset , guint64 *res, guint8 *isNull){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	int prefix;
+	prefix = buff::Buffer::get_guint8 ( rawDataPacket , offset );
+	if (isNull)
+		*isNull = 0;
+	switch (prefix) {
+		case 251:
+			if (res)
+				*res = 0;
+			if (isNull)
+				*isNull = 1;
+			break;
+			case 252:
+			if (res)
+				*res = buff::Buffer::getLetohs(rawDataPacket, offset+1);
+			return 3;
+			case 253:
+			if (res)
+				*res = buff::Buffer::getLetohl(rawDataPacket, offset+1);
+			return 5;
+			case 254:
+			if (res)
+				*res =buff::Buffer::getLetoh64(rawDataPacket, offset+1);
+			return 9;
+			default:
+			if (res)
+				*res = prefix;
+		}
+	return 1;
+}
+
+
+
+int Mysql::mysql_dissect_result_header( actRawDataStruct *rawDataPacket , int offset ){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	gint fle;
+    guint64 num_fields;
+	fle = tvb_get_fle( rawDataPacket , offset , &num_fields , NULL);
+	noOfFielde = num_fields;
+	if ( num_fields   )field::prev_query.prev_query_state = FIELD_PACKET;
+	else field::prev_query.prev_query_state = ROW_PACKET ;
+	return (offset + fle);
+}
+
+//dissect query response
+gint Mysql::mysql_dissect_response ( actRawDataStruct *rawdataPacket , gint offset , proto::field_info * field_info ){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	gint response_code = buff::Buffer::get_guint8 ( rawdataPacket ,  offset );
+	if ( response_code == 0xff ) {
+		std::cout<<__FUNCTION__<<" Error packet at mysql_dissect_response --\n";
+		return offset;
+	}
+        else {
+		if ( response_code == 0xfe  && ( buff::Buffer::return_remaining_length ( offset ) < 9 ) ) {
+			int eofLengthPrevious = (rawdataPacket->length - ( offset - 4 ) ) ;
+			std::cout<<__FUNCTION__<<"eoflengthPrevious="<<eofLengthPrevious<<std::endl;
+			if ( !buff::Buffer::Read ( rawdataPacket, field_info , hf_mysql_eof ,offset , 1 , ENC_NA ) ){
+				std::cerr<<__FUNCTION__<<" error --- hf_mysql_eof\n";
+				return offset ;
+			}
+			offset ++;
+			//pre 4.1 packet ends here
+			if ( buff::Buffer::get_remaining_length ( offset ) ){
+				if ( !buff::Buffer::Read (rawdataPacket, field_info , hf_mysql_num_warn , offset , 2 , ENC_LITTLE_INDIAN ) ){
+					std::cerr<<__FUNCTION__<<" --error hf_mysql_num_warn\n";
+					return offset;
+				}
+				offset += 2;
+				//now dissect server header flags
+                offset = mysql_dissect_server_status ( offset );
+			}
+			if ( field::prev_query.prev_query_state == FIELD_PACKET ){
+				fileHandler<<event<<std::endl;
+				field::prev_query.prev_query_state = ROW_PACKET;
+			}
+		}
+		else {
+			switch (  field::prev_query.prev_query_state ) {
+				case RESPONSE_TABULAR:
+					offset = mysql_dissect_result_header ( rawdataPacket , offset );
+					break;
+					
+				case FIELD_PACKET:
+					
+				case RESPONSE_SHOW_FIELDS:
+					
+				case RESPONSE_PREPARE:
+					
+				case PREPARED_PARAMETERS:
+					offset = mysql_dissect_field_packet( rawdataPacket, offset , field_info);
+					break;
+					
+				case ROW_PACKET:
+					std::cout<<__FUNCTION__<<"row count offset="<<offset<<std::endl;
+					int columnCount = noOfFielde ;
+					//    std::cout<<"now learn to dissect row packet ::"<<noOfFielde<<std::endl;
+					while ( columnCount != 0 ){
+						// std::cout<<"column no :"<<columnCount--<<std::endl;
+						columnCount --;
+						offset = mysql_dissect_row_packets ( rawdataPacket , offset , field_info );
+						std::cout<<__FUNCTION__<<columnCount<<std::endl;
+					}
+					QueryPacket.rowCount = ++rowCount ;
+					QueryPacket.colInfo.insert ( std::make_pair ( QueryPacket.rowCount ,responseDataTogetherForRow ) );
+					break;
+				}
+			// std::cout<<"offset after dissecting field "<<offset<<std::endl;
+		}
+	}
+	return offset;
+}
+
+//
+//
+//Mysql dissect client request
+//once authontication is done client engine sends command packates to the
+//server
+//
+ gint Mysql::mysql_dissect_request ( actRawDataStruct *rawdataPacket , gint offset , proto::field_info * field_info ){
+	 std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	 //1st read teh oppcode from the packet
+         gint opcode = buff::Buffer::get_guint8 (rawdataPacket , offset ) ;
+         offset ++ ;
+std::cout<<"????????????????????????????????????????????????????????????????????\n";
+         std::cout<<__FUNCTION__<<"opcode is "<<opcode<<std::endl;
+std::cout<<"?????????????????????????????????????????????????????????????????????\n";
+	 switch ( opcode ){
+		 case COM_QUIT : // no argument , tells the server end of session
+			 break ;
+                 case COM_PROCESS_INFO :// tells the server to send back a report on the status of all remaining thread
+                        field::prev_query.prev_query_state = RESPONSE_TABULAR ;
+                          break;
+                 case COM_DEBUG:// tells the server to reponse with an ok packet .If the server is alive and reachable it will.
+                 case COM_PING:
+                         field::prev_query.prev_query_state = RESPONSE_OK ;
+                          break;;
+                 case COM_STATISTICS: // tell the server to send back a string containing a big status report.
+                         field::prev_query.prev_query_state = RESPONSE_MESSAGE ;
+                          break;
+                 case COM_INIT_DB://tell the server to change the default database
+                          //for the sesion to the one specified by the argument
+                 case COM_CREATE_DB: // tells the server to create a DB with a specified name.
+                 case COM_DROP_DB: // tells the server to drop a DB
+                          if ( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_schema , offset , 0 , ENC_NA ) ){
+                                  std::cerr<<__FUNCTION__<<" error --- hf_mysql_schema @ mysql_dissect_request--\n";
+                                  return offset;
+                          }
+                          offset +=buff::Buffer::get_string_length ( rawdataPacket ,  offset ) ;
+			  field::prev_query.prev_query_state = RESPONSE_OK;
+                          break ;
+                 case COM_QUERY: // tells the server to run the query
+                    // std::cout<<"com query"<<std::endl;
+
+
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_query , offset , 0 , ENC_NA ) ){
+                                  std::cerr<<__FUNCTION__<<"-- error hf_mysql_query -- \n";
+                                  return offset ;
+                          }
+                          if ( JSON ){
+                          std::string dataValue;
+                          dataValue.clear();
+                          dataValue = types::get_string ( (u_char*)rawdataPacket->data , buff::Buffer::tvb_length , offset , 0 );
+                          QueryPacket.query = dataValue;
+                          std::cout<<__FUNCTION__<<"QueryPacket.query = "<<QueryPacket.query<<std::endl;
+			  QueryPacket.queryType = COM_QUERY;
+			  JSON = 2;
+
+
+                      }
+                          //for JSON, to insert new query
+
+                       //   std::cout<<"after printing value"<<std::endl;
+                         offset +=buff::Buffer::get_string_length ( rawdataPacket , offset ) ;
+                         field::prev_query.prev_query_state = RESPONSE_TABULAR;
+                          break;
+			  
+		 case COM_PREPARE: // tells the server to prepare the statement specified by the argument.
+			  if( !buff::Buffer::Read ( rawdataPacket , field_info , hf_mysql_query , offset , 0 , ENC_NA ) ){
+				  std::cerr<<__FUNCTION__<<"-- error hf_mysql_query part 2-- \n";
+                                  return offset ;
+                          }
+			  offset +=buff::Buffer::get_string_length (rawdataPacket , offset ) ;
+			  field::prev_query.prev_query_state = RESPONSE_PREPARE;
+                          break;
+                 case COM_CLOSE_STMT:// tells the server to close the prepare statement. specified by statement ID
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_stmt_id , offset , 4 , ENC_LITTLE_INDIAN ) ){
+                                  std::cerr<<__FUNCTION__<<"-- error hf_mysql_stmt_id-- \n";
+                                  return offset ;
+                          }
+                          offset += 4 ;
+                         field::prev_query.prev_query_state = REQUEST ;
+                          break ;
+                 case COM_RESET_STMT:// tells the server to disscurd the current parameter valus in the prepared statement spe
+                          //cified by the statement ID
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_stmt_id , offset , 4 , ENC_LITTLE_INDIAN ) ){
+                                  std::cerr<<__FUNCTION__<<"-- error hf_mysql_stmt_id--  part 2\n";
+                                  return offset ;
+                          }
+                          offset += 4 ;
+                         field::prev_query.prev_query_state = RESPONSE_OK;
+                          break ;
+                 case COM_FIELD_LIST:
+         // tells the server to retirn a list of fields for the specified table
+         std::cout<<__FUNCTION__<<"COM_FIELD_LIST\n";
+
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_table_name , offset , 0 , ENC_NA ) ){
+                                  std::cerr<<__FUNCTION__<<"-- error hf_mysql_table_name -- \n";
+                                  return offset ;
+                          }
+                         offset +=buff::Buffer::get_string_length (rawdataPacket , offset ) ;
+                         field::prev_query.prev_query_state = RESPONSE_SHOW_FIELDS;
+                          break;
+                 case COM_PROCESS_KILL :// tells the server to kill the thread identified by the argument.
+
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_thd_id , offset , 4 , ENC_LITTLE_INDIAN ) ){
+                                  std::cerr<<__FUNCTION__<<"-- error hf_mysql_thd_id--  part 2\n";
+                                  return offset ;
+                          }
+                          offset += 4 ;
+			  field::prev_query.prev_query_state = RESPONSE_OK;
+                          break ;
+                 case COM_CHANGE_USER://tells the server that the client wants to chanfe the user. associated with the seeion
+                          //zero terminated user name , encrypted password , zero termonated defaukt db name
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_user , offset , 0 , ENC_NA ) ){
+                                  std::cerr<<"-- error hf_mysql_user -- "<<std::endl;
+                                  return offset ;
+                          }
+                         offset +=buff::Buffer::get_string_length (rawdataPacket , offset ) ;
+                         if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_passwd , offset , 0 , ENC_NA ) ){
+                                  std::cerr<<"-- error hf_mysql_passwd -- "<<std::endl;
+                                  return offset ;
+                          }
+                         offset +=buff::Buffer::get_string_length ( rawdataPacket ,offset ) ;
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_schema , offset , 0 , ENC_NA ) ){
+                                  std::cerr<<"-- error hf_mysql_schema -- "<<std::endl;
+                                  return offset ;
+                          }
+                         offset +=buff::Buffer::get_string_length (rawdataPacket , offset ) ;
+                         field::prev_query.prev_query_state = RESPONSE_OK;
+
+                          break;
+                          //tells the server to refresh the table cache , rotate the logs , reread the access cintrol table.
+                          //clear the host name lookup control cache , reset the status variable to 0 , clear the replication
+                          //master logs , or reset the replication slave depending on the options in the bit mask.
+                 case COM_REFRESH :
+                          //have to write logic to read all the flags
+                          offset ++ ;
+                         field::prev_query.prev_query_state = RESPONSE_OK;
+                          break ;
+
+                 case COM_SHUTDOWN: // tells the server to shutdown
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_shutdown , offset , 1 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                  std::cerr<<"-- error hf_mysql_shutdown--  part 2"<<std::endl;
+                                  return offset ;
+                          }
+                          offset += 1 ;
+                         field::prev_query.prev_query_state = RESPONSE_OK;
+                          break ;
+                          //tells the server to disable the options specified by the code.At this point , seems to be used only to
+                          //enable or disable the support of multiple statements in one query string
+                 case COM_SET_OPTION:
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_option , offset , 2 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                  std::cerr<<"-- error hf_mysql_option--  part 2"<<std::endl;
+                                  return offset ;
+                          }
+                          offset += 2 ;
+                         field::prev_query.prev_query_state = RESPONSE_OK;
+                          break ;
+
+                 case COM_STMT_FETCH :
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_stmt_id , offset , 4 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                  std::cerr<<"-- error hf_mysql_stmt_id--  part 2"<<std::endl;
+                                  return offset ;
+                          }
+                          offset += 4 ;
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_num_rows , offset , 4 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                  std::cerr<<"-- error hf_mysql_stmt_thd_id--  part 2"<<std::endl;
+                                  return offset ;
+                          }
+                          offset += 4 ;
+                         field::prev_query.prev_query_state = RESPONSE_TABULAR ;
+                          break ;
+
+                          //tells the server that the packet contains the data for one bound parameter in a prepared statement ,used to avoid unnecessary copying of
+                          //lafge amount of data when the value of the bound parameter is very large - 4 byte statement ID , two byte parameter number , parameter
+                          //string , LBF
+                 case COM_LONG_DATA:
+                          if( !buff::Buffer::Read ( rawdataPacket ,field_info , hf_mysql_stmt_id , offset , 4 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                  std::cerr<<"-- error hf_mysql_stmt_id--  part 2"<<std::endl;
+                                  return offset ;
+                          }
+                          offset += 4 ;
+                          if( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_param , offset , 4 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                  std::cerr<<"-- error hf_mysql_param--  part 2"<<std::endl;
+                                  return offset ;
+                          }
+                          offset += 2 ;
+                          //check more data is available or not
+                          if ( buff::Buffer::get_remaining_length( offset ) ){
+                                  if( !buff::Buffer::Read ( rawdataPacket ,field_info , hf_mysql_payload, offset , 0 , ENC_NA ) ){
+                                          std::cerr<<"-- error hf_mysql_payload -- "<<std::endl;
+                                          return offset ;
+
+                                  }
+                                  offset +=buff::Buffer::get_string_length (rawdataPacket , offset ) ;
+                          }
+                                 field::prev_query.prev_query_state = REQUEST;
+                                  break ;
+                                  //tels the server to execute the statement , identified by statement ID : ( 4byte statement ID , 1 byte for flags , 4 byte iteration cound.
+
+
+                 case COM_EXECUTE:
+                                  if( !buff::Buffer::Read ( rawdataPacket , field_info , hf_mysql_stmt_id , offset , 4 , ENC_LITTLE_INDIAN ) ){// this will be ENC_NA
+                                          std::cerr<<"-- error hf_mysql_stmt_id--  part 2"<<std::endl;
+                                          return offset ;
+
+                                  }
+                                  offset += 4 ;
+                                  if ( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_exec_flags5 , offset , 1 , ENC_NA ) ){
+                                          std::cerr<<" error at hf_mysql_exec_flags5--- "<<std::endl;
+                                          return offset;
+                                  }
+                                  offset ++ ;
+                                  if ( !buff::Buffer::Read( rawdataPacket ,field_info , hf_mysql_exec_iter , offset , 4 , ENC_LITTLE_INDIAN ) ){
+                                          std::cerr<<" error at hf_mysql_exec_iter "<<std::endl;
+                                          return offset;
+                                  }
+                                  offset +=4 ;
+
+                                  //check remaing length remaining or not
+                                  if ( buff::Buffer::get_remaining_length ( offset ) ){
+                                          if ( !buff::Buffer::Read(rawdataPacket , field_info , hf_mysql_payload , offset , 0 , ENC_NA ) ){
+                                                  std::cerr<<"error hf_mysql_payload---"<<std::endl;
+                                                  return offset;
+                                          }
+                                          offset +=buff::Buffer::get_string_length (rawdataPacket , offset );
+
+                                  }
+                                 field::prev_query.prev_query_state = RESPONSE_TABULAR;
+                                  //return offset ;
+                                  break ;
+                                  //4 byte int for the offset , 2 byte integer for the flag , 4 byte int for the slave server ID
+                                  //a string for the long name
+                                  //
+                 case COM_BINLOG_DUMP :
+                                  if ( !buff::Buffer::Read ( rawdataPacket ,field_info , hf_mysql_binlog_position , offset , 4 , ENC_LITTLE_INDIAN ) ){
+                                          Mysql::print_error ( field_info , hf_mysql_binlog_position );
+                                          return offset;
+                                  }
+                                  offset +=4;
+                                  if ( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_binlog_flags , offset , 2 , ENC_NA ) ){
+
+                                          Mysql::print_error ( field_info , hf_mysql_binlog_flags );
+                                          return offset ;
+                                  }
+                                  offset +=2;
+                                  if ( !buff::Buffer::Read ( rawdataPacket ,field_info , hf_mysql_binlog_server_id , offset , 4 , ENC_LITTLE_INDIAN ) ){
+                                          Mysql::print_error ( field_info , hf_mysql_binlog_server_id );
+                                          return offset;
+                                  }
+                                  offset +=4;
+                                  //binlog filem name
+                                  if ( buff::Buffer::get_remaining_length( offset ) ){
+                                          if ( !buff::Buffer::Read (rawdataPacket , field_info , hf_mysql_binlog_file_name , offset , 0 , ENC_NA ) ){
+                                                  Mysql::print_error( field_info , hf_mysql_binlog_file_name );
+                                                  return offset;
+                                          }
+                                          offset +=buff::Buffer::get_string_length (rawdataPacket , offset );
+                                  }
+                                 field::prev_query.prev_query_state = REQUEST;
+                                 // return offset;
+                                  break;
+
+                                  //implement replication packet , tells the server the table defination and the data to the cliennt in row format , 1 byte for database name length
+                                  //database name , 1byte for table name length , then table name.
+                 case COM_TABLE_DUMP:
+
+                 case COM_CONNECT_OUT: // never sent by client used for iternal purpose
+                 case COM_REGISTER_SLAVE:
+                                  offset +=buff::Buffer::return_remaining_length ( offset );
+                                 field::prev_query.prev_query_state = REQUEST;
+                                  break ;
+                 default:
+                                  offset += buff::Buffer::return_remaining_length ( offset );
+				  field::prev_query.prev_query_state = UNDEFINED;
+         }
+         return offset;
+
+ }
+
+//dissect mysql
+
+//define function 
+//this will dissect the massage part by part..yup go through this interesting algo
+
+bool Mysql::dissect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLength){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	std::cout<<"total packet length="<<totalPacketLength<<std::endl;
+	std::cout<<"Mysql::dissect_mysql\n";
+	//open file for Json
+	//this file will take input for new query
+
+	fileHandler.open("/home/suman/TCPStub/jon.txt",std::ios::out);
+	if ( !fileHandler.is_open() ){
+		std::cerr<<__FUNCTION__<<"can't open json input file\n";
+		exit(EXIT_FAILURE);
+	}
+	//for adding row at tree view initiLIZE THE NEW ROOTrOW fLAAG	
+	buff::rootRowPass = true ;
+        //buff::Buffer::add_heading ( "MySql" , "MySql" );
+
+	//set the length flag
+	buff::Buffer::pass = false ;
+	//find the appropriate array of field info from proto_map;
+	//have to pass this value by function error , now geting error
+	//create an proto field info refernce and initialize it by appropriate protocol from map.
+	proto::_proto_map::iterator protomap_iterator = proto::proto_map.find ( PORT_MYSQL );
+	if ( protomap_iterator == proto::proto_map.end () ){
+		std::cout<<__FUNCTION__<<":Protocol didnot registered / but it must be registered because after searching registered proto only dynamic function will  be clled "<<std::endl;
+		exit ( EXIT_FAILURE );
+	}
+	proto::mapkey temp_key_pair = protomap_iterator->second;
+	proto::field_info *field_info = temp_key_pair.second;
+	//know the length of the packet
+        int offset=0;
+        while ( offset < totalPacketLength ){
+          //  std::cout<<"totalPacketLength"<<std::endl;
+            buff::Buffer::pass = false;
+            //read the packet length
+            if ( !buff::Buffer::Read ( rawdataPacket , field_info , hf_mysql_packet_length , offset , 3 , ENC_LITTLE_INDIAN )){
+                std::cerr<<__FUNCTION__<<"can't read hf_mysql_packet_length"<<std::endl;
+                return false;
+            }
+	    //update offset by 3
+	    offset += 3;
+            //update the packet length by 4 manualy
+            buff::Buffer::tvb_length +=4;
+	    // read the packet number 
+            std::cout<<__FUNCTION__<<"hf_mysql_packet_length"<<hf_mysql_packet_length<<std::endl;
+	    if ( !buff::Buffer::Read ( rawdataPacket , field_info , hf_mysql_packet_number , offset , 1 , ENC_NA )){
+		    std::cerr<<__FUNCTION__<<"cant read  proto-mysql.hpp -- hf_mysql_packet_number\n";
+		    return false ;
+		   }
+	    gint packet_number = buff::Buffer::get_guint8 ( rawdataPacket , offset );
+	    //std::cout<<"packet no: "<<packet_number;
+	    bool is_response= false;
+	    offset +=1;
+	    //check the destination port
+	    if ( !rawdataPacket->appServer )	is_response = true;
+	    else is_response = false ;
+	    if ( is_response ) {// packet going to APP
+		    if ( packet_number == 0  ){ //then it is server greetings
+			    //offset = mysql_dissect_greetings ( offset , field_info );
+			    std::cout<<__FUNCTION__<<"no need to dissect greetings\n";
+			    return true;
+			   }
+		    else{
+			    offset = mysql_dissect_response( rawdataPacket, offset  , field_info ) ;
+			    // std::cout<<"offset after response dis"<<offset<<std::endl;
+			   
+		    }
+		    }else { //packet going to Db
+			    if ( packet_number == 1 ){ //it's a login request
+				    std::cout<<__FUNCTION__<<"no need to dissect login request\n";
+				   
+			    }
+			    else
+				    //normal request from client to server
+				    offset = Mysql::mysql_dissect_request ( rawdataPacket, offset , field_info );
+		    }
+	    //   std::cout<<"offset = "<<offset<<"total length "<<totalPacketLength<<std::endl;
+	   
+	}
+	//for a same mainly for response of a select query 
+	// offset +=4; chngd on 13/12 -- 6.16
+	//Remaining payload indicates an error
+	if ( buff::Buffer::get_remaining_length ( offset ) )
+		std::cout<<__FUNCTION__<<"******DISSECTOR INCOMPLETE*****\n";
+	//exit ( EXIT_FAILURE );
+	fileHandler.close();
+
+	return true;
+}
+
+//this method will dissect only quey part
+bool Mysql::getQueryOnly( actRawDataStruct *packetSettingDataArray , queryData *& queryDataArray){
+	std::cout<<"FUNCTION:"<<__FUNCTION__<<std::endl;
+	int currentCount = -1 ;
+	int totalPacketLength;
+	//now for each packet do dissection and put the dissected value into querydataArray.
+	proto::_proto_map::iterator protomap_iterator = proto::proto_map.find ( PORT_MYSQL );
+	if ( protomap_iterator == proto::proto_map.end () ) std::cout<<__FUNCTION__<<"Protocol didnot registered / but it must be registered because after searching registered proto only dynamic function will  be clled \n";
+	proto::mapkey temp_key_pair = protomap_iterator->second;
+	proto::field_info *field_info = temp_key_pair.second;
+	while ( packetSettingDataArray [ ++currentCount ].length != -999 ){
+		std::cout<<__FUNCTION__<<"NOW DISSECT QUERY ***********************************************************##############################\n";
+		std::cout<<__FUNCTION__<<"current count\t"<<currentCount<<std::endl;
+		//first update the packet no to querydataArray
+		queryDataArray [ currentCount ].packetNo = packetSettingDataArray [ currentCount ].packetNumber ;
+		//know the length of the packet
+		int offset=0;
+		totalPacketLength = packetSettingDataArray[ currentCount ].length;
+		while ( offset < totalPacketLength ){
+			//  std::cout<<"totalPacketLength"<<std::endl;
+			buff::Buffer::pass = false;
+			//read the packet length
+			if ( !buff::Buffer::Read ( &packetSettingDataArray [ currentCount] , field_info , hf_mysql_packet_length , offset , 3 , ENC_LITTLE_INDIAN )){
+				std::cerr<<__FUNCTION__<<"can't read hf_mysql_packet_length\n";
+				return false;
+			}
+			//update offset by 3
+			offset += 3;
+			//update the packet length by 4 manualy
+			buff::Buffer::tvb_length +=4;
+			// read the packet number 
+			std::cout<<__FUNCTION__<<"hf_mysql_packet_length"<<hf_mysql_packet_length<<std::endl;
+			if ( !buff::Buffer::Read ( &packetSettingDataArray [ currentCount ] , field_info , hf_mysql_packet_number , offset , 1 , ENC_NA )){
+				std::cerr<<__FUNCTION__<<"cant read  proto-mysql.hpp -- hf_mysql_packet_number\n";
+				return false ;
+			}
+			gint packet_number = buff::Buffer::get_guint8 ( &packetSettingDataArray [ currentCount ] , offset );
+			std::cout<<__FUNCTION__<<"packet no: "<<packet_number<<std::endl;
+			bool is_response= false;
+			offset +=1;
+			//check the destination port
+			if (  packetSettingDataArray [ currentCount].appServer == 0 )	is_response = false;
+			else is_response = true ;
+			std::cout<<__FUNCTION__<<packetSettingDataArray [ currentCount].appServer<<"::"<<is_response<<std::endl;
+			if ( !is_response ) {// packet going to APP
+				if ( packet_number == 0  ){ //then it is server greetings
+					//offset = mysql_dissect_greetings ( offset , field_info );
+					queryDataArray [ currentCount].queryType = "server greetings";
+					queryDataArray [ currentCount ].query ="greetins";
+					std::cout<<__FUNCTION__<<"no need to dissect greetings\n";
+					offset +=999;
+					//return true;
+				}
+				else{
+					queryDataArray [ currentCount ].queryType = "response";
+					queryDataArray [ currentCount ].query="response";
+					offset = mysql_dissect_response( &packetSettingDataArray [ currentCount ] , offset  , field_info ) ;
+					
+				}
+			}else { //packet going to Db
+				if ( packet_number == 1 ){ //it's a login request
+					queryDataArray [ currentCount].queryType = "login Request";
+					queryDataArray [ currentCount ].query ="login";
+					std::cout<<__FUNCTION__<<"no need to dissect login request\n";
+					offset +=999;
+				}
+				else{
+					//normal request from client to server
+					//    offset = Mysql::mysql_dissect_request ( &packetSettingDataArray [ currentCount ] , offset , field_info );
+					queryDataArray [ currentCount].queryType = "query request from client";
+					gint opcode = buff::Buffer::get_guint8 ( &packetSettingDataArray [ currentCount ]  , offset ) ;
+					offset ++ ;
+					std::cout<<__FUNCTION__<<"opcode is "<<opcode<<std::endl;
+					//types::get_string ( (u_char*)rawdataPacket->data , buff::Buffer::tvb_length , offset , 0 );
+					queryDataArray [ currentCount ].query =  types::get_string ( ( u_char * ) packetSettingDataArray [ currentCount ].data , buff::Buffer::tvb_length , offset , 0) ;
+					//   std::cout<<"get only query \t"<<types::get_string ( ( u_char * ) packetSettingDataArray [ currentCount ].data , buff::Buffer::tvb_length , offset , 0)
+					std::cout<<__FUNCTION__<<"storage value\t"<<queryDataArray [ 0 ].query<<std::endl;
+					std::cout<<__FUNCTION__<<queryDataArray [ currentCount ].query <<std::endl;
+					offset +=999;
+				}
+			}
+		}
+		//Remaining payload indicates an error
+		if ( buff::Buffer::get_remaining_length ( offset ) )	std::cout<<__FUNCTION__<<"******DISSECTOR INCOMPLETE*****\n";
+	}
+	return true;
+}

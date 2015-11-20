@@ -1,0 +1,3 @@
+1) What field.cpp and field.hpp is doing?
+2) remove init.hpp
+3) now write mysql_protocol ..just to get querry.

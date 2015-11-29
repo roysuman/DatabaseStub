@@ -18,23 +18,24 @@
 #ifndef DATA_PROCESS_H
 #define DATA_PROCESS_H
 #include "buffer.h"
-#include "group_packets.h"
+#include "group_packet.h"
 #include "sniffing.h"
+#include "../common/vserver_datatype.h"
 #define NEW_BUFFER                  0x01
 #define NEW_GROUP_PACKET            0x02
 #define NEW_SNIF                    0x03
 
 class ProcessData{
 	public:
-		explicit ProcessData( std::string const ip_address_="127.0.0.1", uint32_t port_ = 0):ip_address_filter(ip_address_),port_filter(port_){
+		explicit ProcessData( std::string const ip_address_="127.0.0.1", VS_UINT32 port_ = 0):ip_address_filter(ip_address_),port_filter(port_){
 			try{
-				if ( (buff = new Buffer())!= NULL ){
+				if ( (buff = new Buffer())!= nullptr ){
 					flag |= NEW_BUFFER;
 				}
-				if  ( (grp_pack = new GrupPacket( *buff ))!= NULL ){
+				if  ( (grp_pack = new GroupPacket( *buff ))!= nullptr ){
 					flag |= NEW_GROUP_PACKET;
 				}
-				if ( (snif = new Snif(*buff)) != NULL ){
+				if ( (snif = new Snif(*buff)) != nullptr ){
 					flag |= NEW_SNIF;
 				}
 			}
@@ -53,15 +54,18 @@ class ProcessData{
 			return;
 		}
 	protected:
-		const int  start_processing_dump_file( std::string const file_name,std::string const ip_address = "127.0.0.1",const uint32_t port =0);
+		const VS_INT32  start_processing_dump_file( std::string const file_name,std::string const ip_address = "127.0.0.1",VS_UINT32 const port =0);
 	private:
 		Buffer               *buff;
-		GrupPacket           *grp_pack;
+		GroupPacket          *grp_pack;
 		Snif                 *snif;
-		unsigned int         flag;
-		bool                 is_init;
+		VS_UINT32            flag;
+		VS_BOOL              is_init;
 		pthread_t            file_process_thread;
 		pthread_t            group_packet_thread;
+		std::string          ip_address_filter;
+		VS_UINT32            port_filter;
+
 };
 
 #endif

@@ -5,7 +5,7 @@
 #include<string>
 #include <unistd.h>
 #include<stdint.h>
-//#define PRINT DATE<<"_"<<TIME<<" [ "<<FILE<<" ] [ "<<FUNCTION<<" ] [ "<<LINE<<" ] "
+#include "../common/vserver_datatype.h"
 //each tcp packet( network packet ) has some flags that helps to understand the type of packet. 
 //        URG (1 bit) – indicates that the Urgent pointer field is significant
 //        ACK (1 bit) – indicates that the Acknowledgment field is significant. All packets after the initial SYN packet sent by the client should have this flag set.
@@ -15,51 +15,51 @@
 //        FIN (1 bit) – No more data from sender
 
 
-typedef struct _netFlags_ netFlags;
-struct _netFlags_{
-	bool    URG;
-	bool    ACK;
-	bool    PSH;
-	bool    RST;
-	bool    SYN;
-	bool    FIN;
+typedef struct _net_flags_struct_ net_flags_struct;
+struct _net_flags_struct_{
+	VS_BOOL    URG;
+	VS_BOOL    ACK;
+	VS_BOOL    PSH;
+	VS_BOOL    RST;
+	VS_BOOL    SYN;
+	VS_BOOL    FIN;
 };
-typedef struct _rawNetData_ rawNetData;
-struct _rawNetData_{
-	std::string     sourceIp;
-	std::string     destinationIp;
-	uint16_t        sourcePort;
-	uint16_t        destinationPort;
-	uint32_t        sequenceNumber;
-	uint32_t        acknowledgeNumber;
-	netFlags    networkTcpFlags;
+typedef struct _raw_net_data_struct_ raw_net_data_struct;
+struct _raw_net_data_struct_{
+	std::string         source_ip;
+	std::string         destination_ip;
+	VS_UINT16           source_port;
+	VS_UINT16           destination_port;
+	VS_UINT32           sequence_number;
+	VS_UINT32           acknowledge_number;
+	net_flags_struct    tcp_flags;
 //	const u_char    *data;
-	uint32_t        dataLength;
-	std::string     dateTime;
+	VS_UINT32           data_length;
+	std::string         date_time;
 
 };
 //all packets ar communicating between a client and a server, it's mainly a client server model.
 //a client is sending a query to the server and server sending back the result set to the client.
 //the query being sebd by the client or the response from server end may contain 1/2.. tcp packets. We are grooping this communication between 
-//client and server by a unique conversation id.The following structure helps to perform the grooping of packets under a unique conversation id. 
-typedef struct _prevNetPacket_ prevNetPacket;
-struct _prevNetPacket_{
-	uint32_t        sequenceNumber;
-	uint32_t        acknowledgeNumber;
-	uint32_t        dataLength;
-	netFlags    networkTcpFlags;
+//client and server by a unique conversation_struct id.The following structure helps to perform the grooping of packets under a unique conversation_struct id. 
+typedef struct _prev_net_packet_struct_ prev_net_packet_struct;
+struct _prev_net_packet_struct_{
+	VS_UINT32           sequence_number;
+	VS_UINT32           acknowledge_number;
+	VS_UINT32           data_length;
+	net_flags_struct    tcp_flags;
 };
-//group all packets under a unique conversation id
-typedef struct _conversation conversation;
-struct _conversation{
-	size_t    conversationId;
-	prevNetPacket    *sourcePreviousPackets;//source meane... my machine
-	prevNetPacket    *destinationPreviousPackets;
-	size_t               currentIndexSourceArray;
-	size_t               currentIndexDestinationArray;
+//group all packets under a unique conversation_struct id
+typedef struct _conversation_struct conversation_struct;
+struct _conversation_struct{
+	VS_UINT64                 conversation_id;
+	prev_net_packet_struct    *source_previous_packets;//source meane... my machine
+	prev_net_packet_struct    *destination_previous_packets;
+	VS_UINT64                 current_index_source_array;
+	VS_UINT64                 current_index_destination_array;
 };
 
-//conversation converationDiary[ 1000];
+//conversation_struct converationDiary[ 1000];
 
 
 

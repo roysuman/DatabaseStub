@@ -15,27 +15,28 @@
  *
  * =====================================================================================
  */
-#include "sniffing.hpp"
+#include "sniffing.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  process_tcp_packet
- *  Description:  print tcp packets dield info
+ *  Description:  prVS_INT32 tcp packets dield info
  * =====================================================================================
  */
 
+VS_BOOL __flagCapture__ = false, __flagStop__ = false;
 std::string Snif::dump_file_name;
 std::string Snif::filter_ip;
-std::string Snif::filter_port;
-bool 
-Snif::process_tcp_packet( const u_char *buffer , struct pcap_pkthdr packet_header   ){
+VS_UINT32 Snif::filter_port;
+VS_BOOL 
+Snif::process_tcp_packet( const VS_UINT8 *buffer , struct pcap_pkthdr packet_header   ){
 	unsigned short               ip_header_len;
-	size_t                       header_size;
+	VS_UINT64                       header_size;
 	struct iphdr                 *str_ip_header;
-	bool                         ret_value = true;
-	__rawNetData                 *raw_data;
-	size_t                       temp_size;
-	struct tcphdr                *str_tcp_header 
+	VS_BOOL                         ret_value = true;
+	raw_net_data_struct                 *raw_data;
+	VS_UINT64                       temp_size;
+	struct tcphdr                *str_tcp_header ;
 
 	temp_size = packet_header.len;
 	str_ip_header = ( struct iphdr * ) 
@@ -53,53 +54,51 @@ Snif::process_tcp_packet( const u_char *buffer , struct pcap_pkthdr packet_heade
 		<<" ] \n";
 #endif
 	try {
-		raw_data = new __rawNetData();
+		raw_data = new raw_net_data_struct();
 	}
 	catch ( const std::bad_alloc &ba){
 		std::cerr<<PRINT<<" Exception:"<<ba.what() <<std::endl;
 		ret_value = false;
 	}
 	if ( ret_value ){
-		//get the dateTime from the packet header
-		raw_data->dateTime = getTime(&packet_header.ts);
-		raw_data->sourceIp = 
+		raw_data->source_ip = 
 			std::string( inet_ntoa( *(struct in_addr *) &str_ip_header->saddr) );
-		raw_data->destinationIp = 
+		raw_data->destination_ip = 
 			std::string ( inet_ntoa( *(struct in_addr *) &str_ip_header->daddr) );
-		raw_data->sourcePort = ntohs( str_tcp_header->source );
-		raw_data->destinationPort = ntohs ( str_tcp_header->dest) ;
+		raw_data->source_port = ntohs( str_tcp_header->source );
+		raw_data->destination_port = ntohs ( str_tcp_header->dest) ;
 		if ( !seq_init ){
 			delta =  ntohl ( str_tcp_header->seq );
 			seq_init = true;
 		}
-		raw_data->sequenceNumber =
-			(uint32_t) ntohl( str_tcp_header->seq ) -delta;// /- 33278;// ( str_tcp_header->seq ) ;
-		raw_data->acknowledgeNumber=
+		raw_data->sequence_number =
+			(VS_UINT32) ntohl( str_tcp_header->seq ) -delta;// /- 33278;// ( str_tcp_header->seq ) ;
+		raw_data->acknowledge_number=
 			ntohl( str_tcp_header->ack_seq ) - delta;
-		raw_data->dataLength =  (temp_size - header_size );
-		( ( unsigned int )str_tcp_header->psh ) == 1 ? 
-			raw_data->networkTcpFlags.__PSH__ = true 
-			:  raw_data->networkTcpFlags.__PSH__ = false ;
-		( ( unsigned int ) str_tcp_header->ack ) == 1 ?
-			raw_data->networkTcpFlags.__ACK__ = true
-			: raw_data->networkTcpFlags.__ACK__ = false ;
-		( unsigned int )str_tcp_header->syn  == 1 ? 
-			raw_data->networkTcpFlags.__SYN__ = true :
-			raw_data->networkTcpFlags.__SYN__ = 0;
-		( unsigned int ) str_tcp_header->fin  ==  1 ? 
-			raw_data->networkTcpFlags.__FIN__ = true : 
-			raw_data->networkTcpFlags.__FIN__ = false;
+		raw_data->data_length =  (temp_size - header_size );
+		( ( unsigned VS_INT32 )str_tcp_header->psh ) == 1 ? 
+			raw_data->tcp_flags.PSH = true 
+			:  raw_data->tcp_flags.PSH = false ;
+		( ( unsigned VS_INT32 ) str_tcp_header->ack ) == 1 ?
+			raw_data->tcp_flags.ACK = true
+			: raw_data->tcp_flags.ACK = false ;
+		( unsigned VS_INT32 )str_tcp_header->syn  == 1 ? 
+			raw_data->tcp_flags.SYN = true :
+			raw_data->tcp_flags.SYN = 0;
+		( unsigned VS_INT32 ) str_tcp_header->fin  ==  1 ? 
+			raw_data->tcp_flags.FIN = true : 
+			raw_data->tcp_flags.FIN = false;
 		//TODO coppy the data also
 		
 #ifdef DEBUG
-		std::cout<<PRINT<<" Packet Info\nSource port [ "<<raw_data->sourcePort<< " ]destination port [ "
-			<<raw_data->destinationPort<<"] sequence number ["
-			<<(int)raw_data->sequenceNumber<<" ] Acknowledge number["
-			<<(int)raw_data->acknowledgeNumber<<"] Network Flags \n Acknowledge [ "
-			<<raw_data->networkTcpFlags.__ACK__
-			<<" ] PSH [ "<<raw_data->networkTcpFlags.__PSH__
-			<<"] SYN ["<<raw_data->networkTcpFlags.__SYN__
-			<<"] FIN ["<<raw_data->networkTcpFlags.__FIN__
+		std::cout<<PRINT<<" Packet Info\nSource port [ "<<raw_data->source_port<< " ]destination port [ "
+			<<raw_data->destination_port<<"] sequence number ["
+			<<(VS_INT32)raw_data->sequence_number<<" ] Acknowledge number["
+			<<(VS_INT32)raw_data->acknowledge_number<<"] Network Flags \n Acknowledge [ "
+			<<raw_data->tcp_flags.__ACK__
+			<<" ] PSH [ "<<raw_data->tcp_flags.__PSH__
+			<<"] SYN ["<<raw_data->tcp_flags.__SYN__
+			<<"] FIN ["<<raw_data->tcp_flags.__FIN__
 			<<"] Packet Size["<<temp_size - header_size <<" ] \n";
 		
 #endif
@@ -123,32 +122,32 @@ Snif::process_tcp_packet( const u_char *buffer , struct pcap_pkthdr packet_heade
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  dump_data
- *  Description:  print char by char
+ *  Description:  prVS_INT32 VS_INT8 by VS_INT8
  * =====================================================================================
  */
-void 
-Snif::dump_data ( const u_char *ucData , size_t temp_size ) {
+VS_VOID 
+Snif::dump_data ( const VS_UINT8 *ucData , VS_UINT64 temp_size ) {
 
-	for ( size_t i=0 ; i < temp_size ; ++ i ){
-		if ( i!= 0 && i % 16 == 0 ){ //if one line of hex print os complete.....
+	for ( VS_UINT64 i=0 ; i < temp_size ; ++ i ){
+		if ( i!= 0 && i % 16 == 0 ){ //if one line of hex prVS_INT32 os complete.....
 
 			std::cout<<"        ";
-			for ( size_t j= i - 16 ; j < i ; ++ j ){
+			for ( VS_UINT64 j= i - 16 ; j < i ; ++ j ){
 				if ( ucData [ j ] >=32 && ucData [ j ] <= 128 )
-					std::cout<<( unsigned char ) ucData [ j ] ;//if it's a number or alphabet
+					std::cout<<( unsigned VS_INT8 ) ucData [ j ] ;//if it's a number or alphabet
 				else
-					std::cout<<".";// else print a dot
+					std::cout<<".";// else prVS_INT32 a dot
 			}
 		}
-		if ( i % 16 == 0 ) 
-			std::cout<<std::hex<<( unsigned int ) ucData [ i ] ;
-		if ( i == temp_size - 1 ){ //print the last space
-			for ( size_t j= 0 ; j < 15 - i % 16 ; ++ j )
+		if ( i % 16 == 0 ); 
+		//	std::cout<<std::hex( (unsigned VS_INT32 ) ucData [ i ]) ;
+		if ( i == temp_size - 1 ){ //prVS_INT32 the last space
+			for ( VS_UINT64 j= 0 ; j < 15 - i % 16 ; ++ j )
 				std::cout<<"]"<<"   ";//extra space
 			std::cout<<"       ";
-			for ( size_t j= i - i % 16 ; j <=i ; ++ j){
+			for ( VS_UINT64 j= i - i % 16 ; j <=i ; ++ j){
 				if ( ucData [ j ] >= 32 && ucData [ j ] <=128 )
-					std::cout<<( unsigned char ) ucData [ j ] ;
+					std::cout<<( unsigned VS_INT8 ) ucData [ j ] ;
 				else
 					std::cout<<".";
 			}
@@ -156,12 +155,12 @@ Snif::dump_data ( const u_char *ucData , size_t temp_size ) {
 	}
 }
 
-void
+VS_VOID
 Snif::set_filter( std::string const file_name_, 
 		  std::string const ip_,
-		  uint32_t    const port_){
+		  VS_UINT32    const port_){
 #ifdef DEBUG
-	std::cout<<PORT<<"Set tcp dump file name[ "<<file_name_
+	std::cout<<PRINT<<"Set tcp dump file name[ "<<file_name_
 		<<"\nFilter Ip Address [ "<<ip__
 		<<"\n Filter Port [ "<<port_<<" ] \n";
 #endif
@@ -179,17 +178,17 @@ Snif::set_filter( std::string const file_name_,
  * =====================================================================================
  */
 
-void* 
-Snif::analysis_from_file ( void *temp ){
+VS_VOID* 
+Snif::analysis_from_file ( VS_VOID *temp ){
 #ifdef DEBUG
-	std::cout<<PRINT<<"Reading file:[ "<<fileName<<" ] "<<std::endl;
+	std::cout<<PRINT<<"Reading file:[ "<<dump_file_name<<" ] "<<std::endl;
 #endif
 
 	pcap_t                *pcap;
 	struct pcap_pkthdr    header;
-	const u_char          *packet;
+	const VS_UINT8          *packet;
 	struct iphdr          *str_ip_header;
-	bool                  ret_value;
+	VS_BOOL                  ret_value;
 	char                  errbuf[PCAP_ERRBUF_SIZE];
 	Snif                  *snf_ptr;
 
@@ -197,7 +196,7 @@ Snif::analysis_from_file ( void *temp ){
 
 	ret_value = true;
 	
-	pcap = pcap_open_offline( fileName.c_str() , errbuf);
+	pcap = pcap_open_offline( dump_file_name.c_str() , errbuf);
 	if (pcap == NULL){
 		std::cerr<<PRINT<<"error reading pcap file: \n"<< errbuf<<std::endl;
 		return nullptr;
@@ -206,18 +205,18 @@ Snif::analysis_from_file ( void *temp ){
 		try{
 			while ( ( packet = pcap_next(pcap, &header ) ) != NULL && ret_value  ){
 				str_ip_header = ( struct iphdr * ) ( packet + sizeof ( struct ethhdr ) );
-				if ( std::string(inet_ntoa ( *(struct in_addr * )&str_ip_header->saddr) )== Init::configuration.ip ||  std::string(inet_ntoa (*(struct in_addr * ) &str_ip_header->daddr) )== Init::configuration.ip ) {
+				if ( std::string(inet_ntoa ( *(struct in_addr * )&str_ip_header->saddr) )== "127.0.0.1" ||  std::string(inet_ntoa (*(struct in_addr * ) &str_ip_header->daddr) )== "127.0.0.1" ) {
 					ret_value = snf_ptr->process_packet( packet,  header );//caplen
 				}
 			}
 
-			__rawNetData    *newFileNextIndicator = new __rawNetData();
-			newFileNextIndicator->sourcePort = 0;
+			raw_net_data_struct    *new_file_next_indicator = new raw_net_data_struct();
+			new_file_next_indicator->source_port = 0;
 
-			while (  buffer_handler.write_buffer ( newFileNextIndicator )  == 0 ){
+			while (  snf_ptr->buffer_handler.write_buffer ( new_file_next_indicator )  == 0 ){
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
-			delete newFileNextIndicator;
+			delete new_file_next_indicator;
 			pcap_close( pcap );
 		}
 		catch ( std::exception &ea ){
@@ -234,13 +233,14 @@ Snif::analysis_from_file ( void *temp ){
  * =====================================================================================
  */
 
-bool 
-Snif::process_packet ( const u_char* buffer , struct pcap_pkthdr packet_header ){
+VS_BOOL 
+Snif::process_packet ( const VS_UINT8* buffer , struct pcap_pkthdr packet_header ){
 #ifdef DEBUG
 	std::cout<<PRINT<<"\nProcessPacket\n";
+#endif
 
 	struct iphdr    *str_iph;
-	bool            ret_value;
+	VS_BOOL            ret_value;
 
 	ret_value = true;
 
@@ -257,7 +257,7 @@ Snif::process_packet ( const u_char* buffer , struct pcap_pkthdr packet_header )
 				
             case 6: //TCP protocol , this protocol we need to sniff for database port
                 ++count_tcp_packet;
-                 ret_value = snif::process_tcp_packet ( buffer , packet_header ) ;
+                 ret_value = process_tcp_packet ( buffer , packet_header ) ;
                 break;
 				
             case 17: // UDP protocol

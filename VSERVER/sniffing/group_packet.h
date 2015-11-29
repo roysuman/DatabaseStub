@@ -20,44 +20,40 @@
 #include<iostream>
 #include<stdlib.h>
 #include "buffer.h"
+#include "../common/vserver_datatype.h"
 #define zero 0
-extern long k;
+extern VS_INT64 k;
 
-class GroupPacket: public DbManager {
+class GroupPacket{//: public DbManager {
 	private:
-		static bool                is_init;
-		static bool                lastDb;
-		static int                 fileCount;
-		static bool                isSynFin;
-		static __conversation__    conversationDiary[1000];
-		static int                 packetNumber;
-		static int                 activeConversationId;
-		DbManager                  *dbInstance;
-		static int                 relativeActiveConversation;
-		static int                 relativePacketNumber;
+		static VS_BOOL                is_init;
+		static VS_BOOL                last_db;
+		static VS_INT32                 file_count;
+		static VS_BOOL                is_syn_fin;
+		static conversation_struct    conversation_diary[1000];
+		static VS_INT32                 packet_number;
+		static VS_INT32                 active_conversation_id;
+//FIXME temp		DbManager                  *db_instance;
+		static VS_INT32                 relative_active_conversation;
+		static VS_INT32                 relative_packet_number;
 
 
 	public:
-		GroupPacket();
+		GroupPacket( Buffer &);
 		~GroupPacket();
-		bool gInit();
-		void* start_grouping( void);
-		bool packet_handler( __rawNetData__ * );
-		bool copy_packet( bool , __conversation__ * , __rawNetData__ * );
-		bool search_mother( bool , __conversation__ * , __rawNetData__ * );
-		bool valid_pack( bool , __conversation__ * , __rawNetData__  *);
-		bool insert_db( __rawNetData__ * , bool, bool );
-		//bool checkSimultaniousNewPacket( bool , __conversation__ * , __rawNetData__ *);
-		//bool checkGreeting( 	__conversation__ *, __rawNetData__ * );
+		VS_BOOL group_init();
+		Buffer                  read_buffer_obj;
+		static VS_VOID* start_grouping( VS_VOID*);
+		VS_BOOL packet_handler( raw_net_data_struct * );
+		VS_BOOL copy_packet( VS_BOOL , conversation_struct * , raw_net_data_struct * );
+		VS_BOOL search_mother( VS_BOOL , conversation_struct * , raw_net_data_struct * );
+		VS_BOOL valid_pack( VS_BOOL , conversation_struct * , raw_net_data_struct  *);
+		VS_BOOL insert_db( raw_net_data_struct * , VS_BOOL, VS_BOOL );
+		//VS_BOOL checkSimultaniousNewPacket( VS_BOOL , conversation_struct * , raw_net_data_struct *);
+		//VS_BOOL checkGreeting( 	conversation_struct *, raw_net_data_struct * );
 
 
 };
-/*
-class ParsePacket{
-	public:
-		bool sendData
-};
-*/	       	
 
 
 #endif

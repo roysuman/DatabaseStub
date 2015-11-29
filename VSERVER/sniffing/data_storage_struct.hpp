@@ -17,7 +17,7 @@
  */
 #ifndef DATA_STORAGE_STRUCT_H
 #define DATA_STORAGE_STRUCT_H
-
+#include "../common/vserver_datatype.h"
 /*-----------------------------------------------------------------------------
  *  structure to hold information of a querry_string along with querry type
  *  this structure is required to get the dissected querry information from 
@@ -26,7 +26,7 @@
 typedef struct _query_data_info query_data_info;
 
 struct _query_data_info {
-	int packet_seq_no;           /* unque sequence number of packet */
+	VS_INT32 packet_seq_no;           /* unque sequence number of packet */
 	std::string query_type;      /* type of the querry..if needed to define */
 	std::string query_string;    /* disected querry string */
 };
@@ -41,9 +41,9 @@ typedef struct raw_data_struct_ raw_data_struct;
 
 struct raw_data_struct_{
 	bool application_or_server ; /* to differentiate between application or server packet */
-	size_t packet_seq_number;    /*unique sequence number of packet */
-	unsigned char *data;         /* raw packet data */
-	size_t  length ;             /* length of the data */
+	VS_UINT64 packet_seq_number;    /*unique sequence number of packet */
+	VS_UINT8 *data;         /* raw packet data */
+	VS_UINT64  length ;             /* length of the data */
 };
 
 #endif

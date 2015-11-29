@@ -20,54 +20,52 @@
 #include"../include/proto_mysql.hpp"
 
 #define NEWPACKET 0
-int JSON = 1;
- std::fstream fileHandler;
-int rowCount = 0;
+VS_INT32 JSON = 1;
+ std::fstream file_handler;
+VS_INT32 rowCount = 0;
 
- int mysqlPacketLength ;
- int mysqlPacketNumber;
- int mysqlSchema;
- int mysqlPayload;
- int mysqlNumWarn;
- int mysqlStatementId;
- int mysqlQuery;
- int mysqlExecFlags;
- int mysqlExecIterations;
- int mysqlEOF;
- int mysqlFieldCatalog;
- int mysqlFieldDb;
- int mysqlFieldTable;
- int mysqlFieldOriginalTable;
- int mysqlFieldName;
- int mysqlFieldldOriginalName;
- int mysqlFieldCharsetNumber;
- int mysqlFieldLength;
- int mysqlFieldType;
- int mysqlFieldDecimals;
- int mysqlRowText;
- int prevQueryState;
- int mysqlNumFields ;
- int mysqlExecParameter;
- int mysqlExecUnsigned;
- int mysqlExecFieldLong;
- int mysqlExecFieldFloat;
- int mysqlExecFieldDouble;
- int mysqlExecFieldString;
- int recentStatementId = -1;
- int colNoGlobal = 0;
- bool rowPacketOffsetFlag = true;
+ VS_INT32 mysql_packet_lengrh ;
+ VS_INT32 mysql_packet_number;
+ VS_INT32 mysql_schema;
+ VS_INT32 mysql_pay_load;
+ VS_INT32 mysql_num_warn;
+ VS_INT32 mysql_statement_id;
+ VS_INT32 mysql_query;
+ VS_INT32 mysql_exec_flags;
+ VS_INT32 mysql_exec_iterations;
+ VS_INT32 mysql_eof;
+ VS_INT32 mysql_field_catalog;
+ VS_INT32 mysql_field_db;
+ VS_INT32 mysql_field_table;
+ VS_INT32 mysql_field_original_table;
+ VS_INT32 mysql_field_name;
+ VS_INT32 mysql_field_original_name;
+ VS_INT32 mysql_field_char_set_number;
+ VS_INT32 mysql_field_length;
+ VS_INT32 mysql_field_type;
+ VS_INT32 mysql_field_decimals;
+ VS_INT32 mysql_row_text;
+ VS_INT32 prev_query_state;
+ VS_INT32 mysql_num_fields ;
+ VS_INT32 mysql_exec_parameter;
+ VS_INT32 mysql_exec_unsigned;
+ VS_INT32 mysql_exec_field_long;
+ VS_INT32 mysql_exec_field_float;
+ VS_INT32 mysql_exec_field_double;
+ VS_INT32 mysql_exec_field_string;
+ VS_INT32 recent_statement_id = -1;
+ VS_INT32 col_no_global = 0;
+ bool row_packet_offset_flag = true;
 #ifdef NEWPACKET
- int rowPacketOffsetStart;
- int eofPacketOffsetStart;
- bool isFof;
- int prevPacketTillInserted;
+ VS_INT32 row_packet_offset_start;
+ VS_INT32 prev_packet_till_inserted;
 #endif
 // FOR JSON
 Json::Value event;
-int noOfFielde = 0;
-int Mysql::field_count= 0;
-int Mysql::prev_packet_no_with_query = 0;
-int Mysql::statement_id = 0;
+VS_INT32 noOfFielde = 0;
+VS_INT32 Mysql::field_count= 0;
+VS_INT32 Mysql::prev_packet_no_with_query = 0;
+VS_INT32 Mysql::statement_id = 0;
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  Mysql::initialize
@@ -75,122 +73,116 @@ int Mysql::statement_id = 0;
  *  this is the first method which will be called from init().
  * =====================================================================================
  */
-bool Mysql::initialize( void  ) {
+bool 
+Mysql::initialize( void  ) {
 
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
-		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
+#ifdef DEBUG
+	std::cout<<PRINT<<"Register Mysql Protocol]n";
+#endif
 
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
-		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
-		<<"] registering mysql protocol\n";
 
-	proto::fpStruct    *functionStructure;
+	proto::fp_struct    *function_ptr_structure;
 
-	functionStructure = new proto::fpStruct() ;
-	functionStructure->functionToInnitiateDissecton = &Mysql::disect_mysql;
-	functionStructure->functionToGetClientRequest= &Mysql::get_query_string;
-		static proto::packetInfo pi[]={ //fieldInfo_map_str
+	function_ptr_structure = new proto::fp_struct() ;
+	function_ptr_structure->functionToInnitiateDissecton = &Mysql::disect_mysql;
+	function_ptr_structure->functionToGetClientRequest= &Mysql::get_query_string;
+		static proto::packetInfo pi[]={ //field_info_map_str
 
-			{ &mysqlPacketLength,
+			{ &mysql_packet_lengrh,
 				{ "Packet Length",types::UINT24,
 				       	types::BASE_DECIMAL }},
-			{ &mysqlPacketNumber,
+			{ &mysql_packet_number,
 					{ "Packet Number", types::UINT8,
 					       	types::BASE_DECIMAL }},
-			{ &mysqlSchema,
+			{ &mysql_schema,
 					{ "Schema", types::STRING,
 					       	types::BASE_NONE }},
-			{ &mysqlPayload,
+			{ &mysql_pay_load,
 					{ "Payload",types::BYTES,
 					       	types::BASE_NONE}},
-			{ &mysqlNumWarn,
+			{ &mysql_num_warn,
 					{ "Warnings", types::UINT16,
 					       	types::BASE_DECIMAL }},
-			{ &mysqlStatementId,
+			{ &mysql_statement_id,
 					{ "Statement ID", types::UINT32,
 					       	types::BASE_DECIMAL}},
-			{ &mysqlQuery,
+			{ &mysql_query,
 				{ "Query Statement", types::STRING,
 				       	types::BASE_NONE }},
-			{ &mysqlExecFlags,
+			{ &mysql_exec_flags,
 					{ "Flags", types::UINT8,
 					       	types::BASE_DECIMAL }},
-			{ &mysqlExecIterations,
+			{ &mysql_exec_iterations,
 					{ "Iterations (unused)",types::UINT32, 
 						types::BASE_DECIMAL }},
-			{ &mysqlEOF,
+			{ &mysql_eof,
 					{ "EOF marker", types::UINT8,
 					       	types::BASE_DECIMAL}},
-			{ &mysqlFieldCatalog,
+			{ &mysql_field_catalog,
 					{ "FIELD Catalog", types::STRING,
 					       	types::BASE_NONE }},
-			{ &mysqlFieldDb,
+			{ &mysql_field_db,
 
 					{ "FIELD Database", types::STRING,
 					       	types::BASE_NONE}},
-			{ &mysqlFieldTable,
+			{ &mysql_field_table,
 					{ "FIELD Table", types::STRING,
 					       types::BASE_NONE }},
-			{ &mysqlFieldOriginalTable,
+			{ &mysql_field_original_table,
 					{ "Original table", types::STRING,
 					       	types::BASE_NONE }},
-			{ &mysqlFieldName,
+			{ &mysql_field_name,
 					{ "Name", types::STRING,
 					       	types::BASE_NONE }},
-			{ &mysqlFieldldOriginalName,
+			{ &mysql_field_original_name,
 					{ "Original name", types::STRING,
 					       	types::BASE_NONE }},
-			{ &mysqlFieldCharsetNumber,
+			{ &mysql_field_char_set_number,
 					{ "Charset number", types::UINT16,
                             types::BASE_DECIMAL}},
-			{ &mysqlFieldLength,
+			{ &mysql_field_length,
 					{ "Field Length", types::UINT32,
                             types::BASE_DECIMAL }},
-			{ &mysqlFieldType,
+			{ &mysql_field_type,
 				{ " FIeld Type", types::UINT8,
                         types::BASE_DECIMAL }},
-			{ &mysqlFieldDecimals,
+			{ &mysql_field_decimals,
 				{ " Field Decimals", types::UINT8,
                         types::BASE_DECIMAL }},
-			{ &mysqlRowText,
+			{ &mysql_row_text,
 				{ " Mysql Roe Text", types::STRING, 
 					types::BASE_NONE }},
-			{&mysqlNumFields,
+			{&mysql_num_fields,
 				{"No of Fields" , types::UINT64,
 					types::BASE_DECIMAL } },
-			{&mysqlExecParameter,
+			{&mysql_exec_parameter,
 				{"Parameter" , types::NONE ,
 					types::BASE_NONE} },
-			{&mysqlExecUnsigned , 
+			{&mysql_exec_unsigned , 
 				{"Unsigned" , types::UINT8 ,
 					types::BASE_DECIMAL } },
-			{&mysqlExecFieldLong ,
+			{&mysql_exec_field_long ,
 				{"long VALUE", types::INT32,
 					types::BASE_DECIMAL  } },
-			{&mysqlExecFieldFloat ,
+			{&mysql_exec_field_float ,
 				{"Float VALUE" , types::FLOAT ,
 					types::BASE_NONE } },
-			{&mysqlExecFieldDouble ,
+			{&mysql_exec_field_double ,
 				{"Double VALUE", types::DOUBLE,
 					types::BASE_NONE } },
-			{&mysqlExecFieldString ,
+			{&mysql_exec_field_string ,
 				{"String VALUE",types::UINT_STRING ,
 					types::BASE_NONE } },
 			};
 
-    if ( ! ( (  proto::Proto::registerProto ( "MYSQL" , functionStructure , 
+    if ( ! ( (  proto::Proto::register_proto ( "MYSQL" , function_ptr_structure , 
 					    (sizeof ( pi ) / sizeof ( proto::packetInfo )) ) ) 
-			    && ( proto::Proto::insertDissectorProto ( "MYSQL" ,
+			    && ( proto::Proto::insert_dissector_proto ( "MYSQL" ,
 					    ( sizeof ( pi ) / sizeof ( proto::packetInfo ) )
 					    , pi ) )) ) {
-		std::cerr<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
-			__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
-			"] Can't register myssql protocol \n";
-exit ( 0);
-		return false;
+	    std::cerr<<PRINT<<" Can't register myssql protocol \n";
+	    return false;
     }
-// proto::Proto::initDissect ( 3306 , 1 );
-//exit ( 0 );
     return true;
 }
 
@@ -202,40 +194,28 @@ std::string    response_data_together_row; //need to be in a proper way
  *  Description:  dissect row packet protocol of mysql
  * =====================================================================================
  */
-int Mysql::disect_mysql_row_packets ( actRawDataStruct *rawDataPacket , int offset , 
-		proto::fieldInfo *fieldInfoData  ){
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
-		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
-		<<"]\n";
+VS_INT32 
+Mysql::disect_mysql_row_packets ( act_raw_dataStruct *raw_packet , VS_INT32 offset , 
+		proto::field_info *field_info  ){
 
-	STUB_UINT64    lelen;
-	STUB_UINT8     isNull;
+	VS_UNSIGNED_INT_64    lelen;
+	VS_INT8               is_null;
 
-	offset+=get_tvb_fle( rawDataPacket, offset, & ( lelen = 0 ), 
-			& ( isNull = 0 ) );
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
-		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
-		<<"] length of data is "<<(int)lelen<<'\n';
+	offset+=get_tvb_fle( raw_packet, offset, & ( lelen = 0 ), 
+			& ( is_null = 0 ) );
 	std::string rowText = boost::get < std::string > ( buff::Buffer< returnType >
-			::Read ( rawDataPacket , fieldInfoData , mysqlRowText , 
-				&offset , ( int ) lelen , ENC_NA ) );
+			::Read ( raw_packet , field_info , mysql_row_text , 
+				&offset , ( VS_INT32 ) lelen , ENC_NA ) );
 	if ( JSON != 1 ){
 		response_data_together_row = response_data_together_row + rowText + ";" ;
 	}
-#ifdef DEBUG
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
-		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"] offset = "
-		<<offset<<'\n';
-#endif
 	return offset;
 }
 
 
 // dissect server status flags
-int Mysql::disect_mysql_server_status (  int offset ){
-
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
-		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
+VS_INT32 
+Mysql::disect_mysql_server_status (  VS_INT32 offset ){
 
 	return ( offset + 2 );
 }
@@ -247,53 +227,50 @@ int Mysql::disect_mysql_server_status (  int offset ){
  * =====================================================================================
  */
 
-int Mysql::disect_mysql_field_packet( actRawDataStruct *rawDataPacket , int offset , 
-		proto::fieldInfo * fieldInfoData ){
+VS_INT32 Mysql::disect_mysql_field_packet( act_raw_dataStruct *raw_packet , VS_INT32 offset , 
+		proto::field_info * field_info ){
 
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
-		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
+	VS_UNSIGNED_INT_64    lelen;
+	VS_INT8               is_null ;
 
-	STUB_UINT64    lelen;
-	STUB_UINT8     isNull ;
+	is_null = 0;
 
-	isNull = 0;
-
-	offset += get_tvb_fle( rawDataPacket, offset, &( lelen = 0 ), &( isNull = 0 ) );
-	buff::Buffer< returnType >::Read ( rawDataPacket, fieldInfoData , 
-			mysqlFieldCatalog , &offset , (int)lelen , ENC_NA );
-	offset += get_tvb_fle( rawDataPacket, offset, &( lelen = 0 ),
-		       	&( isNull = 0 ));
-	buff::Buffer< returnType >::Read ( rawDataPacket, fieldInfoData ,  
-			mysqlFieldDb, &offset , (int)lelen , ENC_NA );
-	offset += get_tvb_fle( rawDataPacket, offset, &( lelen = 0 ) ,
-		       	&( isNull = 0 ) );
-	buff::Buffer< returnType >::Read( rawDataPacket, fieldInfoData ,
-		      	mysqlFieldTable, &offset , (int)lelen , ENC_NA );
-	offset += get_tvb_fle( rawDataPacket, offset, & ( lelen = 0 ),
-		       	&( isNull = 0 ) );
-	buff::Buffer < returnType >::Read( rawDataPacket, fieldInfoData ,
-		      	mysqlFieldOriginalTable , &offset , (int)lelen , ENC_NA );
-	offset += get_tvb_fle( rawDataPacket, offset, &( lelen = 0 ), 
-			&( isNull = 0 ) );
-	buff::Buffer< returnType > ::Read ( rawDataPacket, fieldInfoData ,  
-			mysqlFieldName , &offset , (int)lelen , ENC_NA );
-	offset += get_tvb_fle( rawDataPacket, offset, &( lelen = 0 ),
-		       	&( isNull = 0 ) );
+	offset += get_tvb_fle( raw_packet, offset, &( lelen = 0 ), &( is_null = 0 ) );
+	buff::Buffer< returnType >::Read ( raw_packet, field_info , 
+			mysql_field_catalog , &offset , (VS_INT32)lelen , ENC_NA );
+	offset += get_tvb_fle( raw_packet, offset, &( lelen = 0 ),
+		       	&( is_null = 0 ));
+	buff::Buffer< returnType >::Read ( raw_packet, field_info ,  
+			mysql_field_db, &offset , (VS_INT32)lelen , ENC_NA );
+	offset += get_tvb_fle( raw_packet, offset, &( lelen = 0 ) ,
+		       	&( is_null = 0 ) );
+	buff::Buffer< returnType >::Read( raw_packet, field_info ,
+		      	mysql_field_table, &offset , (VS_INT32)lelen , ENC_NA );
+	offset += get_tvb_fle( raw_packet, offset, & ( lelen = 0 ),
+		       	&( is_null = 0 ) );
+	buff::Buffer < returnType >::Read( raw_packet, field_info ,
+		      	mysql_field_original_table , &offset , (VS_INT32)lelen , ENC_NA );
+	offset += get_tvb_fle( raw_packet, offset, &( lelen = 0 ), 
+			&( is_null = 0 ) );
+	buff::Buffer< returnType > ::Read ( raw_packet, field_info ,  
+			mysql_field_name , &offset , (VS_INT32)lelen , ENC_NA );
+	offset += get_tvb_fle( raw_packet, offset, &( lelen = 0 ),
+		       	&( is_null = 0 ) );
 	std::string fieldOriginalName =boost::get < std::string > ( buff::Buffer< returnType >
-		       	::Read( rawDataPacket, fieldInfoData ,  mysqlFieldldOriginalName ,
-			       	&offset , (int)lelen , ENC_NA ) ); 
+		       	::Read( raw_packet, field_info ,  mysql_field_original_name ,
+			       	&offset , (VS_INT32)lelen , ENC_NA ) ); 
 		fieldOriginalName +=  ";";
 		QueryPacket.colNames.insert ( std::make_pair ( 
 					Mysql::field_count ++ , fieldOriginalName ) );
 	event["PACKET/MySQL"]["Query"]="ENTER NEW QUERY";
 	event["PACKET/MySQL"]["Response"][fieldOriginalName]="ENTER NEW VALUE";
 	offset ++ ; //filler
-	buff::Buffer< returnType >::Read ( rawDataPacket , fieldInfoData , mysqlFieldCharsetNumber
+	buff::Buffer< returnType >::Read ( raw_packet , field_info , mysql_field_char_set_number
 		       	, &offset , 2 , ENC_LITTLE_INDIAN );
-	buff::Buffer< returnType >::Read ( rawDataPacket , fieldInfoData , mysqlFieldLength , 
+	buff::Buffer< returnType >::Read ( raw_packet , field_info , mysql_field_length , 
 			&offset , 4 , ENC_LITTLE_INDIAN );
-	int fieldType =boost::get < int > ( buff::Buffer< returnType >::Read ( rawDataPacket 
-				, fieldInfoData , mysqlFieldType , &offset , 1 , ENC_NA ) );
+	VS_INT32 fieldType =boost::get < VS_INT32 > ( buff::Buffer< returnType >::Read ( raw_packet 
+				, field_info , mysql_field_type , &offset , 1 , ENC_NA ) );
 	switch ( fieldType ){ // read types and dissect it
 		case  0x00 :
 			std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
@@ -439,7 +416,7 @@ int Mysql::disect_mysql_field_packet( actRawDataStruct *rawDataPacket , int offs
 		}
 
 	//dissect each flags
-	switch ( types::getGuint ( ( u_char *)rawDataPacket->data , rawDataPacket->length , 
+	switch ( types::get_guVS_INT32 ( ( u_char *)raw_packet->data , raw_packet->length , 
 			    offset , 2 , ENC_LITTLE_INDIAN ) ){
 
 		case 0001 :
@@ -515,11 +492,11 @@ int Mysql::disect_mysql_field_packet( actRawDataStruct *rawDataPacket , int offs
 				<<"] combination of 8 creating prob\n";
 			break;
 		}
-	buff::Buffer < returnType >::Read( rawDataPacket , fieldInfoData , 
-			mysqlFieldDecimals , &( offset +=  2 )  , 1 , ENC_NA );
+	buff::Buffer < returnType >::Read( raw_packet , field_info , 
+			mysql_field_decimals , &( offset +=  2 )  , 1 , ENC_NA );
 	offset +=2; // filler
 
-    if ( buff::Buffer< void >::returnRemainingLength( offset ) )
+    if ( buff::Buffer< void >::return_remaining_length( offset ) )
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__
 			<<"] Line["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"
 			<<__TIME__<<" ] SOME EXTRA DATA\n";
@@ -527,36 +504,33 @@ int Mysql::disect_mysql_field_packet( actRawDataStruct *rawDataPacket , int offs
 	
 }
 
-int Mysql::get_tvb_fle(actRawDataStruct * rawDataPacket, int offset , STUB_UINT64 *res, 
-		STUB_UINT8 *isNull){
+VS_INT32 Mysql::get_tvb_fle(act_raw_dataStruct * raw_packet, VS_INT32 offset , VS_UNSIGNED_INT_64 *res, 
+		VS_INT8 *is_null){
 
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
-		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
-
-	int    prefix;
+	VS_INT32    prefix;
 	
 	
-	prefix = buff::Buffer< void >::getGuint8 ( rawDataPacket , offset++ );
-	if (isNull)
-		*isNull = 0;
+	prefix = buff::Buffer< void >::get_guVS_INT328 ( raw_packet , offset++ );
+	if (is_null)
+		*is_null = 0;
 	switch (prefix) {
 		case 251:
 			if (res)
 				*res = 0;
-			if (isNull)
-				*isNull = 1;
+			if (is_null)
+				*is_null = 1;
 			break;
 			case 252:
 			if (res)
-                *res = buff::Buffer< void >::getLetohs( rawDataPacket, offset );
+                *res = buff::Buffer< void >::getLetohs( raw_packet, offset );
 			return 3;
 			case 253:
 			if (res)
-                *res = buff::Buffer< void >::getLetohl (rawDataPacket, offset );
+                *res = buff::Buffer< void >::getLetohl (raw_packet, offset );
 			return 5;
 			case 254:
 			if (res)
-                *res =buff::Buffer< void >::getLetoh64( rawDataPacket, offset );
+                *res =buff::Buffer< void >::getLetoh64( raw_packet, offset );
 			return 9;
 			default:
 			if (res)
@@ -573,15 +547,15 @@ int Mysql::get_tvb_fle(actRawDataStruct * rawDataPacket, int offset , STUB_UINT6
  * =====================================================================================
  */
 
-int Mysql::dissect_mysql_result_header( actRawDataStruct *rawDataPacket , int offset ){
+VS_INT32 Mysql::dissect_mysql_result_header( act_raw_dataStruct *raw_packet , VS_INT32 offset ){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
 
-	int       fle;
-	STUB_UINT64    numFields;
+	VS_INT32       fle;
+	VS_UNSINED_INT_64    numFields;
 
-	fle = get_tvb_fle( rawDataPacket , offset , &numFields , NULL );
+	fle = get_tvb_fle( raw_packet , offset , &numFields , NULL );
 	noOfFielde = numFields;
 #ifdef DEBUG
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
@@ -589,8 +563,8 @@ int Mysql::dissect_mysql_result_header( actRawDataStruct *rawDataPacket , int of
 		<<"]"<<"[OFFSET]:[NO OF FIELD]:"<<offset<<"::"
 		<<noOfFielde<<'\n';
 #endif
-    if ( numFields   )field::prevQuery.prevQueryState = FIELD_PACKET;
-	else field::prevQuery.prevQueryState = ROW_PACKET ;
+    if ( numFields   )field::prevQuery.prev_query_state = FIELD_PACKET;
+	else field::prevQuery.prev_query_state = ROW_PACKET ;
 	offset += fle;
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
@@ -604,38 +578,38 @@ int Mysql::dissect_mysql_result_header( actRawDataStruct *rawDataPacket , int of
  *  Description:  dissect response prepare packet for mysql
  * =====================================================================================
  */
-bool Mysql::dissect_mysql_response_prepare ( actRawDataStruct *rawDataPacket , 
-		int *offset){
+bool Mysql::dissect_mysql_response_prepare ( act_raw_dataStruct *raw_packet , 
+		VS_INT32 *offset){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
 
-	int    noOfParam;
-	int    noOfFields;
-	int    statement_id;
+	VS_INT32    noOfParam;
+	VS_INT32    noOfFields;
+	VS_INT32    statement_id;
 
 	//read statement ID
-	statement_id = buff::Buffer< void >::getLetohl ( rawDataPacket, *offset );
+	statement_id = buff::Buffer< void >::getLetohl ( raw_packet, *offset );
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 		"] [STATEMENT ID]:"<<statement_id<<'\n';
 	*offset += 4;
-	noOfFields = buff::Buffer< void >::getLetohs ( rawDataPacket , *offset );
+	noOfFields = buff::Buffer< void >::getLetohs ( raw_packet , *offset );
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 		"] [no of Fields]:"<<noOfFields<<'\n';
 	*offset += 2;
-	noOfParam = buff::Buffer< void >::getLetohs ( rawDataPacket , *offset );
+	noOfParam = buff::Buffer< void >::getLetohs ( raw_packet , *offset );
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 		"] [No of PARAM]:"<<noOfParam<<'\n';
 	*offset += 2;
 	//filler
 	*offset = *offset + 1 ;
-	if ( noOfParam > 0 ) field::prevQuery.prevQueryState = PREPARED_PARAMETERS ;
-	else if( noOfFields > 0 ) field::prevQuery.prevQueryState = PREPARED_FIELDS;
-	else field::prevQuery.prevQueryState = REQUEST;
-	*offset += buff::Buffer < void >::returnRemainingLength ( *offset );
+	if ( noOfParam > 0 ) field::prevQuery.prev_query_state = PREPARED_PARAMETERS ;
+	else if( noOfFields > 0 ) field::prevQuery.prev_query_state = PREPARED_FIELDS;
+	else field::prevQuery.prev_query_state = REQUEST;
+	*offset += buff::Buffer < void >::return_remaining_length ( *offset );
 
 	return true;
 }
@@ -647,27 +621,27 @@ bool Mysql::dissect_mysql_response_prepare ( actRawDataStruct *rawDataPacket ,
  *  Description:  dissect mysql response packet ( Response packet of a query)
  * =====================================================================================
  */
-int Mysql::disect_mysql_response ( actRawDataStruct *rawdataPacket , int offset , 
-		proto::fieldInfo * fieldInfoData, int packetNo , 
-		actSeriesStruct *conversationPackets){
+VS_INT32 Mysql::disect_mysql_response ( act_raw_dataStruct *rawdataPacket , VS_INT32 offset , 
+		proto::field_info * field_info, VS_INT32 packetNo , 
+		actSeriesStruct *conversation_packets){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
 
-	int    columnCount;
-	int    responseCode; 
-	int    eofLengthPrevious;
+	VS_INT32    columnCount;
+	VS_INT32    responseCode; 
+	VS_INT32    eofLengthPrevious;
 
 
 #ifdef DEBUG
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<
-		"{PREVIOUS QUERY:}"<<field::prevQuery.prevQueryState<<'\n';
+		"{PREVIOUS QUERY:}"<<field::prevQuery.prev_query_state<<'\n';
 #endif
-    responseCode = buff::Buffer< int >::getGuint8 ( rawdataPacket ,  offset );
+    responseCode = buff::Buffer< VS_INT32 >::get_guVS_INT328 ( rawdataPacket ,  offset );
     std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 	    <<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"response code:"
-	    <<responseCode<<"::"<<( int)(rawdataPacket->data[offset] ) <<'\n';
+	    <<responseCode<<"::"<<( VS_INT32)(rawdataPacket->data[offset] ) <<'\n';
 	if ( responseCode == 0xff ) {
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 			"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
@@ -677,43 +651,43 @@ int Mysql::disect_mysql_response ( actRawDataStruct *rawdataPacket , int offset 
 	}
         else {
         if ( responseCode == 0xfe  && 
-			( buff::Buffer< void > ::returnRemainingLength( offset ) < 9 ) ) {
+			( buff::Buffer< void > ::return_remaining_length( offset ) < 9 ) ) {
 			eofLengthPrevious = (rawdataPacket->length - ( offset - 4 ) ) ;
 			std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 				"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 				<<"] eoflengthPrevious="<<eofLengthPrevious<<std::endl;
-             buff::Buffer< returnType >::Read ( rawdataPacket, fieldInfoData , 
-			     mysqlEOF , &offset , 1 , ENC_NA ) ;
+             buff::Buffer< returnType >::Read ( rawdataPacket, field_info , 
+			     mysql_eof , &offset , 1 , ENC_NA ) ;
 			 //pre 4.1 packet ends here
-            if ( buff::Buffer< void >::returnRemainingLength( offset ) ){
-		    buff::Buffer< returnType >::Read (rawdataPacket, fieldInfoData , 
-				    mysqlNumWarn , &offset , 2 , ENC_LITTLE_INDIAN ) ;
+            if ( buff::Buffer< void >::return_remaining_length( offset ) ){
+		    buff::Buffer< returnType >::Read (rawdataPacket, field_info , 
+				    mysql_num_warn , &offset , 2 , ENC_LITTLE_INDIAN ) ;
 				//now dissect server header flags
 				offset = disect_mysql_server_status ( offset );
 			}
-			if ( field::prevQuery.prevQueryState == FIELD_PACKET ){
-				fileHandler<<event<<std::endl;
-				field::prevQuery.prevQueryState = ROW_PACKET;
+			if ( field::prevQuery.prev_query_state == FIELD_PACKET ){
+				file_handler<<event<<std::endl;
+				field::prevQuery.prev_query_state = ROW_PACKET;
 			}
 	
 //#ifdef NEWPACKET
-			else if ( ( field::prevQuery.prevQueryState == ROW_PACKET )
-				       	&& Json::flagForGenerateQuery ){
-				generate_mysql_response_packet(rawdataPacket , rowPacketOffsetStart , 
+			else if ( ( field::prevQuery.prev_query_state == ROW_PACKET )
+				       	&& Json::flag_for_generate_query ){
+				generate_mysql_response_packet(rawdataPacket , row_packet_offset_start , 
 						noOfFielde ,packetNo, eofLengthPrevious , 
-						conversationPackets );
+						conversation_packets );
 				return 999;
             }
 
 //#endif
 	}else if ( responseCode == 0 ){
-		if ( field::prevQuery.prevQueryState == RESPONSE_PREPARE ) 
+		if ( field::prevQuery.prev_query_state == RESPONSE_PREPARE ) 
 			dissect_mysql_response_prepare( rawdataPacket , &offset  );
 	}
 
 
 		else {
-			switch (  field::prevQuery.prevQueryState ) {
+			switch (  field::prevQuery.prev_query_state ) {
 				std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 					"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 					<<"]"<<"INSIDE SWITCH!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
@@ -735,7 +709,7 @@ int Mysql::disect_mysql_response ( actRawDataStruct *rawdataPacket , int offset 
 					
 				case PREPARED_PARAMETERS:
 					offset = disect_mysql_field_packet( rawdataPacket, 
-							offset , fieldInfoData);
+							offset , field_info);
 					break;
 					
 				case ROW_PACKET:
@@ -745,20 +719,18 @@ int Mysql::disect_mysql_response ( actRawDataStruct *rawdataPacket , int offset 
 						<<__DATE__<<"_"<<__TIME__<<
 						"] row count offset="<<offset<<std::endl;
 #endif
-					if ( rowPacketOffsetFlag ) {
-						rowPacketOffsetStart = offset - 4 ;
-						rowPacketOffsetFlag = false ;
+					if ( row_packet_offset_flag ) {
+						row_packet_offset_start = offset - 4 ;
+						row_packet_offset_flag = false ;
 					}
 					columnCount = noOfFielde ;
-					//    std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"now learn to dissect row packet ::"<<noOfFielde<<std::endl;
 					while ( columnCount != 0 ){
-						// std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"column no :"<<columnCount--<<std::endl;
 						columnCount --;
 						offset = disect_mysql_row_packets ( rawdataPacket ,
-							       	offset , fieldInfoData );
-						std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<
-							__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<
-							__DATE__<<"_"<<__TIME__<<"]"<<columnCount<<std::endl;
+							       	offset , field_info );
+#ifdef DEBUG
+						std::cout<<PRINT<<columnCount<<std::endl;
+#endif
 					}
 					QueryPacket.rowCount = ++rowCount ;
 					QueryPacket.colInfo.insert ( std::make_pair ( QueryPacket.rowCount ,
@@ -777,49 +749,50 @@ int Mysql::disect_mysql_response ( actRawDataStruct *rawdataPacket , int offset 
  *  Description:  dissect datatype of execute statement packet
  * =====================================================================================
  */
-//extraxt valu from specified datatype( long , STUB_DOUBLE ,STUB_FLOAT )
-std::string Mysql::disect_mysql_datatype( actRawDataStruct * rawdataPacket , int *offset , 
-		proto::fieldInfo *fieldInfoData , int data_type , int lengthDatatype ){
+//extraxt valu from specified datatype( long , VS_DOUBLE ,STUB_FLOAT )
+std::string 
+Mysql::disect_mysql_datatype( act_raw_dataStruct * rawdataPacket , VS_INT32 *offset , 
+		proto::field_info *field_info , VS_INT32 data_type , VS_INT32 lengthDatatype ){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
 
-	std::string    parameterValue;
+	std::string    parameter_value;
 	//now read the data with respect to datatype
-	if ( data_type ==  mysqlExecFieldLong ){
-		parameterValue = std::to_string ( static_cast< long long >( boost::get< int >
+	if ( data_type ==  mysql_exec_field_long ){
+		parameter_value = std::to_string ( static_cast< long long >( boost::get< VS_INT32 >
 					(buff::Buffer< returnType > ::Read( rawdataPacket , 
-									    fieldInfoData , 
+									    field_info , 
 									    data_type , 
 									    &(*offset) ,
 									    4 , 
 									    ENC_LITTLE_INDIAN 
 									    )) ) );
 	}
-	else{ if ( data_type ==  mysqlExecFieldFloat)
-		parameterValue = std::to_string( static_cast< long long> ( boost::get< STUB_FLOAT >
+	else{ if ( data_type ==  mysql_exec_field_float)
+		parameter_value = std::to_string( static_cast< long long> ( boost::get< STUB_FLOAT >
 					(buff::Buffer< returnType > ::Read( rawdataPacket , 
-									    fieldInfoData , 
+									    field_info , 
 									    data_type , 
 									    &(*offset) , 
 									    lengthDatatype , 
 									    ENC_LITTLE_INDIAN 
 									    )) ) );
 
-	else {if ( data_type == mysqlExecFieldDouble )
-		parameterValue = std::to_string ( static_cast < long long > (boost::get< STUB_DOUBLE >
+	else {if ( data_type == mysql_exec_field_double )
+		parameter_value = std::to_string ( static_cast < long long > (boost::get< VS_DOUBLE >
 					(buff::Buffer< returnType > ::Read( rawdataPacket , 
-									    fieldInfoData , 
+									    field_info , 
 									    data_type , 
 									    &(*offset) , 
 									    lengthDatatype , 
 									    ENC_LITTLE_INDIAN 
 									    )) ));
 	else
-		parameterValue = "No SPECIFIED DATATYPE";
+		parameter_value = "No SPECIFIED DATATYPE";
 	}
 	}
-	return parameterValue;
+	return parameter_value;
 }
 
 
@@ -829,18 +802,18 @@ std::string Mysql::disect_mysql_datatype( actRawDataStruct * rawdataPacket , int
  *  Description:  dissect the string datatype of execute statement packet
  * =====================================================================================
  */
-std::string Mysql::disect_mysql_exec_string( actRawDataStruct *rawdataPacket , int *offset ){ 
-//		proto::fieldInfo *fieldInfoData , int data_type , int lengthDatatype){
+std::string Mysql::disect_mysql_exec_string( act_raw_dataStruct *rawdataPacket , VS_INT32 *offset ){ 
+//		proto::field_info *field_info , VS_INT32 data_type , VS_INT32 lengthDatatype){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
 
 	std::string   data; 
-	int      parameterLength;
+	VS_INT32      parameterLength;
 
 
 	//return "done";
-	parameterLength = buff::Buffer< void >::getGuint8 ( rawdataPacket ,
+	parameterLength = buff::Buffer< void >::get_guVS_INT328 ( rawdataPacket ,
 		       	*offset );
 	*offset += 1;
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
@@ -853,7 +826,7 @@ std::string Mysql::disect_mysql_exec_string( actRawDataStruct *rawdataPacket , i
 		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"data["<<data<<"]\n";
 	return data;
 /* 	exit(0);
-	for ( int ii = 0 ; ii< parameterLength ; ++ ii )
+	for ( VS_INT32 ii = 0 ; ii< parameterLength ; ++ ii )
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<(STUB_CHAR)rawdataPacket->data[ii]<<std::endl;
 	exit(0);
 	STUB_UINT32 parameterLength32;
@@ -862,17 +835,17 @@ std::string Mysql::disect_mysql_exec_string( actRawDataStruct *rawdataPacket , i
 		case 0xfc:
 			*offset += 1;
 			parameterLength32 = buff::Buffer < void >::getLetohs( rawdataPacket , *offset );
-			fieldString = boost::get< STUB_UINT32 > (buff::Buffer< returnType > ::Read( rawdataPacket , fieldInfoData , mysqlExecFieldString , &(*offset) , 2 , ENC_NA ) );
+			fieldString = boost::get< STUB_UINT32 > (buff::Buffer< returnType > ::Read( rawdataPacket , field_info , mysql_exec_field_string , &(*offset) , 2 , ENC_NA ) );
 			std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<__FUNCTION__<<"[FIELD STRING]:"<<fieldString<<'\n';
 			* offset += parameterLength32  + 2 ;
 			break;
 		case 0xfd:
 			*offset ++;
 			parameterLength32 = buff::Buffer < void >::getLetoh24(rawdataPacket , *offset );
-			fieldString = boost::get< STUB_UINT32 >( buff::Buffer < returnType >::Read ( rawdataPacket , fieldInfoData , mysqlExecFieldString ,&(*offset) , 3 , ENC_NA) );
+			fieldString = boost::get< STUB_UINT32 >( buff::Buffer < returnType >::Read ( rawdataPacket , field_info , mysql_exec_field_string ,&(*offset) , 3 , ENC_NA) );
 			*offset += parameterLength32 + 3 ;
 		default:
-			fieldString = boost::get< STUB_UINT32 > (buff::Buffer< returnType > ::Read( rawdataPacket , fieldInfoData , mysqlExecFieldString , &(*offset) , 1 , ENC_NA ) );
+			fieldString = boost::get< STUB_UINT32 > (buff::Buffer< returnType > ::Read( rawdataPacket , field_info , mysql_exec_field_string , &(*offset) , 1 , ENC_NA ) );
 			*offset += parameterLength + 1;
 	}return std::to_string ( static_cast<long long>( fieldString ) );	
 	*/
@@ -885,19 +858,19 @@ std::string Mysql::disect_mysql_exec_string( actRawDataStruct *rawdataPacket , i
  *  Description:  dissect parameter , datatype, value...tail part of execute statement
  * =====================================================================================
  */
-std::string Mysql::disect_mysql_exec_parameter ( actRawDataStruct * rawdataPacket , 
-		int *offset , proto::fieldInfo *fieldInfoData, 
-		int noParameters =1 ){
+std::string Mysql::disect_mysql_exec_parameter ( act_raw_dataStruct * rawdataPacket , 
+		VS_INT32 *offset , proto::field_info *field_info, 
+		VS_INT32 noParameters =1 ){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 		<<"]\n";
 
 	bool           pass;
-	int       index;
-	int       *paramType;
+	VS_INT32       index;
+	VS_INT32       *paramType;
 	std::string    returnString;
-	int       *paramUnsigned;
+	VS_INT32       *paramUnsigned;
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
@@ -907,24 +880,24 @@ std::string Mysql::disect_mysql_exec_parameter ( actRawDataStruct * rawdataPacke
 	mysqlExecuteDissector executeDissectors[ 8 ] ={
 //	    { 0x01, 0, mysql_dissect_exec_tiny },
 //	    { 0x02, 0, mysql_dissect_exec_short },
-	    { 0x03, 0, &Mysql::disect_mysql_datatype , mysqlExecFieldLong , 4 },
-	    { 0x04, 0, &Mysql::disect_mysql_datatype , mysqlExecFieldFloat , 4 },
-	    { 0x05, 0, &Mysql::disect_mysql_datatype , mysqlExecFieldDouble , 8},
+	    { 0x03, 0, &Mysql::disect_mysql_datatype , mysql_exec_field_long , 4 },
+	    { 0x04, 0, &Mysql::disect_mysql_datatype , mysql_exec_field_float , 4 },
+	    { 0x05, 0, &Mysql::disect_mysql_datatype , mysql_exec_field_double , 8},
 //	    { 0x06, 0, mysql_dissect_exec_null },
 //	    { 0x07, 0, mysql_dissect_exec_datetime },
 //	    { 0x08, 0, mysql_dissect_exec_lonSTUB_LONG },
 //	    { 0x0a, 0, mysql_dissect_exec_datetime },
 //	    { 0x0b, 0, mysql_dissect_exec_time },
 //	    { 0x0c, 0, mysql_dissect_exec_datetime },
-	    { 0xf6, 0, &Mysql::disect_mysql_exec_string , mysqlExecFieldString, 0 },
-	    { 0xfc, 0, &Mysql::disect_mysql_exec_string , mysqlExecFieldString , 0},
-	    { 0xfd, 0, &Mysql::disect_mysql_exec_string , mysqlExecFieldString , 0},
-	    { 0xfe, 0, &Mysql::disect_mysql_exec_string , mysqlExecFieldString , 0},
+	    { 0xf6, 0, &Mysql::disect_mysql_exec_string , mysql_exec_field_string, 0 },
+	    { 0xfc, 0, &Mysql::disect_mysql_exec_string , mysql_exec_field_string , 0},
+	    { 0xfd, 0, &Mysql::disect_mysql_exec_string , mysql_exec_field_string , 0},
+	    { 0xfe, 0, &Mysql::disect_mysql_exec_string , mysql_exec_field_string , 0},
 	    { 0x00, 0, NULL , 0, 0},
     };
 	try {
-		paramType = new int[noParameters ];
-		paramUnsigned = new int [ noParameters ];
+		paramType = new VS_INT32[noParameters ];
+		paramUnsigned = new VS_INT32 [ noParameters ];
 	}
 	catch ( std::exception &ba ){
 		std::cerr<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
@@ -933,23 +906,23 @@ std::string Mysql::disect_mysql_exec_parameter ( actRawDataStruct * rawdataPacke
 			"] on creating paramType and paramUnsigned\n";
 		exit(0);
 	}
-	for ( int i = 0 ; i< noParameters ;++i ){
-		paramType[i] = boost::get< int > (buff::Buffer< returnType > ::
-				Read( rawdataPacket , fieldInfoData , 
-					mysqlFieldType , &(*offset) ,
+	for ( VS_INT32 i = 0 ; i< noParameters ;++i ){
+		paramType[i] = boost::get< VS_INT32 > (buff::Buffer< returnType > ::
+				Read( rawdataPacket , field_info , 
+					mysql_field_type , &(*offset) ,
 				       	1 , ENC_NA ) );
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__
 			<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 			__TIME__<<"] [PARAM TYPE]:"<<paramType[i]<<'\n';
-		paramUnsigned[i] = boost::get< int > (buff::Buffer< returnType > ::
-				Read( rawdataPacket , fieldInfoData , 
-					mysqlExecUnsigned , &(*offset) ,
+		paramUnsigned[i] = boost::get< VS_INT32 > (buff::Buffer< returnType > ::
+				Read( rawdataPacket , field_info , 
+					mysql_exec_unsigned , &(*offset) ,
 				       	1 , ENC_NA ) );
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 			"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 			<<"] [PARAM UNSIGNED]:"<<paramUnsigned[i]<<'\n';
 	}
-	for ( int i = 0 ; i< noParameters ; ++i){
+	for ( VS_INT32 i = 0 ; i< noParameters ; ++i){
 	  index = 0;
 	  pass = false;
 	  while ( ( executeDissectors[ index].type != 0 ) & ( !pass ))  {
@@ -970,9 +943,9 @@ std::string Mysql::disect_mysql_exec_parameter ( actRawDataStruct * rawdataPacke
 #endif
 	//		  *offset += 2;
 			  returnString +=boost::any_cast< std::string ( * )
-				  ( actRawDataStruct * , int* , proto::fieldInfo * ,
-				    int , int )>( executeDissectors[ index].dissectorMethod)
-				  ( rawdataPacket ,  &(*offset ) , fieldInfoData , 
+				  ( act_raw_dataStruct * , VS_INT32* , proto::field_info * ,
+				    VS_INT32 , VS_INT32 )>( executeDissectors[ index].dissectorMethod)
+				  ( rawdataPacket ,  &(*offset ) , field_info , 
 				    executeDissectors[ index].data_type , 
 				    executeDissectors[ index ].length) +";";
 			  
@@ -1003,8 +976,8 @@ std::string Mysql::disect_mysql_exec_parameter ( actRawDataStruct * rawdataPacke
  *  Description:  dissect execute statement request that contains STATEMENT ID , ITERATION
  * =====================================================================================
  */
-std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawdataPacket ,
-	       	int *offset , proto::fieldInfo *fieldInfoData , int noParameters = 0 ){
+std::string Mysql::disect_mysql_requestExecuteStatement ( act_raw_dataStruct *rawdataPacket ,
+	       	VS_INT32 *offset , proto::field_info *field_info , VS_INT32 noParameters = 0 ){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
@@ -1012,14 +985,14 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 		"] INITIAL OFFSET:"<<*offset<<'\n';
-	recentStatementId = boost::get<  int > (buff::Buffer< returnType > ::
-			Read( rawdataPacket , fieldInfoData , mysqlStatementId,
+	recent_statement_id = boost::get<  VS_INT32 > (buff::Buffer< returnType > ::
+			Read( rawdataPacket , field_info , mysql_statement_id,
 			       	&(*offset) , 4 , ENC_LITTLE_INDIAN ) );
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
-		<<"]"<<"[STATEMENT ID]"<<recentStatementId;
-	Mysql::statement_id = recentStatementId;
+		<<"]"<<"[STATEMENT ID]"<<recent_statement_id;
+	Mysql::statement_id = recent_statement_id;
 #ifdef DEBUG
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
@@ -1030,9 +1003,9 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 	*offset +=  1;
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
-		<<"]"<<"[ITERATIONS]:"<< boost::get< int > (buff::Buffer< returnType > 
-				::Read( rawdataPacket , fieldInfoData , 
-					mysqlExecIterations ,
+		<<"]"<<"[ITERATIONS]:"<< boost::get< VS_INT32 > (buff::Buffer< returnType > 
+				::Read( rawdataPacket , field_info , 
+					mysql_exec_iterations ,
 				       	&(*offset) ,
 				       	4 , 
 					ENC_LITTLE_INDIAN ) )<<'\n'; 
@@ -1040,14 +1013,14 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 	*  sometime this packet does not contains parameter part, 
 	 *  so check remaing length remaining
        *-----------------------------------------------------------------------------*/
-	if(  buff::Buffer <int>::returnRemainingLength ( *offset ) < 2 )  
+	if(  buff::Buffer <VS_INT32>::return_remaining_length ( *offset ) < 2 )  
 		return "NO PARAMETER";
 	//have to dissect for the offsets 
 	*offset += 2;
 	 return ( disect_mysql_exec_parameter( rawdataPacket , &(*offset) , 
-				 fieldInfoData , noParameters ) ); 
-/*	while ( !(buff::Buffer < int >::returnRemainingLength ( *offset ) < 2 ))
-		returnString  disect_mysql_exec_parameter( rawdataPacket , &(*offset) , fieldInfoData ) ;
+				 field_info , noParameters ) ); 
+/*	while ( !(buff::Buffer < VS_INT32 >::return_remaining_length ( *offset ) < 2 ))
+		returnString  disect_mysql_exec_parameter( rawdataPacket , &(*offset) , field_info ) ;
 	return returnString;
 	*/
 }
@@ -1059,19 +1032,19 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
  *  by the following method.
  * =====================================================================================
  */
- int Mysql::disect_mysql_request ( actRawDataStruct *rawdataPacket , int offset , 
-		 proto::fieldInfo * fieldInfoData , int currentPacket , 
-		 actSeriesStruct * conversationPackets){
+ VS_INT32 Mysql::disect_mysql_request ( act_raw_dataStruct *rawdataPacket , VS_INT32 offset , 
+		 proto::field_info * field_info , VS_INT32 currentPacket , 
+		 actSeriesStruct * conversation_packets){
 
 	 std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		 "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 		 <<"]\n";
 
-	 int    opcode;
-	 int    newDataSetOffsetPosition;
+	 VS_INT32    opcode;
+	 VS_INT32    newDataSetOffsetPosition;
 
 	 //1st read teh oppcode from the packet
-         opcode = (int)buff::Buffer< void > ::getGuint8(rawdataPacket  ,  offset++ ) ;
+         opcode = (VS_INT32)buff::Buffer< void > ::get_guVS_INT328(rawdataPacket  ,  offset++ ) ;
 
 #ifdef ERROR
 	 opcode = 3;
@@ -1086,16 +1059,16 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 					std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<
 						__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["
 						<<__DATE__<<"_"<<__TIME__<<"] COMQUERY\n";
-					std::string mysqlQueryString =boost::get < std::string>
+					std::string mysql_queryString =boost::get < std::string>
 						(buff::Buffer< returnType >::Read (rawdataPacket 
-										   , fieldInfoData 
-										   , mysqlQuery 
+										   , field_info 
+										   , mysql_query 
 										   , &offset 
 										   , 0 
 										   , ENC_NA ) );
 					if ( JSON ){
-						QueryPacket.query = mysqlQueryString;
-						QueryPacket.queryType = COM_QUERY;
+						QueryPacket.query = mysql_queryString;
+						QueryPacket.query_type = COM_QUERY;
 #ifdef DEBUG
 						std::cout<<" File Name ["<<__FILE__<<" ] Function [ "
 							<<__FUNCTION__<<"] Line ["<<__LINE__<<
@@ -1110,16 +1083,16 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 						JSON = 2;
 					}
 					
-					if ( Json::flagForGenerateQuery ){
-						prevQueryState = RESPONSE_TABULAR;
+					if ( Json::flag_for_generate_query ){
+						prev_query_state = RESPONSE_TABULAR;
 						generate_mysql_request_packet( newDataSetOffsetPosition ,
 							       	opcode , currentPacket ,
-							       	conversationPackets);
-						rowPacketOffsetFlag = true ;
+							       	conversation_packets);
+						row_packet_offset_flag = true ;
 					}
 
-					opcode = COM_QUERY ?( field::prevQuery.prevQueryState = 
-							RESPONSE_TABULAR ): (field::prevQuery.prevQueryState 
+					opcode = COM_QUERY ?( field::prevQuery.prev_query_state = 
+							RESPONSE_TABULAR ): (field::prevQuery.prev_query_state 
 								= RESPONSE_PREPARE );
 				
 				}
@@ -1129,8 +1102,8 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 					"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 					__TIME__<<"]"<<"BEFORE OFFSET_______"<<offset<<'\n';
 				Mysql::disect_mysql_requestExecuteStatement( rawdataPacket , 
-						&offset , fieldInfoData );
-				field::prevQuery.prevQueryState = RESPONSE_TABULAR;
+						&offset , field_info );
+				field::prevQuery.prev_query_state = RESPONSE_TABULAR;
 				std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__
 					<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 					__TIME__<<"]"<<"AFTER OFFSET-------------"<<offset<<'\n';
@@ -1139,9 +1112,9 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
 				std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<
 					__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<
 					__DATE__<<"_"<<__TIME__<<"] [STATEMENT ID]:"<< 
-					boost::get<  int > (buff::Buffer< returnType > ::
-							Read( rawdataPacket , fieldInfoData , 
-								mysqlStatementId, &(offset) , 
+					boost::get<  VS_INT32 > (buff::Buffer< returnType > ::
+							Read( rawdataPacket , field_info , 
+								mysql_statement_id, &(offset) , 
 								4 , ENC_LITTLE_INDIAN ) )
 					<<'\n';
 				exit ( 0 );
@@ -1167,24 +1140,19 @@ std::string Mysql::disect_mysql_requestExecuteStatement ( actRawDataStruct *rawd
  *  Description:  method to dissect mysql query packet( REQUEST + RESPONSE )
  * =====================================================================================
  */
-bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLength , 
-		actSeriesStruct * conversationPackets ){
-
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
-		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
-
-	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
-		<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<
-		"[TOTAL_PACKET_LENGTH]:"<<totalPacketLength<<std::endl;
-	int            offset;
-	proto::fieldInfo    *fieldInfo;
+bool Mysql::disect_mysql( act_raw_dataStruct *rawdataPacket , VS_INT32 totalPacketLength , 
+		actSeriesStruct * conversation_packets ){
+#ifdef DEBUG
+	std::cout<<PRINT<<" MYSQL TOTAL_PACKET_LENGTH :"<<totalPacketLength<<std::endl;
+	VS_INT32            offset;
+	proto::field_info    *field_info;
 	bool                isResponse;
 	proto::mapkey       tempKeyPair;
 
 
 	//open file for Json ,this file will take input for new query
-	fileHandler.open("../STUB/json.js",std::ios::out); 
-	if ( !fileHandler.is_open() ){
+	file_handler.open("../STUB/json.js",std::ios::out); 
+	if ( !file_handler.is_open() ){
 		std::cerr<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
 			<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 			"] can't open json input file\n";
@@ -1212,7 +1180,7 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
 		exit ( EXIT_FAILURE );
 	}
 	tempKeyPair = protomapIterator->second;
-	fieldInfo = tempKeyPair.second;
+	field_info = tempKeyPair.second;
 	//know the length of the packet
         offset=0;
         while ( offset < totalPacketLength ){
@@ -1226,21 +1194,21 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
 #endif
         std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
-		<<"]"<<"[PACKET LENGTH]:"<<boost::get< int > 
-		(buff::Buffer< returnType > ::Read( rawdataPacket , fieldInfo 
-						    , mysqlPacketLength , 
+		<<"]"<<"[PACKET LENGTH]:"<<boost::get< VS_INT32 > 
+		(buff::Buffer< returnType > ::Read( rawdataPacket , field_info 
+						    , mysql_packet_lengrh , 
 						    &offset , 
 						    3 , 
 						    ENC_LITTLE_INDIAN 
 						    ) )<<'\n';
 		//update the packet length by 4 manualy
-        buff::Buffer<int>::tvbLength +=4;
+        buff::Buffer<VS_INT32>::tvb_length +=4;
 		// read the packet number 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 		__TIME__<<"]"<<"[OFFSET]:"<<offset<<'\n';
-        int packetNumber =boost::get < int > (  buff::Buffer< returnType >::
-			Read ( rawdataPacket , fieldInfo , mysqlPacketNumber
+        VS_INT32 packetNumber =boost::get < VS_INT32 > (  buff::Buffer< returnType >::
+			Read ( rawdataPacket , field_info , mysql_packet_number
 			       	, &offset , 1 , ENC_NA ) );
 #ifdef DEBUG
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["
@@ -1249,7 +1217,7 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
 #endif
 
 		//try to manage the followig method by implementing template
-	//	int packetNumber = buff::Buffer::get_STUB_UINT8 ( rawdataPacket , offset - 1 );
+	//	VS_INT32 packetNumber = buff::Buffer::get_VS_INT8 ( rawdataPacket , offset - 1 );
 	    //std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"packet no: "<<packet_number;
 	    isResponse= false;
 //	    offset +=1;
@@ -1270,8 +1238,8 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
 			    return true;
 			   }
 		    else offset = disect_mysql_response( rawdataPacket,  offset   , 
-				    fieldInfo , rawdataPacket->packetNumber , 
-				    conversationPackets) ;
+				    field_info , rawdataPacket->packetNumber , 
+				    conversation_packets) ;
 		    }else { //packet going to Db
 			    if ( packetNumber == 1 ) //it's a login request
 				    std::cout<<" File Name ["<<__FILE__<<" ] Function [ "
@@ -1281,14 +1249,14 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
 			    else
 				    //normal request from client to server
 				    offset = Mysql::disect_mysql_request ( rawdataPacket, 
-						    offset , fieldInfo , 
+						    offset , field_info , 
 						    rawdataPacket->packetNumber , 
-						    conversationPackets );
+						    conversation_packets );
 #ifdef DEBUG
 			    std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__
 				    <<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 				    __TIME__<<"]"<<"TOTAL TVB LENGTH:"<<
-				    buff::Buffer<int>::tvbLength<<'\n';
+				    buff::Buffer<VS_INT32>::tvb_length<<'\n';
 #endif
 			    
 		    }
@@ -1297,12 +1265,12 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
 	//for a same mainly for response of a select query 
 	// offset +=4; chngd on 13/12 -- 6.16
 	//Remaining payload indicates an error
-    if ( buff::Buffer<int>::returnRemainingLength ( offset ) )
+    if ( buff::Buffer<VS_INT32>::return_remaining_length ( offset ) )
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 			"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 			__TIME__<<"] ******DISSECTOR INCOMPLETE*****\n";
 	//exit ( EXIT_FAILURE );
-	fileHandler.close();
+	file_handler.close();
 
 	return true;
 }
@@ -1316,8 +1284,8 @@ bool Mysql::disect_mysql( actRawDataStruct *rawdataPacket , int totalPacketLengt
  */
 
 //function to genarate Request packets
-int Mysql::generate_mysql_request_packet(  int offset ,  int oppcode , int currentPacket ,
-	       	actSeriesStruct *conversationPackets){
+VS_INT32 Mysql::generate_mysql_request_packet(  VS_INT32 offset ,  VS_INT32 oppcode , VS_INT32 currentPacket ,
+	       	actSeriesStruct *conversation_packets){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
@@ -1354,18 +1322,18 @@ int Mysql::generate_mysql_request_packet(  int offset ,  int oppcode , int curre
 					//increase offset for oppcode
 					offset ++;// ( copy data untill oppcode)
 					copyConversationPartially ( newConversationPack ,  
-							conversationPackets , 0 , 
+							conversation_packets , 0 , 
 							currentPacket  , offset  , 
 							offset + 
 							colByColDataTogether.query.size() 
 							+ 1 ); // added 1 on 23 // 2
-					memcpy ( ( newConversationPack->actRawData 
+					memcpy ( ( newConversationPack->act_raw_data 
 								[ currentPacket ].data + offset -1    ) //-1
 						       	, colByColDataTogether.query.c_str() , 
 						       	( colByColDataTogether.query.size() ) );//-1
-std::cout<<"\nPrinting coppied data\n";
+std::cout<<"\nPrVS_INT32ing coppied data\n";
 for ( STUB_UINT i = 0 ; i< offset + colByColDataTogether.query.size() ;++ i)
-std::cout<<newConversationPack->actRawData[ currentPacket ].data[i];
+std::cout<<newConversationPack->act_raw_data[ currentPacket ].data[i];
 //exit(0);
 					offset +=colByColDataTogether.query.size();// - 1 ;//
 #ifdef DEBUG
@@ -1373,25 +1341,25 @@ std::cout<<newConversationPack->actRawData[ currentPacket ].data[i];
 						__FUNCTION__<<"] Line ["<<__LINE__<<
 						"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 						"]  buffer length = "<<
-						newConversationPack->actRawData [ currentPacket ].length
+						newConversationPack->act_raw_data [ currentPacket ].length
 						<<std::endl;
 					std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 						"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 						__TIME__<<"] offset = "<<offset<<std::endl;
 #endif
-					newConversationPack->actRawData [ currentPacket ].data [ offset ] =
+					newConversationPack->act_raw_data [ currentPacket ].data [ offset ] =
 					       	'\0';
-					newConversationPack->actRawData [ currentPacket ].length = 
+					newConversationPack->act_raw_data [ currentPacket ].length = 
 						offset + 1; // -1 have to provide
 					offset ++;
 					//update the  length part of the packet.
-					nth24 ( newConversationPack->actRawData [ currentPacket ].data   , 
+					nth24 ( newConversationPack->act_raw_data [ currentPacket ].data   , 
 							0 ,  colByColDataTogether.query.size() + 1  );
 
 					std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 						"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 						<<"] size == "<<colByColDataTogether.query.size()<<std::endl;
-					// std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"data = "<< newConversationPack->actRawData [ currentPacket ].data <<std::endl;
+					// std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"data = "<< newConversationPack->act_raw_data [ currentPacket ].data <<std::endl;
 					offset +=colByColDataTogether.query.length();
 					break;
 				}
@@ -1409,20 +1377,20 @@ std::cout<<newConversationPack->actRawData[ currentPacket ].data[i];
  *  Description:  this method is responsible tgenerate new query packet.( RESPONSE PACKET)
  * =====================================================================================
  */
-int Mysql::generate_mysql_response_packet ( actRawDataStruct * rawDataPacket , int offset ,
-		int noOfColumn ,  int currentPacket , int eofLength , 
-		actSeriesStruct *conversationPackets){
+VS_INT32 Mysql::generate_mysql_response_packet ( act_raw_dataStruct * raw_packet , VS_INT32 offset ,
+		VS_INT32 noOfColumn ,  VS_INT32 currentPacket , VS_INT32 eofLength , 
+		actSeriesStruct *conversation_packets){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 		__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]\n";
 	
         std::string    data;
-	int       tempOffset;
-        int       storeOffset;
-	int       packetNumber;
+	VS_INT32       tempOffset;
+        VS_INT32       storeOffset;
+	VS_INT32       packetNumber;
 	STUB_CHAR      *genDatatemp;
-        int       updatedOffset;
-	int       lengthUpdateOffset;
+        VS_INT32       updatedOffset;
+	VS_INT32       lengthUpdateOffset;
 
 
 	tempOffset = 0;
@@ -1455,12 +1423,12 @@ int Mysql::generate_mysql_response_packet ( actRawDataStruct * rawDataPacket , i
         }
         offset+=3;
         //know the current packet no
-        packetNumber = buff::Buffer<int>::getGuint8 ( rawDataPacket , offset ++ );
-        for ( int rowCount = 1 ; rowCount <= colByColDataTogether.totalRow; rowCount ++ ){
+        packetNumber = buff::Buffer<VS_INT32>::get_guVS_INT328 ( raw_packet , offset ++ );
+        for ( VS_INT32 rowCount = 1 ; rowCount <= colByColDataTogether.totalRow; rowCount ++ ){
             tempOffset += 4;
             storeOffset = tempOffset;
-            for ( int column = 1 ; column <=noOfColumn ; ++ column ){
-			_colInfo::iterator it = colByColDataTogether.colInfo.find( ++ colNoGlobal );
+            for ( VS_INT32 column = 1 ; column <=noOfColumn ; ++ column ){
+			_colInfo::iterator it = colByColDataTogether.colInfo.find( ++ col_no_global );
 			if ( it == colByColDataTogether.colInfo.end() )	
 				std::cerr<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 					"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
@@ -1487,17 +1455,17 @@ int Mysql::generate_mysql_response_packet ( actRawDataStruct * rawDataPacket , i
 		
 	}
 	updatedOffset = tempOffset - 1; // bites of new created rows
-	copyConversationPartially ( newConversationPack ,  conversationPackets ,
-		       	prevPacketTillInserted + 1 , currentPacket   , offset - 5 ,
+	copyConversationPartially ( newConversationPack ,  conversation_packets ,
+		       	prev_packet_till_inserted + 1 , currentPacket   , offset - 5 ,
 		       	(offset - 4) + updatedOffset + eofLength + 1); //( offset + updatedOffset  + eofLength - 5 ));
-	memcpy ( newConversationPack->actRawData[ currentPacket ].data + 
+	memcpy ( newConversationPack->act_raw_data[ currentPacket ].data + 
 			offset - 4   , genDatatemp , tempOffset  );
-	memcpy ( newConversationPack->actRawData [ currentPacket ].data + 
-			(offset - 4 ) + tempOffset  , rawDataPacket->data +
-		       	( rawDataPacket->length - eofLength   ) , eofLength + 1 );
-	newConversationPack->actRawData [ currentPacket ].data [offset-4+tempOffset+3] = 
+	memcpy ( newConversationPack->act_raw_data [ currentPacket ].data + 
+			(offset - 4 ) + tempOffset  , raw_packet->data +
+		       	( raw_packet->length - eofLength   ) , eofLength + 1 );
+	newConversationPack->act_raw_data [ currentPacket ].data [offset-4+tempOffset+3] = 
 		packetNumber;
-	newConversationPack->actRawData [ currentPacket ].length =
+	newConversationPack->act_raw_data [ currentPacket ].length =
 	       	(offset - 4) + updatedOffset + eofLength + 1 ;
 	return ( ( offset - 4 ) + updatedOffset + eofLength + 1) ;
 }
@@ -1510,27 +1478,27 @@ int Mysql::generate_mysql_response_packet ( actRawDataStruct * rawDataPacket , i
  *
  * =====================================================================================
  */
-int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryData *& queryDataArray ,
-	       	int currentCount , int noParam = 0 ){
+VS_INT32  Mysql::get_query_string( act_raw_dataStruct *packet_setting_data_array , queryData *& query_data_array ,
+	       	VS_INT32 current_count , VS_INT32 noParam = 0 ){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 		__TIME__<<"]"<<"FUNCTION:"<<__FUNCTION__<<'\n';
 	
-	int                      offset;
-	int                      opcode;
+	VS_INT32                      offset;
+	VS_INT32                      opcode;
 	bool                          isResponse;
 	proto::mapkey                 tempKeyPair;
-	int                      packetNumber;
-	proto::fieldInfo              *fieldInfoData;
+	VS_INT32                      packetNumber;
+	proto::field_info              *field_info;
 	proto::_protoMap::iterator    protomapIterator;
-	int                      totalPacketLength;
+	VS_INT32                      totalPacketLength;
 
 
-	buff::Buffer< int >::tvbLength  = 0;
+	buff::Buffer< VS_INT32 >::tvb_length  = 0;
 	offset = 0;
 	isResponse = false ;
-	//now for each packet do dissection and put the dissected value into querydataArray.
+	//now for each packet do dissection and put the dissected value VS_INT32o querydataArray.
 	if ( ( protomapIterator= proto::protoMap.find ( "MYSQL" ) ) == 
 			proto::protoMap.end () ){
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
@@ -1541,25 +1509,25 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 		
 	}
 	tempKeyPair = protomapIterator->second;
-	fieldInfoData = tempKeyPair.second;
+	field_info = tempKeyPair.second;
 	//first update the packet no to querydataArray
-	queryDataArray [ currentCount ].packetNo = 
-		packetSettingDataArray [ currentCount ].packetNumber ;
+	query_data_array [ current_count ].packetNo = 
+		packet_setting_data_array [ current_count ].packetNumber ;
 	//know the length of the packet
-	totalPacketLength = packetSettingDataArray[ currentCount ].length;
+	totalPacketLength = packet_setting_data_array[ current_count ].length;
 	while ( offset < totalPacketLength ){
 		buff::Buffer<bool >::pass = false;
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 			__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]PACKET_LENGTH:"<<
-			boost::get<int> ( buff::Buffer< returnType >::Read 
-					( &packetSettingDataArray [ currentCount ] , fieldInfoData 
-					  , mysqlPacketLength , &offset , 3 , ENC_LITTLE_INDIAN ));
+			boost::get<VS_INT32> ( buff::Buffer< returnType >::Read 
+					( &packet_setting_data_array [ current_count ] , field_info 
+					  , mysql_packet_lengrh , &offset , 3 , ENC_LITTLE_INDIAN ));
 		//update the packet length by 4 manualy
-		buff::Buffer<int>::tvbLength +=4;
+		buff::Buffer<VS_INT32>::tvb_length +=4;
 		// read the packet number 
-		packetNumber =boost::get < int > (  buff::Buffer<returnType >::Read (
-				       	&packetSettingDataArray [ currentCount ] , fieldInfoData
-				       	, mysqlPacketNumber , &offset , 1 , ENC_NA) );
+		packetNumber =boost::get < VS_INT32 > (  buff::Buffer<returnType >::Read (
+				       	&packet_setting_data_array [ current_count ] , field_info
+				       	, mysql_packet_number , &offset , 1 , ENC_NA) );
 #ifdef DEBUG
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<
 			__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<
@@ -1567,15 +1535,15 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 #endif
 		
 		//check the destination port
-		if (  packetSettingDataArray [ currentCount].appServer == 0 )	isResponse = false;
+		if (  packet_setting_data_array [ current_count].appServer == 0 )	isResponse = false;
 		else isResponse = true ;
 #ifdef DEBUG
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 			"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<
-			__FUNCTION__<<packetSettingDataArray [ currentCount].appServer<<
+			__FUNCTION__<<packet_setting_data_array [ current_count].appServer<<
 			"::"<<isResponse<<std::endl;
 #endif
-		queryDataArray [ currentCount ].flagForGrouping = false;
+		query_data_array [ current_count ].flagForGrouping = false;
 		if ( !isResponse ) {// packet going to APP
 			if ( packetNumber == 0  ){ //then it is server greetings
 				//offset = mysql_dissect_greetings ( offset , field_info );
@@ -1584,8 +1552,8 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 					"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 					"]"<<"SERVER GREETINGS\n";
 #endif
-				queryDataArray [ currentCount].queryType = "server greetings";
-				queryDataArray [ currentCount ].query ="greetins";
+				query_data_array [ current_count].query_type = "server greetings";
+				query_data_array [ current_count ].query ="greetins";
 #ifdef DEBUG
 				std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 					"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
@@ -1595,11 +1563,11 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 				//return true;
 			}
 			else{
-				queryDataArray [ currentCount ].queryType = "response";
-				queryDataArray [ currentCount ].query="response";
-				Json::flagForGenerateQuery = false; // STUB_DOUBLE check
-//				actSeriesStruct *conversationPackets;
-				//			offset = disect_mysql_response( &packetSettingDataArray [ currentCount ] , offset  , fieldInfoData , packetNumber ,  conversationPackets ) ;
+				query_data_array [ current_count ].query_type = "response";
+				query_data_array [ current_count ].query="response";
+				Json::flag_for_generate_query = false; // VS_DOUBLE check
+//				actSeriesStruct *conversation_packets;
+				//			offset = disect_mysql_response( &packet_setting_data_array [ current_count ] , offset  , field_info , packetNumber ,  conversation_packets ) ;
 				offset += 999;
 				
 			}
@@ -1611,8 +1579,8 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 				__DATE__<<"_"<<__TIME__<<"]"<<"packet going to Db\n";
 #endif
 			if ( packetNumber == 1 ){ //it's a login request
-				queryDataArray [ currentCount].queryType = "login Request";
-				queryDataArray [ currentCount ].query ="login";
+				query_data_array [ current_count].query_type = "login Request";
+				query_data_array [ current_count ].query ="login";
 #ifdef DEBUG
 				std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<
 					__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["
@@ -1627,7 +1595,7 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 					__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime\
 				       	["<<__DATE__<<"_"<<__TIME__<<"]"<<"GENERAL packet---\n";
 #endif
-			opcode = buff::Buffer<void>::getGuint8 ( &packetSettingDataArray [ currentCount ]  , offset ) ;
+			opcode = buff::Buffer<void>::get_guVS_INT328 ( &packet_setting_data_array [ current_count ]  , offset ) ;
 			std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 				__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"][OPCODE]"<<opcode<<'\n';
 
@@ -1639,7 +1607,7 @@ int  Mysql::get_query_string( actRawDataStruct *packetSettingDataArray , queryDa
 								   __FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<
 								   __DATE__<<"_"<<__TIME__<<"]"<<"COM EXECUTE\n";
 #endif
-							   queryDataArray[ currentCount].queryType = "EXECUTE QUERY";
+							   query_data_array[ current_count].query_type = "EXECUTE QUERY";
 							   /*-----------------------------------------------------------------------------
 							    *  dissect previous request queries response packet to get the no of parameters
 I							    *  read packet from PACKET_scenarioName by providing packet no
@@ -1655,13 +1623,13 @@ I							    *  read packet from PACKET_scenarioName by providing packet no
 										   "]"<<"Exception:"<<ea.what()<<'\n';
 exit ( 0 );
 								   }
-								   actRawDataStruct *dataPacket = instance->getPacket
-									   ( packetSettingDataArray[ Mysql::prev_packet_no_with_query ].packetNumber 
+								   act_raw_dataStruct *dataPacket = instance->getPacket
+									   ( packet_setting_data_array[ Mysql::prev_packet_no_with_query ].packetNumber 
 									     , false );
 								   std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 									   "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 									   "]"<<"Read Data";
-								   for ( int i = 0 ; i<dataPacket->length ; ++ i )
+								   for ( VS_INT32 i = 0 ; i<dataPacket->length ; ++ i )
 									   std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 										   "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 										   __TIME__<<"]"<<dataPacket->data[i];
@@ -1672,8 +1640,8 @@ exit ( 0 );
 								   std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 									   "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 									   "]"<<"[param]"<<noParam<<'\n';
-								   queryDataArray[ currentCount ].deltaValue = noParam;
-								   queryDataArray[ Mysql::prev_packet_no_with_query].deltaValue = noParam;
+								   query_data_array[ current_count ].deltaValue = noParam;
+								   query_data_array[ Mysql::prev_packet_no_with_query].deltaValue = noParam;
 
 								   std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 									   "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
@@ -1689,12 +1657,12 @@ exit ( 0 );
 									   exit(0);
 								   }
 							   }
-							   queryDataArray[ currentCount].query = 
-								   Mysql::disect_mysql_requestExecuteStatement( &packetSettingDataArray
-										   [ currentCount ] , &offset , fieldInfoData , noParam);
-							   queryDataArray[ currentCount - 1 ].flagForGrouping = true;
-							   queryDataArray [ currentCount ].flagForGrouping = true;
-							   offset += 999;// buff::Buffer< void >::returnRemainingLength( offset );
+							   query_data_array[ current_count].query = 
+								   Mysql::disect_mysql_requestExecuteStatement( &packet_setting_data_array
+										   [ current_count ] , &offset , field_info , noParam);
+							   query_data_array[ current_count - 1 ].flagForGrouping = true;
+							   query_data_array [ current_count ].flagForGrouping = true;
+							   offset += 999;// buff::Buffer< void >::return_remaining_length( offset );
 							  return  Mysql::statement_id;
 
 							   break;
@@ -1706,11 +1674,11 @@ exit ( 0 );
 								    "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
 								    "]close statement\n";
 #endif
-							    queryDataArray [ currentCount].queryType = "REquest close statement";
-							    queryDataArray [ currentCount ].query ="NOT SUPPORTED";
-							    // + static_cast<ostringstream*>( &(ostringstream() << boost::get < int > ( buff::Buffer < returnType >::Read( &packetSettingDataArray[currentCount] , &fieldInfoData ,mysqlStatementId , &offset , 4 , ENC_LITTLE_INDIAN) ) ))->str();
+							    query_data_array [ current_count].query_type = "REquest close statement";
+							    query_data_array [ current_count ].query ="NOT SUPPORTED";
+							    // + static_cast<ostringstream*>( &(ostringstream() << boost::get < VS_INT32 > ( buff::Buffer < returnType >::Read( &packet_setting_data_array[current_count] , &field_info ,mysql_statement_id , &offset , 4 , ENC_LITTLE_INDIAN) ) ))->str();
 							    offset +=4;
-							   offset += 999;// buff::Buffer< void >::returnRemainingLength( offset );
+							   offset += 999;// buff::Buffer< void >::return_remaining_length( offset );
 							    break;
 						    }
 						    
@@ -1719,9 +1687,9 @@ exit ( 0 );
 						      std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 							      __LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]"<<"COMMAND QUIT\n";
 #endif
-						      queryDataArray [ currentCount].queryType = "QUIT CONNECTION";
-						      queryDataArray[currentCount ].query = "CONNECTION QUIT";
-							   offset += 999;// buff::Buffer< void >::returnRemainingLength( offset );
+						      query_data_array [ current_count].query_type = "QUIT CONNECTION";
+						      query_data_array[current_count ].query = "CONNECTION QUIT";
+							   offset += 999;// buff::Buffer< void >::return_remaining_length( offset );
 						      break;
 						      
 					      }
@@ -1730,38 +1698,38 @@ exit ( 0 );
 					      
 				case COM_PREPARE:{
 
-							 Mysql::prev_packet_no_with_query = currentCount;
+							 Mysql::prev_packet_no_with_query = current_count;
 #ifdef DEBUG
 							 std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 								 "] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<
-								 "]opcode is "<<(int)opcode<<"::"<<packetSettingDataArray
-								 [ currentCount].data[4]<<'\n';
+								 "]opcode is "<<(VS_INT32)opcode<<"::"<<packet_setting_data_array
+								 [ current_count].data[4]<<'\n';
 #endif
-							 queryDataArray [ currentCount ].query =
-							       types::getString ( ( u_char * ) packetSettingDataArray 
-									       [ currentCount ].data ,
-									       buff::Buffer<int>::tvbLength , offset , 0) ;
+							 query_data_array [ current_count ].query =
+							       types::getString ( ( u_char * ) packet_setting_data_array 
+									       [ current_count ].data ,
+									       buff::Buffer<VS_INT32>::tvb_length , offset , 0) ;
 #ifdef DEBUG
 							 std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 								 __LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]storage value\t"<<
-								 queryDataArray [ 0 ].query<<'\n';
+								 query_data_array [ 0 ].query<<'\n';
 							 std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<"] Line ["<<
 								 __LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__<<"]Storage Value"<<
-								 queryDataArray [ currentCount ].query <<'\n';
+								 query_data_array [ current_count ].query <<'\n';
 							        
 #endif
-							 //offset +=buff::Buffer< void >::returnRemainingLength( offset );
+							 //offset +=buff::Buffer< void >::return_remaining_length( offset );
 offset +=999;
 							 break;
 							 
 						 }
 				default:
-						 queryDataArray [ currentCount ].query =  
-							 types::getString ( ( u_char * ) packetSettingDataArray [ currentCount ].data ,
-									 buff::Buffer<int>::tvbLength , offset , 0) ;
-							   offset += 999;// buff::Buffer< void >::returnRemainingLength( offset );
-						 queryDataArray [ currentCount].queryType = "NOT SUPPORTED";
-//						 queryDataArray[ currentCount ].query = "query request from client";
+						 query_data_array [ current_count ].query =  
+							 types::getString ( ( u_char * ) packet_setting_data_array [ current_count ].data ,
+									 buff::Buffer<VS_INT32>::tvb_length , offset , 0) ;
+							   offset += 999;// buff::Buffer< void >::return_remaining_length( offset );
+						 query_data_array [ current_count].query_type = "NOT SUPPORTED";
+//						 query_data_array[ current_count ].query = "query request from client";
 offset +=999;
 						 break;
 			}
@@ -1770,7 +1738,7 @@ offset +=999;
 		}
 	}
 	//Remaining payload indicates an error
-	if ( buff::Buffer<int>::returnRemainingLength( offset ) )
+	if ( buff::Buffer<VS_INT32>::return_remaining_length( offset ) )
 		std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 			"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<
 			__TIME__<<"]"<<__FUNCTION__<<"******DISSECTOR INCOMPLETE*****\n";
@@ -1783,21 +1751,21 @@ offset +=999;
  *  Description:  modify the response packet by updateing statement ID
  * =====================================================================================
  */
-int Mysql::modify_mysql_response( actSeriesStruct *conversationPackets , int statement_id ){
+VS_INT32 Mysql::modify_mysql_response( actSeriesStruct *conversation_packets , VS_INT32 statement_id ){
 
 	std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<__FUNCTION__<<
 		"] Line ["<<__LINE__<<"] DateTime ["<<__DATE__<<"_"<<__TIME__
 		<<"]\n";
 
-	for ( int i = 0 ; i<conversationPackets->noOfPacket ; ++ i ){
-		if ( conversationPackets[ i ].actRawData->appServer && 
-				conversationPackets[ i ].actRawData->length > 8 ){
-			nth32( conversationPackets[i].actRawData->data , 5 , 
+	for ( VS_INT32 i = 0 ; i<conversation_packets->no_of_packet ; ++ i ){
+		if ( conversation_packets[ i ].act_raw_data->appServer && 
+				conversation_packets[ i ].act_raw_data->length > 8 ){
+			nth32( conversation_packets[i].act_raw_data->data , 5 , 
 					statement_id );
 			std::cout<<" File Name ["<<__FILE__<<" ] Function [ "<<
 				__FUNCTION__<<"] Line ["<<__LINE__<<"] DateTime ["<<
 				__DATE__<<"_"<<__TIME__<<"]"<<"modified statement iD["
-				<<types::getGuint( (u_char*)conversationPackets[i].actRawData->data
+				<<types::get_guVS_INT32( (u_char*)conversation_packets[i].act_raw_data->data
 					       	, 15 , 5 , 4 , 1 )<<"]\n";
 			//modify the statement id
 

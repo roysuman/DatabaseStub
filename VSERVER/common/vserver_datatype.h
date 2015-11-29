@@ -18,7 +18,9 @@
 
 #ifndef VSERVER_GLOBALS_H
 #define VSERVER_GLOBALS_H
-
+#include<stdint.h>
+#include<iostream>
+#define PRINT __DATE__<<"_"<<__TIME__<<" [ "<<__FILE__<<" ] "
 #define ZERO 0
 #define IS_LESS_THAN(X,Y) ({    \
 		bool    return_val;     \
@@ -52,7 +54,7 @@
 /* customized datatype */
 typedef signed long VS_LONG;
 typedef unsigned long VS_ULONG;
-typedef signed char VS_INT8;
+typedef char VS_INT8;
 typedef unsigned char VS_UINT8;
 typedef signed short VS_INT16;
 typedef unsigned short VS_UINT16;
@@ -63,6 +65,7 @@ typedef unsigned long long VS_UINT64;
 typedef float VS_FLOAT;
 typedef double VS_DOUBLE;
 typedef bool VS_BOOL;
-
+typedef int64_t VS_UNSIGNED_INT_64;
+typedef void VS_VOID;
 #endif
 

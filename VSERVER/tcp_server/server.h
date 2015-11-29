@@ -23,6 +23,7 @@
 
 class Server:public TcpServer<TcpConnection>{
 	public:
+		bool init_server();//init shared memory
 		bool create_server( uint32_t port=8080);
 		bool close_server(void);
 };

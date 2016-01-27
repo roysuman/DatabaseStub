@@ -46,7 +46,7 @@ class LiveCapture: public BaseWindow<QDialog>, Ui::liveCaptureDialog{
 		void 		setup_actions( void);
 	private slots:
 		void start_capture( void);
-        void on_pushButton_clicked();
+       // void on_pushButton_clicked();
 };
 
 

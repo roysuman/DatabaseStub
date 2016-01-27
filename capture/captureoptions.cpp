@@ -15,16 +15,17 @@
  *
  * =====================================================================================
  */
-
+#include "captureoptions.h"
+//#include "pcapinterface.h"
 bool
-init_capture_options( capture_opts* cap_opts){
+set_capture_options( capture_opts* cap_opts){
 	if ( cap_opts == NULL ) return false;
 	if ( cap_opts->device_name != NULL){
-		global_capture_opts->device_name = cap_opts->device_name;
+		global_capture_opts.device_name = cap_opts->device_name;
 	}else{
 		global_capture_opts.device_name = NULL;
 	}
-	if ( *cap_opts != NULL ){
+	if ( cap_opts->file_name != NULL ){
 		global_capture_opts.file_name = cap_opts->file_name;
 	}else{
 		global_capture_opts.file_name = NULL;
@@ -41,7 +42,7 @@ init_capture_options( capture_opts* cap_opts){
 	global_capture_opts.stop_time_duration = cap_opts->stop_time_duration;
 	global_capture_opts.time_duration = cap_opts->time_duration;
 	global_capture_opts.do_dissect = cap_opts->do_dissect;
-	return;
+	return true;
 
 }
 
@@ -59,7 +60,7 @@ init_capture_options( capture_opts* cap_opts){
 }
 
 void
-log_capture_options( cap_opts *cap_opts){
+log_capture_options( capture_opts *cap_opts){
 	//TODO
 	return;
 }

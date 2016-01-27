@@ -17,10 +17,11 @@
  */
 #ifndef CAPTURE_OPTIONS
 #define CAPTURE_OPTIONS
-
+/* 
 #ifdef __cplusplus
 extern "C"{
 #endif
+*/
 #include <sys/types.h>
 #include <QList>
 
@@ -32,7 +33,8 @@ struct _capture_opts{
 	 				     //interfaces...from which they want to read data
 	bool                      save_file;/* TRUE: SAVE packet in file */
 	char*			  file_name; /* if need to save */
-	HRING*			  ring_buffer;/* write packet */
+//	HRING*			  ring_buffer;/* write packet */
+	void*			  ring_buffer;/* write packet */
 	//TODO BELOW FUTURE USE
 	bool			  stop_packet_set;/* TRUE: stop packet capture after certan packet captured */
 	size_t                    stop_packet_count;/* no of packet need to capture before closing*/
@@ -43,6 +45,9 @@ struct _capture_opts{
 	bool                      do_dissect; /* TRUE:dissect packet after capturing */
 };
 static capture_opts global_capture_opts;
+
+extern bool
+set_capture_options( capture_opts* cap_opts);
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  init_capture_options
@@ -86,8 +91,9 @@ is_dissect_enable( capture_opts* cap_opts);
  */
 extern void
 atexit_interface_list( capture_opts* cap_opts);
+/* 
 #ifdef __cplusplus
 }
 #endif
-
+*/
 #endif

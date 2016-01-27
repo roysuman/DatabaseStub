@@ -19,15 +19,17 @@
 #ifndef PCAP_INTERFACE_H
 #define PCAP_INTERFACE_H
 
-
+/* 
 #ifdef __cplusplus
 extern "C"{
 #endif
-
-#ifdef PCAP_INSTALLED
+*/
 #include <pcap.h>
-#endif
-#include <QList>
+#include <iostream>
+#include<vector>
+
+#define ERROR_GET_INTERFACE_LIST 1
+#define MAX_MSG_LENGTH 65535
 /* there might by situation when we want to read packet
  * from all interfaces. */
 
@@ -76,13 +78,15 @@ struct _loop_data{
 
 };
 loop_data global_ld;
+
+unsigned long start_time;
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  get_available_interface_list
  *  Description:  returns all available interface list...
  * =====================================================================================
  */
-extern QList<interface_info>*
+extern std::vector<interface_info*>
 get_available_interface_list( int *error, char **error_description);
 
 
@@ -94,9 +98,9 @@ get_available_interface_list( int *error, char **error_description);
  */
 extern bool
 start_capture_loop( struct pcap_stat* status);
-
+/* 
 #ifdef __cplusplus
 }
 #endif
-
+*/
 #endif

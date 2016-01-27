@@ -15,10 +15,10 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I$(QT_DIR)/include/QtCore -Igui/core -Igui -Igui/forms -Igui/core/form -Igui/core/viewmodel -Igui/core/controls -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
+INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I$(QT_DIR)/include/QtCore -Igui/core -Igui -Igui/forms -Igui/core/form -Igui/core/viewmodel -Igui/core/controls -Icapture -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -m64 -Wl,-O1
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -lpcap -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -53,7 +53,9 @@ SOURCES       = gui/core/main.cpp \
 		gui/core/form/openDump.cpp \
 		gui/core/form/livecapture.cpp \
 		gui/core/viewmodel/filetreemodel.cpp \
-		gui/core/controls/messagebox.cpp qrc_resource.cpp \
+		gui/core/controls/messagebox.cpp \
+		capture/pcapinterface.cpp \
+		capture/captureoptions.cpp qrc_resource.cpp \
 		moc_vservermainwindow.cpp \
 		moc_qtsingletonapplication.cpp \
 		moc_openDump.cpp \
@@ -69,6 +71,8 @@ OBJECTS       = main.o \
 		livecapture.o \
 		filetreemodel.o \
 		messagebox.o \
+		pcapinterface.o \
+		captureoptions.o \
 		qrc_resource.o \
 		moc_vservermainwindow.o \
 		moc_qtsingletonapplication.o \
@@ -327,7 +331,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/VirtualServer1.0.0 || mkdir -p .tmp/VirtualServer1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents Resources/resource.qrc .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents gui/forms/CustomWindow.h gui/core/vservermainwindow.h gui/core/qtsingletonapplication.h gui/core/qtfilelock.h gui/core/treeitem.h gui/core/form/openDump.h gui/core/form/livecapture.h gui/core/viewmodel/filetreemodel.h gui/core/controls/messagebox.h .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents gui/core/main.cpp gui/core/vservermainwindow.cpp gui/core/qtsingletonapplication.cpp gui/core/qtfilelock.cpp gui/core/treeitem.cpp gui/core/form/openDump.cpp gui/core/form/livecapture.cpp gui/core/viewmodel/filetreemodel.cpp gui/core/controls/messagebox.cpp .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents gui/forms/CustomWindow.ui gui/forms/OpenDumpFileDialog.ui gui/forms/messagebox.ui gui/forms/livecapture.ui .tmp/VirtualServer1.0.0/ && (cd `dirname .tmp/VirtualServer1.0.0` && $(TAR) VirtualServer1.0.0.tar VirtualServer1.0.0 && $(COMPRESS) VirtualServer1.0.0.tar) && $(MOVE) `dirname .tmp/VirtualServer1.0.0`/VirtualServer1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/VirtualServer1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents Resources/resource.qrc .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents gui/forms/CustomWindow.h gui/core/vservermainwindow.h gui/core/qtsingletonapplication.h gui/core/qtfilelock.h gui/core/treeitem.h gui/core/form/openDump.h gui/core/form/livecapture.h gui/core/viewmodel/filetreemodel.h gui/core/controls/messagebox.h capture/pcapinterface.h capture/captureoptions.h .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents gui/core/main.cpp gui/core/vservermainwindow.cpp gui/core/qtsingletonapplication.cpp gui/core/qtfilelock.cpp gui/core/treeitem.cpp gui/core/form/openDump.cpp gui/core/form/livecapture.cpp gui/core/viewmodel/filetreemodel.cpp gui/core/controls/messagebox.cpp capture/pcapinterface.cpp capture/captureoptions.cpp .tmp/VirtualServer1.0.0/ && $(COPY_FILE) --parents gui/forms/CustomWindow.ui gui/forms/OpenDumpFileDialog.ui gui/forms/messagebox.ui gui/forms/livecapture.ui .tmp/VirtualServer1.0.0/ && (cd `dirname .tmp/VirtualServer1.0.0` && $(TAR) VirtualServer1.0.0.tar VirtualServer1.0.0 && $(COMPRESS) VirtualServer1.0.0.tar) && $(MOVE) `dirname .tmp/VirtualServer1.0.0`/VirtualServer1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/VirtualServer1.0.0
 
 
 clean:compiler_clean 
@@ -352,10 +356,10 @@ compiler_rcc_make_all: qrc_resource.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resource.cpp
 qrc_resource.cpp: Resources/resource.qrc \
-		Resources/app.ico \
 		Resources/button_close.ico \
-		Resources/button_minimize.ico \
-		Resources/button_maximize.ico
+		Resources/app.ico \
+		Resources/button_maximize.ico \
+		Resources/button_minimize.ico
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name resource Resources/resource.qrc -o qrc_resource.cpp
 
 compiler_moc_header_make_all: moc_vservermainwindow.cpp moc_qtsingletonapplication.cpp moc_openDump.cpp moc_livecapture.cpp moc_filetreemodel.cpp moc_messagebox.cpp
@@ -680,6 +684,50 @@ moc_vservermainwindow.cpp: gui/forms/CustomWindow.h \
 		/usr/include/qt5/QtWidgets/qframe.h \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
 		ui_CustomWindow.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/qtreeview.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		/usr/include/qt5/QtCore/QTimer \
 		gui/core/vservermainwindow.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include gui/core/vservermainwindow.h -o moc_vservermainwindow.cpp
@@ -1146,16 +1194,53 @@ moc_openDump.cpp: /usr/include/qt5/QtCore/QFile \
 		/usr/include/qt5/QtWidgets/qlabel.h \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
 		ui_OpenDumpFileDialog.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QCheckBox \
+		/usr/include/qt5/QtWidgets/qcheckbox.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QGroupBox \
+		/usr/include/qt5/QtWidgets/qgroupbox.h \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		gui/core/viewmodel/filetreemodel.h \
 		gui/core/treeitem.h \
 		/usr/include/qt5/QtCore/QPair \
-		/usr/include/qt5/QtCore/QVariant \
 		/usr/include/qt5/QtCore/QAbstractItemModel \
 		gui/core/controls/messagebox.h \
 		/usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtWidgets/qmessagebox.h \
 		ui_messagebox.h \
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
 		ui_CustomWindow.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
 		gui/core/form/openDump.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include gui/core/form/openDump.h -o moc_openDump.cpp
 
@@ -1503,8 +1588,49 @@ moc_livecapture.cpp: /usr/include/qt5/QtCore/QFile \
 		/usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtWidgets/qmessagebox.h \
 		ui_messagebox.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		ui_CustomWindow.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
 		ui_livecapture.h \
+		/usr/include/qt5/QtWidgets/QCheckBox \
+		/usr/include/qt5/QtWidgets/qcheckbox.h \
+		/usr/include/qt5/QtWidgets/QGroupBox \
+		/usr/include/qt5/QtWidgets/qgroupbox.h \
+		/usr/include/qt5/QtWidgets/QListWidget \
+		/usr/include/qt5/QtWidgets/qlistwidget.h \
+		/usr/include/qt5/QtWidgets/qlistview.h \
 		gui/core/form/livecapture.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include gui/core/form/livecapture.h -o moc_livecapture.cpp
 
@@ -1895,23 +2021,70 @@ moc_messagebox.cpp: /usr/include/qt5/QtGui/QtGui \
 		/usr/include/qt5/QtWidgets/qwidget.h \
 		/usr/include/qt5/QtWidgets/qsizepolicy.h \
 		ui_messagebox.h \
-		gui/forms/CustomWindow.h \
-		/usr/include/qt5/QtWidgets/QHBoxLayout \
-		/usr/include/qt5/QtWidgets/qboxlayout.h \
-		/usr/include/qt5/QtWidgets/qlayout.h \
-		/usr/include/qt5/QtWidgets/qlayoutitem.h \
-		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
 		/usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/qapplication.h \
 		/usr/include/qt5/QtWidgets/qdesktopwidget.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QDialog \
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtWidgets/qlayout.h \
+		/usr/include/qt5/QtWidgets/qlayoutitem.h \
+		/usr/include/qt5/QtWidgets/qboxlayout.h \
+		/usr/include/qt5/QtWidgets/QHBoxLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QLabel \
+		/usr/include/qt5/QtWidgets/qlabel.h \
 		/usr/include/qt5/QtWidgets/QPushButton \
 		/usr/include/qt5/QtWidgets/qpushbutton.h \
 		/usr/include/qt5/QtWidgets/qabstractbutton.h \
-		/usr/include/qt5/QtWidgets/QLabel \
-		/usr/include/qt5/QtWidgets/qlabel.h \
-		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
+		gui/forms/CustomWindow.h \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
 		ui_CustomWindow.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/qtreeview.h \
 		gui/core/controls/messagebox.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include gui/core/controls/messagebox.h -o moc_messagebox.cpp
 
@@ -2262,6 +2435,50 @@ main.o: gui/core/main.cpp /usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
 		gui/core/vservermainwindow.h \
 		ui_CustomWindow.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/qtreeview.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		/usr/include/qt5/QtCore/QTimer \
 		gui/core/qtsingletonapplication.h \
 		/usr/include/qt5/QtCore/QLatin1Char \
@@ -2611,6 +2828,36 @@ vservermainwindow.o: gui/core/vservermainwindow.cpp /usr/include/qt5/QtWidgets/Q
 		/usr/include/qt5/QtWidgets/qlabel.h \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
 		ui_CustomWindow.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		/usr/include/qt5/QtCore/QTimer \
 		gui/core/form/openDump.h \
 		/usr/include/qt5/QtCore/QFile \
@@ -2621,17 +2868,25 @@ vservermainwindow.o: gui/core/vservermainwindow.cpp /usr/include/qt5/QtWidgets/Q
 		/usr/include/qt5/QtCore/QString \
 		/usr/include/qt5/QtCore/QDir \
 		ui_OpenDumpFileDialog.h \
+		/usr/include/qt5/QtWidgets/QCheckBox \
+		/usr/include/qt5/QtWidgets/qcheckbox.h \
+		/usr/include/qt5/QtWidgets/QGroupBox \
+		/usr/include/qt5/QtWidgets/qgroupbox.h \
 		gui/core/viewmodel/filetreemodel.h \
 		gui/core/treeitem.h \
 		/usr/include/qt5/QtCore/QPair \
-		/usr/include/qt5/QtCore/QVariant \
 		/usr/include/qt5/QtCore/QAbstractItemModel \
 		gui/core/controls/messagebox.h \
 		/usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtWidgets/qmessagebox.h \
 		ui_messagebox.h \
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
 		gui/core/form/livecapture.h \
-		ui_livecapture.h
+		ui_livecapture.h \
+		/usr/include/qt5/QtWidgets/QListWidget \
+		/usr/include/qt5/QtWidgets/qlistwidget.h \
+		/usr/include/qt5/QtWidgets/qlistview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o vservermainwindow.o gui/core/vservermainwindow.cpp
 
 qtsingletonapplication.o: gui/core/qtsingletonapplication.cpp gui/core/qtsingletonapplication.h \
@@ -3248,16 +3503,53 @@ openDump.o: gui/core/form/openDump.cpp gui/core/form/openDump.h \
 		/usr/include/qt5/QtWidgets/qlabel.h \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
 		ui_OpenDumpFileDialog.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QCheckBox \
+		/usr/include/qt5/QtWidgets/qcheckbox.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QGroupBox \
+		/usr/include/qt5/QtWidgets/qgroupbox.h \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		gui/core/viewmodel/filetreemodel.h \
 		gui/core/treeitem.h \
 		/usr/include/qt5/QtCore/QPair \
-		/usr/include/qt5/QtCore/QVariant \
 		/usr/include/qt5/QtCore/QAbstractItemModel \
 		gui/core/controls/messagebox.h \
 		/usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtWidgets/qmessagebox.h \
 		ui_messagebox.h \
-		ui_CustomWindow.h
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
+		ui_CustomWindow.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o openDump.o gui/core/form/openDump.cpp
 
 livecapture.o: gui/core/form/livecapture.cpp gui/core/form/livecapture.h \
@@ -3605,8 +3897,49 @@ livecapture.o: gui/core/form/livecapture.cpp gui/core/form/livecapture.h \
 		/usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtWidgets/qmessagebox.h \
 		ui_messagebox.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
 		ui_CustomWindow.h \
-		ui_livecapture.h
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		ui_livecapture.h \
+		/usr/include/qt5/QtWidgets/QCheckBox \
+		/usr/include/qt5/QtWidgets/qcheckbox.h \
+		/usr/include/qt5/QtWidgets/QGroupBox \
+		/usr/include/qt5/QtWidgets/qgroupbox.h \
+		/usr/include/qt5/QtWidgets/QListWidget \
+		/usr/include/qt5/QtWidgets/qlistwidget.h \
+		/usr/include/qt5/QtWidgets/qlistview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o livecapture.o gui/core/form/livecapture.cpp
 
 filetreemodel.o: gui/core/viewmodel/filetreemodel.cpp gui/core/viewmodel/filetreemodel.h \
@@ -4049,24 +4382,119 @@ messagebox.o: gui/core/controls/messagebox.cpp gui/core/controls/messagebox.h \
 		/usr/include/qt5/QtWidgets/qwidget.h \
 		/usr/include/qt5/QtWidgets/qsizepolicy.h \
 		ui_messagebox.h \
-		gui/forms/CustomWindow.h \
-		/usr/include/qt5/QtWidgets/QHBoxLayout \
-		/usr/include/qt5/QtWidgets/qboxlayout.h \
-		/usr/include/qt5/QtWidgets/qlayout.h \
-		/usr/include/qt5/QtWidgets/qlayoutitem.h \
-		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtWidgets/QAction \
+		/usr/include/qt5/QtWidgets/qaction.h \
+		/usr/include/qt5/QtWidgets/qactiongroup.h \
 		/usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/qapplication.h \
 		/usr/include/qt5/QtWidgets/qdesktopwidget.h \
+		/usr/include/qt5/QtWidgets/QButtonGroup \
+		/usr/include/qt5/QtWidgets/qbuttongroup.h \
+		/usr/include/qt5/QtWidgets/QDialog \
+		/usr/include/qt5/QtWidgets/QDialogButtonBox \
+		/usr/include/qt5/QtWidgets/qdialogbuttonbox.h \
+		/usr/include/qt5/QtWidgets/QGridLayout \
+		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtWidgets/qlayout.h \
+		/usr/include/qt5/QtWidgets/qlayoutitem.h \
+		/usr/include/qt5/QtWidgets/qboxlayout.h \
+		/usr/include/qt5/QtWidgets/QHBoxLayout \
+		/usr/include/qt5/QtWidgets/QHeaderView \
+		/usr/include/qt5/QtWidgets/qheaderview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QLabel \
+		/usr/include/qt5/QtWidgets/qlabel.h \
 		/usr/include/qt5/QtWidgets/QPushButton \
 		/usr/include/qt5/QtWidgets/qpushbutton.h \
 		/usr/include/qt5/QtWidgets/qabstractbutton.h \
-		/usr/include/qt5/QtWidgets/QLabel \
-		/usr/include/qt5/QtWidgets/qlabel.h \
-		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/QWidget \
+		gui/forms/CustomWindow.h \
 		/usr/include/qt5/QtWidgets/QDesktopWidget \
-		ui_CustomWindow.h
+		ui_CustomWindow.h \
+		/usr/include/qt5/QtWidgets/QComboBox \
+		/usr/include/qt5/QtWidgets/qcombobox.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QMenuBar \
+		/usr/include/qt5/QtWidgets/qmenubar.h \
+		/usr/include/qt5/QtWidgets/QSpacerItem \
+		/usr/include/qt5/QtWidgets/QSplitter \
+		/usr/include/qt5/QtWidgets/qsplitter.h \
+		/usr/include/qt5/QtWidgets/QStackedWidget \
+		/usr/include/qt5/QtWidgets/qstackedwidget.h \
+		/usr/include/qt5/QtWidgets/QStatusBar \
+		/usr/include/qt5/QtWidgets/qstatusbar.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTableView \
+		/usr/include/qt5/QtWidgets/qtableview.h \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QTreeView \
+		/usr/include/qt5/QtWidgets/qtreeview.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o messagebox.o gui/core/controls/messagebox.cpp
+
+pcapinterface.o: capture/pcapinterface.cpp capture/pcapinterface.h \
+		capture/captureoptions.h \
+		/usr/include/qt5/QtCore/QList \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qrefcount.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o pcapinterface.o capture/pcapinterface.cpp
+
+captureoptions.o: capture/captureoptions.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o captureoptions.o capture/captureoptions.cpp
 
 qrc_resource.o: qrc_resource.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resource.o qrc_resource.cpp

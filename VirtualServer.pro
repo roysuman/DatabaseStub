@@ -18,10 +18,11 @@ INCLUDEPATH += ./gui/forms
 INCLUDEPATH += ./gui/core/form
 INCLUDEPATH += ./gui/core/viewmodel
 INCLUDEPATH += ./gui/core/controls
+INCLUDEPATH +=./capture
 
 include(VirtualServer.pri)
 
-
+LIBS += -lpcap 
 QMAKE_CXXFLAGS += -std=c++11
 
 

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OpenDumpFileDialog</class>
+ <widget class="QDialog" name="OpenDumpFileDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>551</width>
+    <height>535</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DIALOG_OPEN_TORRENT</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../Resources/resource.qrc">
+    <normaloff>:/icons/app.ico</normaloff>:/icons/app.ico</iconset>
+  </property>
+  <property name="statusTip">
+   <string/>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="titleBar" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="tbMenu">
+        <property name="maximumSize">
+         <size>
+          <width>15</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../../Resources/resource.qrc">:/icons/app.ico</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="LTitle">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>8</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>OPEN_TCP_DUMP</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pbClose">
+        <property name="minimumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="centralWidget" native="true">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0" colspan="6">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>OPEN_TCP_DUMP</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QPushButton" name="browseButton">
+           <property name="text">
+            <string>Browse</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="pathEdit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="6">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>SCENARIO_INFO</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="3" column="0" colspan="3">
+          <widget class="QTreeView" name="dumpFilesTreeView">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="scenarioName">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="setNewScenarioCheckBox">
+             <property name="toolTip">
+              <string>START_SEQUENTIAL_TOOLTIP</string>
+             </property>
+             <property name="text">
+              <string>NEW_SCENARIO</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="setDuplicateQueryCheckBox">
+             <property name="toolTip">
+              <string>START_SEEDING_TOOLTIP</string>
+             </property>
+             <property name="text">
+              <string>ALLOW_DUPLICATE_QUERY</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="setConsiderCheckBox">
+             <property name="toolTip">
+              <string>START_PAUSED_TOOLTIP</string>
+             </property>
+             <property name="text">
+              <string>CONSIDER_UNREGIS_PORT</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="setFutureUseCheckBox">
+             <property name="toolTip">
+              <string>START_WITH_SUPER_SEED</string>
+             </property>
+             <property name="text">
+              <string>FUTURE_USE</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="markAllButton">
+             <property name="text">
+              <string>MARK_ALL</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="unmarkAllButton">
+             <property name="text">
+              <string>UNMARK_ALL</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelScenarioTitile">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>SCENARIO_NAME</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>266</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="5">
+       <widget class="QPushButton" name="cancelButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>CANCEL</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="QPushButton" name="parseButton">
+        <property name="text">
+         <string>PARSE</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../Resources/resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>browseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>OpenDumpFileDialog</receiver>
+   <slot>BrowseButton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>OpenDumpFileDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>402</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pathEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>OpenDumpFileDialog</receiver>
+   <slot>OnPathChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>228</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>unmarkAllButton</sender>
+   <signal>clicked()</signal>
+   <receiver>OpenDumpFileDialog</receiver>
+   <slot>OnUncheckAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>356</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>markAllButton</sender>
+   <signal>clicked()</signal>
+   <receiver>OpenDumpFileDialog</receiver>
+   <slot>OnCheckAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>260</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>CancelButton()</slot>
+  <slot>BrowseButton()</slot>
+  <slot>AccepTorrent()</slot>
+  <slot>ChangeGroup()</slot>
+  <slot>DownloadMetadataCompleted()</slot>
+  <slot>OnPathChanged(QString)</slot>
+  <slot>OnCheckAll()</slot>
+  <slot>OnUncheckAll()</slot>
+ </slots>
+</ui>

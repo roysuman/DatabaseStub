@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/icons">
+    	<file alise="app.ico">app.ico</file>
+	<file alise="button_close.ico">button_close.ico</file>
+	<file alise="button_minimize.ico">button_minimize.ico</file>
+	<file alise="button_maximize.ico">button_maximize.ico</file>
+
+    </qresource>
+</RCC>

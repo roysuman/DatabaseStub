@@ -1,0 +1,72 @@
+﻿
+/*
+ * =====================================================================================
+ *
+ *       Filename:  a.cpp
+ *
+ *    Description:  
+ *
+ *        Version:  1.0
+ *        Created:  Saturday 16 January 2016 07:44:47  IST
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  SIGCONT (suman roy), email.suman.roy@gmail.com
+ *   Organization:  OPEN SOURCE
+ *
+ * =====================================================================================
+ */
+
+#ifndef QTSINGLEAPPLICATION_H
+#define QTSINGLEAPPLICATION_H
+
+#include <QApplication>
+
+class QtInstance: public QObject{
+	Q_OBJECT
+	public:
+		QtInstance( QObject *parent = nullptr );
+		bool is_active();
+		QString get_app_file() const{
+			return name;
+		}
+		virtual ~QtInstance();
+	private:
+		QString name;
+		QtLockedFile locked_file;
+};
+
+class SingTonApp : public QApplication
+{
+	Q_OBJECT
+
+public:
+	SingTonApp(int& argc, char** argv, bool GUIenabled = true);
+
+	bool is_running();
+	QString id() const;
+
+	void set_activation_window(QWidget* aw, bool activateOnMessage = true);
+	QWidget* activation_window() const;
+
+	// Obsolete:
+	void initialize(bool dummy = true)
+	{
+		isRunning();
+		Q_UNUSED(dummy)
+	}
+
+public Q_SLOTS:
+	void activate_window();
+
+
+Q_SIGNALS:
+
+
+private:
+	void init(void );
+	QtLocalPeer* peer;
+	QWidget* active_window;
+};
+
+#endif // QTSINGLEAPPLICATION_H

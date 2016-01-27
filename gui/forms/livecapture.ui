@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>liveCaptureDialog</class>
+ <widget class="QWidget" name="liveCaptureDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>787</width>
+    <height>339</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ADD_RSS_DWONLOAD_RULE_DIALOG</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../Resources/resource.qrc">
+    <normaloff>:/icons/app.ico</normaloff>:/icons/app.ico</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="m_windowLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="titleBar" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="tbMenu">
+        <property name="maximumSize">
+         <size>
+          <width>15</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../../Resources/resource.qrc">:/icons/app.ico</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="LTitle">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>8</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+          <stylestrategy>PreferDefault</stylestrategy>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>LIVE_CAPTURE</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pbClose">
+        <property name="minimumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="centralWidget" native="true">
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QSplitter" name="splitter">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <widget class="QWidget" name="m_ruleSettingsContainer" native="true">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>SCENARIO_NAME</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>INTERFACE</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="interfaceCombobx"/>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="setNewScenarioCheckBox">
+              <property name="text">
+               <string>NEW_SCENARIO</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="setConsiderCheckBox">
+              <property name="text">
+               <string>CONSIDER_UNR_PORT</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QCheckBox" name="setDuplicateQueryCheckBox">
+              <property name="text">
+               <string>ALLOW_DUPLICATE</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="futureUseCheckBox">
+              <property name="text">
+               <string>FUTURE_USE</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="scenarioName"/>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_markAllBtn">
+              <property name="text">
+               <string>MARK_ALL</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_UnmarkAll">
+              <property name="text">
+               <string>UNMARK_ALL</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QGroupBox" name="m_pUseSavePathGroupBox">
+            <property name="title">
+             <string>SAVE_DUMP_IN_FILE</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="2">
+              <widget class="QPushButton" name="browseButton">
+               <property name="text">
+                <string>BROWSE</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="savePathEdit"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>SAVE_PATH</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="widget_2" native="true">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="0">
+           <widget class="QListWidget" name="interfaceListWidget"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>AVAILABLE_INTERFACE</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="widget" native="true">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="0">
+           <widget class="QListWidget" name="protocolsListWidget"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>REGISTERED_PROTOCOLS</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_StartSniffing">
+          <property name="text">
+           <string>START_SNIFFING</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_Cancel">
+          <property name="text">
+           <string>CANCEL</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>scenarioName</tabstop>
+  <tabstop>interfaceCombobx</tabstop>
+  <tabstop>m_pUseSavePathGroupBox</tabstop>
+  <tabstop>savePathEdit</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>interfaceListWidget</tabstop>
+  <tabstop>pbClose</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../Resources/resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>scenarioName</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>onChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>181</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interfaceCombobx</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>onChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_pUseSavePathGroupBox</sender>
+   <signal>clicked()</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>onChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>166</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>savePathEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>onChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interfaceCombobx</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>onUpdateRuleTypeHint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>211</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>onBrowseStaticPath()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>219</x>
+     <y>208</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pb_Cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>liveCaptureDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>733</x>
+     <y>304</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>169</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onApplyRule()</slot>
+  <slot>onCancel()</slot>
+  <slot>onChange()</slot>
+  <slot>onUpdateRuleTypeHint()</slot>
+  <slot>onBrowseStaticPath()</slot>
+ </slots>
+</ui>

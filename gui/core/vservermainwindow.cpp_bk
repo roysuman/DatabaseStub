@@ -1,0 +1,937 @@
+﻿/*
+ * =====================================================================================
+ *
+ *       Filename:  a.cpp
+ *
+ *    Description:  
+ *
+ *        Version:  1.0
+ *        Created:  Saturday 16 January 2016 09:06:20  IST
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  SIGCONT (suman roy), email.suman.roy@gmail.com
+ *   Organization:  OPEN SOURCE
+ *
+ * =====================================================================================
+ */
+#include <stddef.h>
+#include <QAbstractItemView>
+#include <QClipboard>
+#include <QComboBox>
+#include <QDebug>
+#include <QDesktopServices>
+#include <QTreeWidgetItem>
+#include <libtorrent/peer_info.hpp>
+#include <FileSystemTorrentWatcher.h>
+#include <PeerTableModel.h>
+#include <viewModel/itemDelegate/IpItemDelegate.h>
+#include <FaviconDownloader.h>
+#include <AddRssDwonloadRuleDialog.h>
+#include <PowerManagement.h>
+#include <gui/ImportWizard/ImportWizard.h>
+#include <RaitingDialog.h>
+#include <viewModel/itemDelegate/TimeItemDelegate.h>
+
+Q_DECLARE_METATYPE(QList<int>)
+
+VServerMainWindow::VServerMainWindow(QWidget* parent)
+	: BaseWindow(FullTitle, AllowResize, parent)
+	  , mw_init_finished(false)
+{
+
+	setWindowModality(Qt::NonModal);//QT method
+	setup_custome_window();
+	mw_update_timer = new QTimer(this);
+	mw_update_timer->setInterval(400);
+	setAcceptDrops(true);
+//	setup_status_bar();//done
+//	setup_toolbar(); //done
+//	setup_scenario_tree_widget();
+//	setup_connections();
+	setup_view_menu_state();
+	QTimer::singleShot(10000, this, SLOT(CheckForUpdates()));
+	setup_tabel_widgets();
+	mw_update_timer->start();
+	mw_init_finished = true;
+}
+
+
+void VServerMainWindow::CheckForUpdates() const
+{
+	m_pUpdateNotifier->fetch();
+}
+
+void VServerMainWindow::show_about()
+{
+	CustomMessageBox::about(this, tr("ABAUT_TITLE"), tr("ABAUT_TEXT").arg(Version::getVersionStr()));
+}
+
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  init_statusbar_icons
+ *  Description:  init the status bar icons..
+ *  		  TODO setup the icon
+ * =====================================================================================
+ */
+void VServerMainWindow::init_ststusbar_icons() const
+{
+	//TODO StyleENgine
+	up_label_count->setPixmap(mw_style_eng->getIcon("status_bar_up_count").pixmap(16, 16));
+	down_label_count->setPixmap(mw_style_eng->getIcon("status_bar_down_count").pixmap(16, 16));
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  setup_status_bar
+ *  Description:  create lebel for mainwindow status bar.
+ * =====================================================================================
+ */
+void VServerMainWindow::setup_status_bar()
+{
+	up_label_text = new QLabel( this);
+	up_label_text->setToolTip("STATUS_UP_COUNT");
+	up_label_text->setMinimumWidth( 140);
+
+	up_label_count = new QLabel( this );
+	up_label_count->setToolTip("STATUS_UP_COUNT");
+
+	down_label_text = QLabel( this );
+	down_label_text->setToolTip( "STATUS_DOWN_COUNT");
+	down_label_text->setMinimumWidth( 140 );
+
+	down_label_count = new QLabel( this );
+	down_label_count->setToolTip("STATUS_DOWN_COUNT");
+
+	vServerStatusBar->addPermanentWidget( up_label_text);
+	vServerStatusBar->addPermanentWidget( up_label_count);
+	vServerStatusBar->addPermanentWidget( down_label_text);
+	vServerStatusBar->addPermanentWidget( down_label_count);
+	init_ststusbar_icons();
+	return;
+}
+
+
+
+void VServerMainWindow::init_toolbar_icons() const
+{
+	ACTION_TOOlBAR_SHOW_INTERFACE->setIcon( mw_style_eng->getIcon("toolbar_show_interface"));
+	ACTION_TOOLBAR_START_SERVER->setIcon( mw_style_eng->getIcon("toolbar_start_server"));
+	ACTION_TOOLBAR_SETTINGS->setIcon( mw_style_eng->getIcon("toolbar_settings"));
+	/* 
+	 * ACTION FOR 
+	 * START LIVE CAPTURING
+	 * STOP live captur
+	 * save captured fiel`
+	 * */
+
+}
+
+
+void VServerMainWindow::set_skin(QString styleName) const
+{
+	mw_style_eng->setStyle(styleName);
+	m_pSettings->setValue("System", "Style", styleName);
+}
+
+
+
+
+
+
+
+void VServerMainWindow::setup_view_menu_state() const
+{
+	bool toolbarVisible = m_pSettings->valueBool("Window","toolbar_visible");
+	ACTION_MENUVIEW_TOGGLE_TOOLBAR_VISIBILITY->setChecked(toolbarVisible);
+	m_pToolBarsContainer->setVisible(toolbarVisible);
+	bool statusbarVisible = m_pSettings->valueBool("Window", "statusbar_visible");
+	ACTION_MENUVIEW_TOGGLE_STATUSBAR_VISIBILITY->setChecked(statusbarVisible);
+	mystatusBar->setVisible(statusbarVisible);
+	updateInfoPlaneVsibilityMenu();
+	updateGroupVisibilityMenu();
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  setup_toolbar
+ *  Description:  setup toolbar 
+ * =====================================================================================
+ */
+void VServerMainWindow::setup_toolbar()
+{
+	/* init the icons of ui toolbar */
+	init_toolbar_icons();
+	mw_search_category = new QComboBox(this);
+	QMap<SearchProvider::search_categories, QString> categories_search_str;
+	categories_search_str[SearchProvider::Ip] = "IP";
+	categories_search_str[SearchProvider::Port] = "PORT";
+	categories_search_str[SearchProvider::Protocol] = "PROTOCOL";
+	categories_search_str[SearchProvider::All] = "ALL_CATEGORY";
+
+	for (int loop = categories_search_str.size() - 1; loop >= 0; loop--){
+		mw_search_category->addItem(categories_search_str.values().at(i), categories_search_str.keys().at(i));
+	}
+
+	mw_search_category->setCurrentIndex(0);
+	mw_search_edit = new SearchLineEdit(this);
+	mw_search_edit->setContentsMargins(0, 0, 5, 0);
+	mw_search_edit->setMaximumWidth(150);
+	mw_search_edit->setPlaceholderText("Search");
+	connect( mw_search_edit,SIGNAL( returnPressed()), this, SLOT( perform_search()));
+		
+	QWidget *speacer = new QWidget();
+	spacer->setSizePolicy(QSizePolicy::Expanding , QSizePolicy::Preferred);
+	m_toolbar->addWidget(spacer);
+	m_toolbar->addWidget( mw_search_edit); 
+	update_tab_widgets();
+
+	
+	
+}
+
+
+
+
+
+void VServerMainWindow::setup_connections() const
+{
+	/* mainwindow second tree
+	connect(m_pTorrentListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	        m_pTorrentDisplayModel, SLOT(UpdateSelectedIndex(const QItemSelection&)));
+	connect(m_pTorrentListView, SIGNAL(customContextMenuRequested(const QPoint&)), m_pTorrentDisplayModel, SLOT(contextualMenu(const QPoint&)));
+	connect(m_pTorrentListView, SIGNAL(customContextMenuRequested(const QPoint&)), m_pRssDisplayModel, SLOT(contextualMenu(const QPoint&)));
+	connect(m_pTorrentListView, SIGNAL(customContextMenuRequested(const QPoint&)), m_pSearchDisplayModel, SLOT(contextualMenu(const QPoint&)));
+	connect(m_pTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+	        this, SLOT(IconActivated(QSystemTrayIcon::ActivationReason)));
+	connect(ACTION_MENUFILE_EXIT, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(m_pTorrentListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	        this, SLOT(update_tab_widgets()));
+	connect(m_pTorrentListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	        this, SLOT(UpdateLimits()));*/
+
+	connect(Query_TabWidget, SIGNAL(currentChanged(int)), this, SLOT(update_tab_widgets()));
+	/* on time interval update status bar and tabs */
+	connect(mw_update_timer, SIGNAL(timeout()), SLOT(update_statusbar()));
+	connect(mw_update_timer, SIGNAL(timeout()), SLOT(update_tab_widgets()));
+
+
+	/*  main window tab 4 */
+	connect(fileTableView, SIGNAL(customContextMenuRequested(const QPoint&)), m_pFileViewModel, SLOT(FileTabContextMenu(const QPoint&)));
+	/* main window 1st tree view */
+	connect(m_pGroupTreeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(ChnageTorrentFilter()));
+	connect(m_pTorrentListView, SIGNAL(doubleClicked(const QModelIndex&)), m_pTorrentDisplayModel, SLOT(OpenDirSelected()));
+	connect(m_pTorrentListView, SIGNAL(doubleClicked(const QModelIndex&)), m_pSearchDisplayModel, SLOT(downloadTorrent()));
+	connect(ACTION_SEARCHTOOLBAR_DOWNLOAD, SIGNAL(triggered()), m_pSearchDisplayModel, SLOT(downloadTorrent()));
+	connect(ACTION_MENUHELP_ABOUT_QT, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+	connect(qApp, SIGNAL(aboutToQuit()), SLOT(on_quit()));
+	//connect(m_pItemSorterView, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), SLOT(updateSorting(int, Qt::SortOrder)));
+	/* 
+	connect(horizontalSplitter, SIGNAL(splitterMoved(int, int)), SLOT(updateGroupVisibilityMenu()));
+	connect(verticalSplitter, SIGNAL(splitterMoved(int, int)), SLOT(updateInfoPlaneVsibilityMenu()));
+	connect(sortDirectionToggleButton, SIGNAL(toggled(bool)), SLOT(updateSortDirection()));
+	connect(sortByComboBox, SIGNAL(currentIndexChanged(int)), SLOT(updateSorting(int)));
+	PowerManagementPtr powerManagement = PowerManagement::getInstance();
+	connect(powerManagement.get(), SIGNAL(resetPowerState()), SLOT(onResetPowerMenu()));*/
+}
+
+void VServerMainWindow::update_statusbar() const
+{
+	//TODO update ststus bar for up and down count
+	//
+	/*
+	m_pTrayIcon->setToolTip(tr("CuteTorrent %1\nUpload: %2\nDownload: %3").arg(Version::getVersionStr(), m_pTorrentManager->GetSessionUploadSpeed(), m_pTorrentManager->GetSessionDownloadSpeed()));
+
+	if (this->isMinimized())
+	{
+		return;
+	}
+
+	upLabelText->setText(QString("%1(%2)").arg(m_pTorrentManager->GetSessionUploaded(), m_pTorrentManager->GetSessionUploadSpeed()));
+	downLabelText->setText(QString("%1(%2)").arg(m_pTorrentManager->GetSessionDownloaded(), m_pTorrentManager->GetSessionDownloadSpeed()));
+	dhtNodesLabel->setText(tr("DHT: %1 nodes").arg(m_pTorrentManager->GetSessionDHTstate()));*/
+}
+
+void VServerMainWindow::update_tab_widgets() const
+{
+	if (this->isMinimized())
+	{
+		return;
+	}
+
+	int tab_index = Query_TabWidget->currentIndex();
+
+	switch (tab_index)
+	{
+	case 0:
+		{
+			update_info_tab();
+			break;
+		}
+
+	case 1:
+		{
+			update_peertab();
+			break;
+		}
+
+	case 2:
+		{
+			UpadteTrackerTab();
+			break;
+		}
+
+	case 3:
+		{
+			update_file_tab();
+			break;
+		}
+
+	default:
+		break;
+	}
+}
+
+void VServerMainWindow::update_file_tab() const
+{
+	//update last tab
+	/* 
+	Torrent* tor = m_pTorrentDisplayModel->GetSelectedTorrent();
+
+	if (tor != NULL)
+	{
+		if (m_pFileViewModel->setDataSource(tor->GetInternalHandle()))
+		{
+			fileTableView->expandToDepth(0);
+		}
+	}
+	else
+	{
+		m_pFileViewModel->setDataSource(torrent_handle());
+	}
+	*/
+}
+
+static int cnt = 0;
+
+void VServerMainWindow::create_actions()
+{
+
+	action_minimize = new QAction(mw_style_eng->getIcon("app_min"), tr("ACTION_HIDE"), this);
+	action_minimize->setObjectName("ACTION_TRAY_MINIMIZE");
+	connect(action_minimize, SIGNAL(triggered()), this, SLOT(hide()));
+
+	action_maximize = new QAction(mw_style_eng->getIcon("app_max"), tr("ACTION_MAXIMIZE_FULLSCREEN"), this);
+	action_maximize->setObjectName("ACTION_TRAY_MAXIMIZE");
+	connect(action_maximize, SIGNAL(triggered()), this, SLOT(show_maximized()));
+
+
+	restoreActioc = new QAction(mw_style_eng->getIcon("app_reset"), tr("ACTION_MAXIMIZE"), this);
+	action_restore->setObjectName("ACTION_TRAY_RESTORE");
+	connect(action_restore, SIGNAL(triggered()), this, SLOT(show_normal()));
+	action_quit = new QAction(mw_style_eng->getIcon("app_close"), tr("ACTION_EXIT"), this);
+	action_quit->setObjectName("ACTION_TRAY_EXIT");
+	connect(action_quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+
+}
+
+
+void VServerMainWindow::raise_window()
+{
+	// This hack does not give the focus to the app but brings it to front so
+	// the user sees it.
+	// HACK END
+	show_normal();
+	set_window_state((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+	raise();
+	activate_window();
+}
+
+
+
+
+void VServerMainWindow::update_info_tab() const
+{
+	Torrent* tor = m_pTorrentDisplayModel->GetSelectedTorrent();
+
+	if (tor != NULL)
+	{
+		fillPieceDisplay(m_pPieceView->size());
+		downloadedBytesLabel->setText(tor->GetTotalDownloadedStr());
+		uploadedBytesLabel->setText(tor->GetTotalUploadedStr());
+		downloadSpeedLabel->setText(tor->GetDwonloadSpeedStr());
+		activetimeLabel->setText(tor->GetActiveTimeStr());
+		uploadSpeedLabel->setText(tor->GetUploadSpeedStr());
+		pathLabel->setText(tor->GetSavePath());
+		totalSizeLabel->setText(tor->GetTotalSizeStr());
+		seedCoutLabel->setText(tor->GetSeedString());
+		peerCoutLabel->setText(tor->GetPeerString());
+		infoHashLabel->setText(tor->GetInfoHash().toUpper());
+		QFontMetrics metrics(describtionLabel->font());
+		QString discribtion = tor->GetDiscribtion();
+		discribtion = metrics.elidedText(discribtion, Qt::ElideRight, describtionLabel->width());
+		int matchedIndex = m_httpLinkRegexp.indexIn(discribtion);
+
+		if (matchedIndex > -1)
+		{
+			while (matchedIndex > -1)
+			{
+				int matchedLength = m_httpLinkRegexp.matchedLength();
+				QString match = discribtion.mid(matchedIndex, matchedLength);
+				QString replacement = QString("<a href='%1' >%1</a>").arg(match);
+				discribtion = discribtion.replace(matchedIndex, matchedLength, replacement);
+				int offset = matchedIndex + replacement.length();
+				matchedIndex = m_httpLinkRegexp.indexIn(discribtion, offset);
+			}
+		}
+
+		std::vector<int> pieceAvalibility;
+		tor->GetPieceAvalibility(pieceAvalibility);
+
+		if (m_pieceAvalibilityWidget != NULL)
+		{
+			m_pieceAvalibilityWidget->setPiceAvailability(pieceAvalibility);
+		}
+
+		progressLabel->setText(QString("%1 %2").arg(QString::number(tor->GetProgress(), 'f', 2), "%"));
+		availibilityLabel->setText(QString::number(std::abs(tor->GetDistributedCopies()), 'f', 2));
+		describtionLabel->setText(discribtion);
+		timeleftLabel->setText(tor->GetRemainingTimeStr());
+	}
+	else
+	{
+		ClearPieceDisplay();
+		downloadedBytesLabel->setText("");
+		downloadSpeedLabel->setText("");
+		uploadedBytesLabel->setText("");
+		activetimeLabel->setText("");
+		timeleftLabel->setText("");
+		uploadSpeedLabel->setText("");
+		pathLabel->setText("");
+		totalSizeLabel->setText("");
+		seedCoutLabel->setText("");
+		peerCoutLabel->setText("");
+		describtionLabel->setText("");
+		progressLabel->setText("");
+		availibilityLabel->setText("");
+		infoHashLabel->setText("");
+	}
+}
+
+void VServerMainWindow::update_peertab() const
+{
+	Torrent* tor = m_pTorrentDisplayModel->GetSelectedTorrent();
+
+	if (m_pPeerTableModel != NULL)
+	{
+		if (tor != NULL)
+		{
+			std::vector<peer_info> peerInfos = tor->GetPeerInfo();
+			m_pPeerTableModel->UpdateData(peerInfos);
+			//peerTableView->update();
+		}
+		else
+		{
+			m_pPeerTableModel->Clear();
+		}
+	}
+}
+
+void VServerMainWindow::UpadteTrackerTab() const
+{
+	Torrent* tor = m_pTorrentDisplayModel->GetSelectedTorrent();
+
+	if (tor != NULL)
+	{
+		std::vector<announce_entry> trackers = tor->GetTrackerInfo();
+		QTableWidgetItem* dhtItem = new QTableWidgetItem("DHT");
+		dhtItem->setData(Qt::ForegroundRole, QColor("grey"));
+		QTableWidgetItem* pexItem = new QTableWidgetItem("PEx");
+		pexItem->setData(Qt::ForegroundRole, QColor("grey"));
+		QTableWidgetItem* lsdItem = new QTableWidgetItem("LSD");
+		lsdItem->setData(Qt::ForegroundRole, QColor("grey"));
+		trackerTableWidget->setRowCount(trackers.size() + 3);
+		trackerTableWidget->setItem(0, 0, dhtItem);
+		trackerTableWidget->setItem(1, 0, pexItem);
+		trackerTableWidget->setItem(2, 0, lsdItem);
+		std::vector<peer_info> peerInfos = tor->GetPeerInfo();
+		int nb_dht = 0, nb_pex = 0, nb_lsd = 0;
+
+		for (int i = 0; i < peerInfos.size(); i++)
+		{
+			if (peerInfos[i].source & peer_info::dht)
+			{
+				nb_dht++;
+			}
+
+			if (peerInfos[i].source & peer_info::pex)
+			{
+				nb_pex++;
+			}
+
+			if (peerInfos[i].source & peer_info::lsd)
+			{
+				nb_lsd++;
+			}
+		}
+
+		trackerTableWidget->setItem(0, 3, new QTableWidgetItem((nb_dht > 0 ? QString::number(nb_dht) : "")));
+		trackerTableWidget->setItem(1, 3, new QTableWidgetItem((nb_pex > 0 ? QString::number(nb_pex) : "")));
+		trackerTableWidget->setItem(2, 3, new QTableWidgetItem((nb_lsd > 0 ? QString::number(nb_lsd) : "")));
+		FaviconDownloaderPtr pFaviconDownloader = FaviconDownloader::getInstance();
+
+		for (size_type i = 0; i < trackers.size(); i++)
+		{
+			QString url = QString::fromUtf8(trackers[i].url.c_str());
+			QIcon favIcon = pFaviconDownloader->getFavicon(url);
+			QTableWidgetItem* rootItem = new QTableWidgetItem(favIcon, url);
+			trackerTableWidget->setItem(i + 3, 0, rootItem);
+			QString stateStr;
+
+			if (trackers[i].last_error && trackers[i].last_error.value() != errors::tracker_failure)
+			{
+				stateStr = StaticHelpers::translateLibTorrentError(trackers[i].last_error);
+			}
+			else if (!trackers[i].message.empty())
+			{
+				stateStr = QString::fromUtf8(trackers[i].message.c_str());
+			}
+			else if (trackers[i].updating)
+			{
+				stateStr = tr("TRACKER_UPDATING");
+			}
+			else
+			{
+				stateStr = "Ok";
+			}
+
+			trackerTableWidget->setItem(i + 3, 1, new QTableWidgetItem(stateStr));
+			trackerTableWidget->setItem(i + 3, 2, new QTableWidgetItem(StaticHelpers::toTimeString(trackers[i].next_announce_in())));
+			int peer_cnt = tor->GetPeerCountForTracker(QString::fromStdString(trackers[i].url));
+			trackerTableWidget->setItem(i + 3, 3, new QTableWidgetItem((peer_cnt > 0 ? QString::number(peer_cnt) : "")));
+		}
+	}
+	else
+	{
+		trackerTableWidget->setRowCount(0);
+	}
+}
+
+/* TODO open setting tab */
+
+
+
+void VServerMainWindow::open_settings_dialog()
+{
+	boost::shared_ptr<SettingsDialog> dlg(new SettingsDialog(this));
+	connect(dlg.get(), SIGNAL(needRetranslate()), this, SLOT(Retranslate()));
+	dlg->exec();
+	m_pGroupTreeView->expandToDepth(0);
+	setup_key_mappings();
+	update_tab_widgets();
+}
+
+
+
+
+void VServerMainWindow::set_window_state()
+{
+	mw_update_timer->stop();
+	m_pSettings->setValue("Window", "geometry", geometry());
+	m_pSettings->setValue("Window", "preMaximizeGeometry", preMaximizeGeomentry);
+	m_pSettings->setValue("Window", "maximized", isMaximized());
+	m_pSettings->setValue("Window", "selected_tab", Query_TabWidget->currentIndex());
+	m_pSettings->setValue("Window", "horizontal_sizes", QVariant::fromValue(horizontalSplitter->sizes()));
+	m_pSettings->setValue("Window", "vertical_sizes", QVariant::fromValue(verticalSplitter->sizes()));
+	saveHeaderState("peers", m_pPeersHeader);
+	saveHeaderState("files", m_pFilesHeader);
+	saveHeaderState("trackers", m_pTrackersHeader);
+}
+
+VServerMainWindow::~VServerMainWindow()
+{
+	m_pTrayIcon->hide();
+	Scheduller::freeInstance();
+}
+
+void VServerMainWindow::setup_skn_chose_menu()
+{
+	m_pSkinSignalMapper = new QSignalMapper(this);
+	QList<StyleInfo> styleInfos = mw_style_eng->getAvaliableStyles();
+	m_pSkinActionGroup = new QActionGroup(this);
+	StyleInfo currentStyle = mw_style_eng->getCuurentStyle();
+	m_pSkinActionGroup->setExclusive(true);
+	for (int i = 0; i < styleInfos.size(); i++)
+	{
+		StyleInfo styleInfo = styleInfos[i];
+		QAction* action = skinSubMenu->addAction(styleInfo.DisplayName, m_pSkinSignalMapper, SLOT(map()));
+		action->setCheckable(true);
+		action->setChecked(styleInfo.InternalName == currentStyle.InternalName);
+		m_pSkinActionGroup->addAction(action);
+		m_pSkinSignalMapper->setMapping(action, styleInfo.InternalName);
+	}
+	connect(m_pSkinSignalMapper, SIGNAL(mapped(QString)), SLOT(set_skin(QString)));
+}
+
+
+/* perform search  */
+void VServerMainWindow::perform_search() const
+{
+	QString searchText = mw_search_edit->text().trimmed();
+
+	if (!searchText.isEmpty())
+	{
+		ISerachProvider::SearchCategories category = static_cast<ISerachProvider::SearchCategories>(mw_search_category->itemData(mw_search_category->currentIndex()).toInt());
+		mw_search_engine->DoSerach(searchText, category, 1);
+		QModelIndex searchItemIndex = m_pFiltersViewModel->index(3, 0, QModelIndex());
+		m_pGroupTreeView->selectionModel()->setCurrentIndex(searchItemIndex, QItemSelectionModel::Current);
+	}
+}
+
+
+/* TODO upCount  updte */
+void VServerMainWindow::UpdateUL(int kbps) const
+{
+	Torrent* tor = m_pTorrentDisplayModel->GetSelectedTorrent();
+
+	if (tor != NULL)
+	{
+		tor->SetUlLimit(kbps * KbInt);
+	}
+	else
+	{
+		m_pSettings->setValue("Torrent", "upload_rate_limit", kbps * KbInt);
+		m_pTorrentManager->SetUlLimit(kbps * KbInt);
+	}
+}
+
+/* TODO downCount  updte */
+void VServerMainWindow::UpdateDL(int kbps) const
+{
+	Torrent* tor = m_pTorrentDisplayModel->GetSelectedTorrent();
+
+	if (tor != NULL)
+	{
+		tor->SetDlLimit(kbps * KbInt);
+	}
+	else
+	{
+		m_pSettings->setValue("Torrent", "download_rate_limit", kbps * KbInt);
+		m_pTorrentManager->SetDlLimit(kbps * KbInt);
+	}
+}
+
+
+void VServerMainWindow::setup_scenario_tree_widget() const{
+	//TODO set MysQl model view for scenario
+	/* 	m_pGroupTreeView->setModel(m_pFiltersViewModel);
+	m_pGroupTreeView->resizeColumnToContents(0);
+	m_pGroupTreeView->expandToDepth(0);*/
+}
+
+/* init main menu icons  */
+void VServerMainWindow::init_main_menu_icons() const
+{
+	ACTION_MENUHELP_ABAUT_CT->setIcon(mw_style_eng->getIcon("about"));
+	ACTION_MENUHELP_CHECK_UPDATE->setIcon(mw_style_eng->getIcon("check_update"));
+	ACTION_MENUFILE_CREATE->setIcon(mw_style_eng->getIcon("create_torrent"));
+	ACTION_MENUFILE_EXIT->setIcon(mw_style_eng->getIcon("menu_exit"));
+	ACTION_MENUFILE_OPEN_MAGNET->setIcon(mw_style_eng->getIcon("magnet"));
+	ACTION_MENUFILE_OPEN_TORRENT->setIcon(mw_style_eng->getIcon("add_torrent"));
+	ACTION_MENU_SETTINGS->setIcon(mw_style_eng->getIcon("menu_settings"));
+	ACTION_TOOLS_BACKUP->setIcon(mw_style_eng->getIcon("menu_backup"));
+	ACTION_TOOLS_IMPORT->setIcon(mw_style_eng->getIcon("import"));
+	ACTION_MENUHELP_ABOUT_QT->setIcon(mw_style_eng->getIcon("qt"));
+	ACTION_MENUHELP_REPORT_PROBLEM->setIcon(mw_style_eng->getIcon("report"));
+	ACTION_MENUHELP_RATE->setIcon(mw_style_eng->getIcon("star"));
+	autoShutdownMenu->setIcon(mw_style_eng->getIcon("power"));
+}
+
+/* init window icons */
+void VServerMainWindow::init_window_icons()
+{
+	BaseWindow::setupWindowIcons();
+	m_pFiltersViewModel->UpdateIcons();
+	init_toolbar_icons();
+	init_ststusbar_icons();
+	init_main_menu_icons();
+}
+
+
+/* setup custom window... understand */
+void VServerMainWindow::setup_custome_window()
+{
+	setupUi(this);
+	BaseWindow::setup_custom_window();
+	/* SUMAN understand the following  */
+/* 
+	QRect geo = m_pSettings->value("Window", "geometry", QRect(0, 0, 683, 643)).toRect();
+
+	if (m_pSettings->value("Window", "maximized", false).toBool())
+	{
+		m_bIsMaximized = true;
+		pbMax->setIcon(mw_style_eng->getIcon("app_reset"));
+	}
+
+	preMaximizeGeomentry = m_pSettings->value("Window", "preMaximizeGeometry", QRect(0, 0, 683, 643)).toRect();
+
+	if (geo.height() > 0 && geo.x() < QApplication::desktop()->width() && geo.width() > 0 && geo.y() < QApplication::desktop()->height())
+	{
+		setGeometry(geo);
+	}
+
+	int selectedTab = m_pSettings->valueInt("Window", "selected_tab", 0);
+
+	if (selectedTab >= 0 && selectedTab < Query_TabWidget->count())
+	{
+		Query_TabWidget->setCurrentIndex(selectedTab);
+	}
+
+	QList<int> horizontal_sizes = m_pSettings->value("Window", "horizontal_sizes", qVariantFromValue(QList<int>() << 130 << 538)).value<QList<int>>();
+
+	if (horizontal_sizes.size() > 0)
+	{
+		horizontalSplitter->setSizes(horizontal_sizes);
+	}
+
+	QList<int> vertical_sizes = m_pSettings->value("Window", "vertical_sizes", qVariantFromValue(QList<int>() << 530 << 195)).value<QList<int>>();
+
+	if (vertical_sizes.size() > 0)
+	{
+		verticalSplitter->setSizes(vertical_sizes);
+	}
+
+	QList<QWidget*> children = findChildren<QWidget*>();
+
+	for (int i = 0; i < children.size(); i++)
+	{
+		QWidget* child = children[i];
+		child->installEventFilter(this);
+	}
+	*/
+}
+
+
+/* create shortcut */
+void VServerMainWindow::setup_key_mappings() const
+{
+	QList<QAction*> actions = this->findChildren<QAction*>();
+	QMap<QString, QVariant> keyMap = m_pSettings->getGroupValues("KeyMap");
+
+	foreach(QAction* action, actions)
+		{
+			QString objName = action->objectName();
+
+			if (!objName.isEmpty() && objName.startsWith("ACTION_") && !keyMap.contains(objName))
+			{
+				keyMap.insert(action->objectName(), action->shortcut().toString());
+			}
+			else
+			{
+				if (objName.startsWith("ACTION_") && keyMap.contains(objName))
+				{
+					action->setShortcut(QKeySequence(keyMap[objName].toString()));
+				}
+			}
+		}
+
+	m_pSettings->setGroupValues("KeyMap", keyMap);
+	//qDebug() << keyMap;
+}
+
+
+void VServerMainWindow::resize_window(QMouseEvent* e)
+{
+	BaseWindow::resize_window(e);
+	m_pPieceView->update();
+}
+
+QPushButton* VServerMainWindow::get_min_btn()
+{
+	return pbMin;
+}
+
+QPushButton* VServerMainWindow::get_max_btn()
+{
+	return pbMax;
+}
+
+QPushButton* VServerMainWindow::get_close_btn()
+{
+	return pbClose;
+}
+
+QWidget* VServerMainWindow::get_title_bar()
+{
+	return titleBar;
+}
+
+QWidget* VServerMainWindow::get_central_widget()
+{
+	return m_get_central_widget;
+}
+
+QLabel* VServerMainWindow::get_title_label()
+{
+	return LTitle;
+}
+
+QLabel* VServerMainWindow::get_title_icon()
+{
+	return tbMenu;
+}
+
+
+
+
+void VServerMainWindow::maximize_btn_clicked()
+{
+	BaseWindow::maximize_btn_clicked();
+}
+
+void VServerMainWindow::minimize_btn_clicked()
+{
+	BaseWindow::minimize_btn_clicked();
+}
+
+bool VServerMainWindow::event_filter(QObject* obj, QEvent* event)
+{
+	switch (event->type())
+	{
+		case QEvent::MouseButtonDblClick:
+		{
+			mouseMoveEvent((static_cast<QMouseEvent*>(event)));
+			break;
+		}
+
+		case QEvent::MouseButtonRelease:
+		{
+			mouseMoveEvent((static_cast<QMouseEvent*>(event)));
+			break;
+		}
+
+		case QEvent::MouseButtonPress:
+		{
+			mouseMoveEvent((static_cast<QMouseEvent*>(event)));
+			break;
+		}
+
+		case QEvent::MouseMove:
+		{
+			mouseMoveEvent((static_cast<QMouseEvent*>(event)));
+			break;
+		}
+
+		case QEvent::Resize:
+		{
+			resizeEvent(static_cast<QResizeEvent*>(event));
+			break;
+		}
+	}
+
+	return QObject::eventFilter(obj, event);
+}
+
+/* methods on quit */
+void VServerMainWindow::on_quit()
+{
+	if (m_pOnlineReporter != NULL)
+	{
+		m_pOnlineReporter->stop();
+	}
+
+
+	if (m_pTorrentManager != NULL)
+	{
+		m_pTorrentManager->SaveSession();
+	}
+	m_pTorrentGroupsManager->SaveGroups();
+	RssManagerPtr pRssManager = RssManager::getInstance();
+	pRssManager->SaveFeeds();
+	pRssManager->SaveDownloadRules();
+	set_window_state();
+	m_pSettings->WriteSettings();
+}
+
+void VServerMainWindow::toggle_info_tab_visibility(bool visibility) const
+{
+	qDebug() << "toggle_info_tab_visibility" << visibility;
+	int index = verticalSplitter->indexOf(m_pInfoPlaneContainer);
+	if (index > -1)
+	{
+		if (visibility)
+		{
+			QList<int> sizes = m_pSettings->value("Window", "precollapsed_vertical_sizes", m_pSettings->value("Window", "vertical_sizes")).value<QList<int>>();
+			qDebug() << "precollapsed_vertical_sizes" << sizes;
+			verticalSplitter->setSizes(sizes);
+		}
+		else
+		{
+			int itemsCount = verticalSplitter->count();
+			QList<int> sizes = QList<int>::fromVector(QVector<int>(itemsCount, 1));
+			m_pSettings->setValue("Window", "precollapsed_vertical_sizes", QVariant::fromValue(verticalSplitter->sizes()));
+			sizes[index] = 0;
+			verticalSplitter->setSizes(sizes);
+		}
+	
+	}
+}
+
+void VServerMainWindow::toggle_tool_bar_visibility(bool b)
+{
+	m_pToolBarsContainer->setVisible(b);
+	m_pSettings->setValue("Window", "toolbar_visible", b);
+}
+
+void VServerMainWindow::toggle_status_bar_visibility(bool b) const
+{
+	mystatusBar->setVisible(b);
+	m_pSettings->setValue("Window", "statusbar_visible", b);
+}
+
+void VServerMainWindow::toggle_groups_visibility(bool visibility) const
+{
+	qDebug() << "toggle_groups_visibility" << visibility;
+	int index = horizontalSplitter->indexOf(m_pGroupTreeView);
+	if (index > -1)
+	{
+		if (visibility)
+		{
+			QList<int> sizes = m_pSettings->value("Window", "precollapsed_horizontal_sizes", m_pSettings->value("Window", "horizontal_sizes")).value<QList<int>>();
+			qDebug() << "precollapsed_horizontal_sizes" << sizes;
+			horizontalSplitter->setSizes(sizes);
+		}
+		else
+		{
+			int itemsCount = horizontalSplitter->count();
+			QList<int> sizes = QList<int>::fromVector(QVector<int>(itemsCount, 1));
+			m_pSettings->setValue("Window", "precollapsed_horizontal_sizes", QVariant::fromValue(horizontalSplitter->sizes()));
+			sizes[index] = 0;
+			horizontalSplitter->setSizes(sizes);
+		}
+
+	}
+}
+
+
+
+void VServerMainWindow::setup_mainwindow_menu( void){
+
+	/* setup action for MENU_FILE tab */
+	action ( ui->ACTION_MENUFILE_OPEN_DUMP ,signal(triggered()),open_dump_file());
+	action( ui->ACTION_MENUFILE_LIVE_CAPTURE , signal( triggered()),capture_live());
+	action( ui->ACTION_MENUFILE_EXIT, signal(triggered()),on_quit());
+
+	/* setup action for MENUVIEW */
+	action ( ui->ACTION_MENUVIEW_TOGGLE_TOOLBAR_VISIBILITY, 
+			signal(triggered()),toggle_toolbar_visibility());
+	action( ui->ACTION_MENUVIEW_TOGGLE_STATUSBAR_VISIBILITY, signal( triggered()),
+			toggle_scenario_visibility());
+	action(ui->ACTION_MENUVIEW_TOGGLE_STATUSBAR_VISIBILITY,
+			signal(triggered()),toggle_statusbar_visibility());
+
+
+}
+11111

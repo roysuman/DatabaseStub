@@ -1,0 +1,12 @@
+1. dumpcap.c: open_capture_device
+2. capture-pacp-util.c: open_capture_device->open_capture_device_local.
+3. capture-pcap-util-unix.c : open_capture_device_local->open_capture_device_pcap_open_live
+4. capture-pcap-util.c: open_capture_device_pcap_open_live ->pcap_open_live.
+
+
+
+
+3. capture_loop_start -> calling the 2 ( dumpcap.c:2980)3. capture_loop_start -> calling the 2 ( dumpcap.c:2980)3. capture_loop_start -> calling the 2 ( dumpcap.c:2980)
+2. pacp_read_handler is calling capture_loop_dispatch ( dumpcap.c:2957)
+1. dumpcap.c: capture_loop_dispatch: calling the daspatcher method to live capture and call the call-back.
+  1.1->pcap_dispatch->loopback.->capture_loop_queue_packet_cd // capture_loop_write_packet_cd.

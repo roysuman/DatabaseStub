@@ -1,0 +1,948 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CustomWindow</class>
+ <widget class="QWidget" name="CustomWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>663</width>
+    <height>681</height>
+   </rect>
+  </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>CuteTorrent</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="titleBar" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>23</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="tbMenu">
+        <property name="maximumSize">
+         <size>
+          <width>15</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../../Resources/resource.qrc">:/icons/app.ico</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="LTitle">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>VSERVER</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pbMin">
+        <property name="minimumSize">
+         <size>
+          <width>3</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pbMax">
+        <property name="minimumSize">
+         <size>
+          <width>3</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pbClose">
+        <property name="minimumSize">
+         <size>
+          <width>3</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="m_centralWidget" native="true">
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>6</number>
+      </property>
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="6" column="0">
+       <widget class="QStatusBar" name="vServerStatusBar">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>19</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <layout class="QGridLayout" name="main_grid_layout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item row="0" column="1">
+         <widget class="QSplitter" name="verticalSplitter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="mouseTracking">
+           <bool>true</bool>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="QSplitter" name="horizontalSplitter">
+           <property name="mouseTracking">
+            <bool>true</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <widget class="QTreeView" name="t_Tscenario_TreeView">
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
+            <property name="acceptDrops">
+             <bool>true</bool>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="verticalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="rootIsDecorated">
+             <bool>false</bool>
+            </property>
+            <property name="animated">
+             <bool>true</bool>
+            </property>
+            <property name="headerHidden">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QWidget" name="ItemListContainer" native="true">
+            <layout class="QVBoxLayout" name="torrentViewLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QWidget" name="SortersContainer" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <property name="spacing">
+                 <number>3</number>
+                </property>
+                <property name="leftMargin">
+                 <number>4</number>
+                </property>
+                <property name="topMargin">
+                 <number>4</number>
+                </property>
+                <property name="rightMargin">
+                 <number>4</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>4</number>
+                </property>
+                <item>
+                 <widget class="QWidget" name="TorentLimitsContainer" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <property name="spacing">
+                    <number>3</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="l_inPacket">
+                     <property name="text">
+                      <string>IN_PACKET</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="In_Packet_lineEdit"/>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="l_outPacket">
+                     <property name="text">
+                      <string>OUT_PACKET</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>6</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="Out_PacketlineEdit"/>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_15">
+                  <property name="text">
+                   <string>SORT_BY</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="sortByComboBox"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTreeView" name="t_data_TreeView"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QStackedWidget" name="m_pInfoPlaneContainer">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="VserverPage">
+            <layout class="QGridLayout" name="gridLayout_11">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QTabWidget" name="Query_TabWidget">
+               <property name="mouseTracking">
+                <bool>true</bool>
+               </property>
+               <property name="acceptDrops">
+                <bool>true</bool>
+               </property>
+               <property name="currentIndex">
+                <number>3</number>
+               </property>
+               <widget class="QWidget" name="infoTab">
+                <property name="mouseTracking">
+                 <bool>true</bool>
+                </property>
+                <attribute name="title">
+                 <string>TAB_INFO</string>
+                </attribute>
+                <layout class="QGridLayout" name="gridLayout_7"/>
+               </widget>
+               <widget class="QWidget" name="tab_3">
+                <property name="mouseTracking">
+                 <bool>true</bool>
+                </property>
+                <attribute name="title">
+                 <string>TAB_QUERY</string>
+                </attribute>
+                <layout class="QGridLayout" name="gridLayout_2">
+                 <item row="0" column="0">
+                  <widget class="QTableView" name="queryTableView">
+                   <property name="mouseTracking">
+                    <bool>true</bool>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="showGrid">
+                    <bool>false</bool>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>18</number>
+                   </attribute>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="tab_2">
+                <property name="mouseTracking">
+                 <bool>true</bool>
+                </property>
+                <attribute name="title">
+                 <string>TAB_TRACKERS</string>
+                </attribute>
+                <layout class="QGridLayout" name="gridLayout"/>
+               </widget>
+               <widget class="QWidget" name="tab_4">
+                <property name="mouseTracking">
+                 <bool>true</bool>
+                </property>
+                <attribute name="title">
+                 <string>TAB_FILES</string>
+                </attribute>
+                <layout class="QGridLayout" name="gridLayout_5">
+                 <item row="0" column="0">
+                  <widget class="QTreeView" name="fileTableView">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="mouseTracking">
+                    <bool>true</bool>
+                   </property>
+                   <property name="contextMenuPolicy">
+                    <enum>Qt::CustomContextMenu</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="animated">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="extra">
+            <layout class="QGridLayout" name="m_pRssInfoLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QMenuBar" name="mainMenuBar">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="defaultUp">
+         <bool>false</bool>
+        </property>
+        <property name="nativeMenuBar">
+         <bool>false</bool>
+        </property>
+        <widget class="QMenu" name="fileMenu">
+         <property name="title">
+          <string>MENU_FILE</string>
+         </property>
+         <addaction name="ACTION_MENUFILE_OPEN_DUMP"/>
+         <addaction name="ACTION_MENUFILE_LIVE_CAPTURE"/>
+         <addaction name="separator"/>
+         <addaction name="separator"/>
+         <addaction name="ACTION_MENUFILE_EXIT"/>
+        </widget>
+        <widget class="QMenu" name="settingsMenu">
+         <property name="title">
+          <string>MENU_SETTINGS</string>
+         </property>
+         <addaction name="ACTION_MENU_CONFIGURATION"/>
+        </widget>
+        <widget class="QMenu" name="menu_CuteTorrent">
+         <property name="title">
+          <string>MENU_HELP</string>
+         </property>
+         <addaction name="ACTION_MENUHELP_ABAUT_CT"/>
+         <addaction name="ACTION_MENUHELP_ABOUT_QT"/>
+         <addaction name="separator"/>
+         <addaction name="ACTION_MENUHELP_CHECK_UPDATE"/>
+         <addaction name="ACTION_MENUHELP_REPORT_PROBLEM"/>
+        </widget>
+        <widget class="QMenu" name="viewMenu">
+         <property name="title">
+          <string>MENU_VIEW</string>
+         </property>
+         <addaction name="ACTION_MENUVIEW_TOGGLE_TOOLBAR_VISIBILITY"/>
+         <addaction name="ACTION_MENUVIEW_TOGGLE_SCENARIO_INFO_VISIBILITY"/>
+         <addaction name="ACTION_MENUVIEW_TOGGLE_STATUSBAR_VISIBILITY"/>
+         <addaction name="separator"/>
+         <addaction name="separator"/>
+        </widget>
+        <addaction name="fileMenu"/>
+        <addaction name="viewMenu"/>
+        <addaction name="settingsMenu"/>
+        <addaction name="menu_CuteTorrent"/>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QStackedWidget" name="m_pToolBarsContainer">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QToolBar" name="m_toolbar">
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+         <addaction name="ACTION_TOOLBAR_SHOW_INTERFACE"/>
+         <addaction name="separator"/>
+         <addaction name="ACTION_TOOLBAR_START_SERVER"/>
+        </widget>
+        <widget class="QWidget" name="page"/>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+  <action name="ACTION_MENUFILE_OPEN_DUMP">
+   <property name="text">
+    <string>MENU_OPEN</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="ACTION_MENUFILE_LIVE_CAPTURE">
+   <property name="text">
+    <string>MENU_LIVE</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUFILE_EXIT">
+   <property name="text">
+    <string>MENU_EXIT</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+X</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
+  </action>
+  <action name="ACTION_MENU_CONFIGURATION">
+   <property name="text">
+    <string>MENU_CONFIGURATION</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
+  </action>
+  <action name="ACTION_MENUHELP_ABAUT_CT">
+   <property name="text">
+    <string>MENU_ABAUT</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="ACTION_MENUHELP_CHECK_UPDATE">
+   <property name="text">
+    <string>MENU_CHECK_UPDATES</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_SHOW_INTERFACE">
+   <property name="text">
+    <string>ACTION_TOOLBAR_SHOW_INTERFACE</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ACTION_TOOLBAR_SHOW_INTERFACE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_START_RECORDING">
+   <property name="text">
+    <string>ACTION_TOOLBAR_START_RECORDING</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_START_SERVER">
+   <property name="text">
+    <string>ACTION_TOOLBAR_START_RECORDING</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUHELP_ABOUT_QT">
+   <property name="text">
+    <string>MENU_ABOUT_QT</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUHELP_REPORT_PROBLEM">
+   <property name="text">
+    <string>MENU_REPORT_PROBLEM</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUVIEW_TOGGLE_TOOLBAR_VISIBILITY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>MENU_TOGGLE_TOOLBAR_VISIBILITY</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUVIEW_TOGGLE_SCENARIO_INFO_VISIBILITY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>ACTION_MENUVIEW_TOGGLE_SCENARIO_INFO_VISIBILITY</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUVIEW_TOGGLE_STATUSBAR_VISIBILITY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>MENU_TOGGLE_STATUSBAR_VISIBILITY</string>
+   </property>
+  </action>
+  <action name="ACTION_MENUVIEW_TOGGLE_GROUPS_VISIBILITY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>MENU_TOGGLE_GROUPS_VISIBILITY</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>t_Tscenario_TreeView</tabstop>
+  <tabstop>Query_TabWidget</tabstop>
+  <tabstop>queryTableView</tabstop>
+  <tabstop>fileTableView</tabstop>
+  <tabstop>pbMin</tabstop>
+  <tabstop>pbMax</tabstop>
+  <tabstop>pbClose</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../Resources/resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>ACTION_MENUFILE_OPEN_DUMP</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>open_tcp_dump_file()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENU_CONFIGURATION</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>open_configuration_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUHELP_CHECK_UPDATE</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>check_updates()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUHELP_ABAUT_CT</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>show_about()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUFILE_LIVE_CAPTURE</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>live_capture()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_TOOLBAR_SHOW_INTERFACE</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>show_interface_list()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>309</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_TOOLBAR_START_SERVER</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>show_start_server_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>309</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_TOOLBAR_START_RECORDING</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>live_capture()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>265</x>
+     <y>309</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUVIEW_TOGGLE_SCENARIO_INFO_VISIBILITY</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>toggle_scenario_tree_visibility(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUVIEW_TOGGLE_TOOLBAR_VISIBILITY</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>toggle_toolbar_visibility(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUVIEW_TOGGLE_STATUSBAR_VISIBILITY</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>toggle_statusbar_visibility(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ACTION_MENUHELP_REPORT_PROBLEM</sender>
+   <signal>triggered()</signal>
+   <receiver>CustomWindow</receiver>
+   <slot>show_report_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>340</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

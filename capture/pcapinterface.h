@@ -16,6 +16,21 @@
  *
  * =====================================================================================
  */
+
+/* 
+ *This program is free software: you can redistribute it and/or modify
+ *it under the terms of the GNU General Public License as published by
+ *the Free Software Foundation, either version 3 of the License, or
+ *(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
 #ifndef PCAP_INTERFACE_H
 #define PCAP_INTERFACE_H
 
@@ -27,9 +42,11 @@ extern "C"{
 #include <pcap.h>
 #include <iostream>
 #include<vector>
-
+#include<QDebug>
 #define ERROR_GET_INTERFACE_LIST 1
 #define MAX_MSG_LENGTH 65535
+#define READ_TIMEOUT 250
+#define ERRBUFF_SIZE 512
 /* there might by situation when we want to read packet
  * from all interfaces. */
 
@@ -51,7 +68,11 @@ typedef struct _interface_info interface_info;
 struct _interface_info{
 	char* name;
 	char* description;
-	bool loopbak;
+	bool loopback;
+	bool promiscious_mode;
+	bool active_snaplen;
+	int  snaplen;
+	int timeout;
 };
 
 
@@ -77,9 +98,13 @@ struct _loop_data{
 	size_t    byte_writen;
 
 };
-loop_data global_ld;
+extern loop_data global_ld;
 
-unsigned long start_time;
+extern unsigned long start_time;
+static std::vector<interface_info> global_available_interfaces;
+
+extern void
+init_global_interface_list( std::vector<interface_info>& int_info);
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  get_available_interface_list
@@ -87,7 +112,7 @@ unsigned long start_time;
  * =====================================================================================
  */
 extern std::vector<interface_info*>
-get_available_interface_list( int *error, char **error_description);
+get_available_interface_list( int *error, char *error_description);
 
 
 /* 

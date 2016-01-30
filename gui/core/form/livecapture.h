@@ -44,6 +44,8 @@ class LiveCapture: public BaseWindow<QDialog>, Ui::liveCaptureDialog{
 		QLabel*		get_title_label( void) override;
 		QLabel*		get_title_icon( void) override;
 		void 		setup_actions( void);
+		void            fetch_available_interface( void);
+		void set_style_sheet( void);
 	private slots:
 		void start_capture( void);
        // void on_pushButton_clicked();

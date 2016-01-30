@@ -15,16 +15,32 @@
  *
  * =====================================================================================
  */
+
+/* 
+ *This program is free software: you can redistribute it and/or modify
+ *it under the terms of the GNU General Public License as published by
+ *the Free Software Foundation, either version 3 of the License, or
+ *(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
 #include "captureoptions.h"
 //#include "pcapinterface.h"
 bool
 set_capture_options( capture_opts* cap_opts){
 	if ( cap_opts == NULL ) return false;
+	/* 
 	if ( cap_opts->device_name != NULL){
 		global_capture_opts.device_name = cap_opts->device_name;
 	}else{
 		global_capture_opts.device_name = NULL;
-	}
+	}*/
 	if ( cap_opts->file_name != NULL ){
 		global_capture_opts.file_name = cap_opts->file_name;
 	}else{
@@ -48,7 +64,7 @@ set_capture_options( capture_opts* cap_opts){
 
 void
 init_capture_options( capture_opts* cap_opts){
-	cap_opts->device_name = NULL;
+//	cap_opts->device_name = NULL;
 	cap_opts->save_file = false;
 	cap_opts->file_name = NULL;
 	cap_opts->ring_buffer = NULL;

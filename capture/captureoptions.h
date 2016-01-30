@@ -15,6 +15,21 @@
  *
  * =====================================================================================
  */
+
+
+/* 
+ *This program is free software: you can redistribute it and/or modify
+ *it under the terms of the GNU General Public License as published by
+ *the Free Software Foundation, either version 3 of the License, or
+ *(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #ifndef CAPTURE_OPTIONS
 #define CAPTURE_OPTIONS
 /* 
@@ -29,7 +44,8 @@ extern "C"{
 typedef struct _capture_opts capture_opts;
 
 struct _capture_opts{
-	char*                     device_name;//it must be an array to hold all user specified
+	//TODO indices of interfaces to capture
+//	char*                     device_name;//it must be an array to hold all user specified
 	 				     //interfaces...from which they want to read data
 	bool                      save_file;/* TRUE: SAVE packet in file */
 	char*			  file_name; /* if need to save */

@@ -3,24 +3,21 @@
  *
  *       Filename:  ringbuffer.h
  *
- *    Description:  ring buffer implementation
+ *       Description:  
  *
- *        Version:  1.0
- *        Created:  Friday 29 January 2016 12:14:29  IST
+ *       Version:  1.0
+ *       Created:  Friday 29 January 2016 12:14:29  IST
  *       Revision:  none
- *       Compiler:  g++4.7
+ *       Compiler:  gcc
  *
- *         Author:  SIGCONT (suman roy), email.suman.roy@gmail.com
- *   Organization:  OPEN SOURCE
- *
- * =====================================================================================
- */
-
-/* 
- *This program is free software: you can redistribute it and/or modify
- *it under the terms of the GNU General Public License as published by
- *the Free Software Foundation, either version 3 of the License, or
- *(at your option) any later version.
+ *       Author:  SIGCONT (suman roy), email.suman.roy@gmail.com
+ *       Organization:  OPEN SOURCE
+ *       LICENSE: GNU GPL
+ *  
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,7 +25,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * =====================================================================================
+ */
+
 #ifndef RINGBUFFER_H
 #define RINGBUFFER_H
 
@@ -44,7 +46,7 @@ class RingBuffer{
 		 * */
 		//TODO whu following method adding creating problem?
 
-//		void print_( void );
+	//	void print_( void );
 		/* 
 		 * initialize a ring buffer 
 		 * */

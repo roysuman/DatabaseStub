@@ -356,10 +356,10 @@ compiler_rcc_make_all: qrc_resource.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resource.cpp
 qrc_resource.cpp: Resources/resource.qrc \
+		Resources/button_minimize.ico \
 		Resources/button_maximize.ico \
 		Resources/app.ico \
-		Resources/button_close.ico \
-		Resources/button_minimize.ico
+		Resources/button_close.ico
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name resource Resources/resource.qrc -o qrc_resource.cpp
 
 compiler_moc_header_make_all: moc_vservermainwindow.cpp moc_qtsingletonapplication.cpp moc_openDump.cpp moc_livecapture.cpp moc_filetreemodel.cpp moc_messagebox.cpp

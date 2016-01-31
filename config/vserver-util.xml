@@ -1,6 +1,12 @@
 <!DOCTYPE UTILCONFIG>
-	<COMPONENT ID="SETUP_ENVIRONEMNT ">
-	<NAME ="RING_BUFFER" PATH="ring-buffer.xml"/>
-	</COMPONENT>
-</BOM>
+<CONFIG>
+	<SETUP_ENVIRONEMNT>
+	 <RING_BUFFER PATH="/home/suman/MY_PROJECT/git/DatabaseStub/config/ring-buffer.xml"/>
+	 </SETUP_ENVIRONEMNT>
+	 <TEST>
+	 <IAMTESTER NAME="TEST"/>
+	 <TEST>
+
+	
+</CONFIG>
 

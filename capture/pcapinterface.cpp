@@ -1,25 +1,23 @@
 /*
  * =====================================================================================
  *
- *       Filename:  pcapinterface.c
+ *       Filename:  pcapinterface.cpp
  *
- *    Description:  read heder file for definations
+ *       Description:  
  *
- *        Version:  1.0
- *        Created:  Wednesday 27 January 2016 03:19:51  IST
+ *       Version:  1.0
+ *       Created:  Wednesday 27 January 2016 03:19:51  IST
  *       Revision:  none
- *       Compiler:  g++4.7
+ *       Compiler:  gcc
  *
- *         Author:  Suman Roy (), suman.roy@cognizant.com
- *   Organization:  OPEN_SOURCE
+ *       Author:  SIGCONT (suman roy), email.suman.roy@gmail.com
+ *       Organization:  OPEN SOURCE
+ *       LICENSE: GNU GPL
  *
- * =====================================================================================
- */
-/* 
- *This program is free software: you can redistribute it and/or modify
- *it under the terms of the GNU General Public License as published by
- *the Free Software Foundation, either version 3 of the License, or
- *(at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,7 +25,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * =====================================================================================
+ */
+
+
 #include "pcapinterface.h"
 #include "captureoptions.h"
 #include <sys/time.h>

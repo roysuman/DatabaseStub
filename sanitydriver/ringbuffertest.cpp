@@ -40,8 +40,11 @@
 typedef struct _data data;
 struct _data{
 	int value;
+	char* packet;
+
 	void print(){
-		std::cout<<value;
+		std::cout<<value<<"packet "<<packet<<std::endl;
+
 	}
 };
 int main(){
@@ -58,8 +61,11 @@ int main(){
 	int data_ = 100;
 	for( size_t loop=0;loop<1;++loop){
 		sample.value = 100;
+		sample.packet = new char [ 100];
+		char name[]="suman";
+		memcpy( sample.packet ,&name,sizeof( name));
 		ins->get_write_reference(&d );
-		memcpy((d + sizeof(unsigned int)),(char *)&sample, sizeof(int));
+		memcpy((d + sizeof(unsigned int)),(char *)&sample, sizeof(sample));
 		ins->publish_data( &d,2);
 		std::cout<<"MASK"<<*(unsigned int*)d<<std::endl;
 		//std::cout<<"data"<<*(int*)&(d+sizeof(unsigned int))<<std::endl;

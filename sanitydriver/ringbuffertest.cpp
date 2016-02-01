@@ -54,12 +54,14 @@ int main(){
 	data sample{100};
 	size_t read_head = 0;
 	char *d;//= new char [100];
-	for( size_t loop=0;loop<10;++loop){
-		sample.value = loop;
+
+	int data_ = 100;
+	for( size_t loop=0;loop<1;++loop){
+		sample.value = 100;
 		ins->get_write_reference(&d );
-		memcpy((d + sizeof(unsigned int)),&sample, sizeof(data));
+		memcpy((d + sizeof(unsigned int)),(char *)&sample, sizeof(int));
 		ins->publish_data( &d,2);
-		std::cout<<"AMSK"<<*(unsigned int*)&d<<std::endl;
+		std::cout<<"MASK"<<*(unsigned int*)d<<std::endl;
 		//std::cout<<"data"<<*(int*)&(d+sizeof(unsigned int))<<std::endl;
 	}
 	for ( size_t loop=0;loop<1;++loop){

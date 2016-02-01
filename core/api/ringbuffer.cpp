@@ -153,8 +153,9 @@ RingBuffer::get_read_reference( char** ref,size_t *read_head_, unsigned int mask
 			std::cout<<*(unsigned int*)(buffer)<<std::endl;
 			std::cout<<"Inside while\n"<<std::endl;
 			if ( (*(unsigned int*)(buffer + offset ) == 0 )|| ( *(unsigned int*)(buffer + offset ) > mask )){std::cout<<"First check"<<std::endl; *read_head_ ++;}
-			else if ( *(unsigned int*)(buffer + offset ) == mask ){
-				*ref = buffer  + offset + sizeof ( unsigned int );
+			else if ( (*(unsigned int*)(buffer + offset ) & mask) ){
+				*ref = (char *)(buffer  + offset + sizeof ( unsigned int ));
+				std::cout<<"Read data [ "<<*(int*)(buffer+offset+sizeof( unsigned int))<<" ] "<<std::endl;
 				return_val = true;
 				*read_head_ ++;
 			}else return false;
@@ -196,7 +197,7 @@ RingBuffer::wait_and_get_read_reference( char** ref,size_t *read_head_, unsigned
 		offset *= element_size;
 		while ( !return_val && ( *read_head_ < write_head  ) ){
 			if ( (*(unsigned int*)(buffer + offset ) == 0 )|| ( *(unsigned int*)(buffer + offset ) > mask )) *read_head_ ++;
-			else if ( *(unsigned int*)(buffer + offset ) == mask ){
+			else if ( ( *(unsigned int*)(buffer + offset ) & mask) ){
 				*ref = buffer  + offset + sizeof ( unsigned int );
 				return_val = true;
 				*read_head_ ++;
@@ -226,8 +227,8 @@ RingBuffer::wait_and_get_read_reference( char** ref,size_t *read_head_, unsigned
  */
 void
 RingBuffer::publish_data( char** ref , unsigned int mask ){
-	*(unsigned int *)&(*ref) = mask;
-//	std::cout<<*((unsigned int*)(buffer));
+	*((unsigned int *)*ref) = mask;
+//	std::cout<<"WROTE MASK "<<*((int*)*(ref + sizeof (unsigned int)))<<std::endl;
 	write_head ++;
 
 }
@@ -242,7 +243,7 @@ RingBuffer::publish_data( char** ref , unsigned int mask ){
  */
 void
 RingBuffer::update_mask( char** ref, unsigned int mask ){
-	*(unsigned int* )&(*ref) =  mask ;
+	*((unsigned int*)*ref) =  mask ;
 	return;
 }
 

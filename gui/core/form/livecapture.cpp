@@ -34,7 +34,7 @@
 
 #include "livecapture.h"
 #include "./capture/pcapinterface.h"
-#include "./capture/captureoptions.h"
+
 
 LiveCapture::LiveCapture( QWidget* parent):BaseWindow( BaseWindow::only_close_btn , BaseWindow::resize_not_allowed, parent){
 	setupUi( this);
@@ -141,13 +141,22 @@ LiveCapture::set_style_sheet( void ){
 	
 
 }
+
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  fetch_available_interface
+ *  Description:  call the pcap api to provide interface list available in 
+ *  		  current system.
+ * =====================================================================================
+ */
 void
 LiveCapture::fetch_available_interface( void){
 	int error;
 	char str_err[ERRBUFF_SIZE];
 	/* read the interface list */
 	std::vector<interface_info*> interfaces =
-		get_available_interface_list( &error , str_err );
+		InterfaceHandler::get_available_interface_list( &error , str_err );
 	if ( error != 0 ){
 		//TODO show the error 
 	}

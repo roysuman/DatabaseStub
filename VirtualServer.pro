@@ -19,6 +19,7 @@ INCLUDEPATH += ./gui/core/form
 INCLUDEPATH += ./gui/core/viewmodel
 INCLUDEPATH += ./gui/core/controls
 INCLUDEPATH +=./capture
+INCLUDEPATH +=./core/api
 
 include(VirtualServer.pri)
 

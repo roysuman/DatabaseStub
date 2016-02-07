@@ -34,15 +34,13 @@
 #ifndef PCAP_INTERFACE_H
 #define PCAP_INTERFACE_H
 
-/* 
-#ifdef __cplusplus
-extern "C"{
-#endif
-*/
 #include <pcap.h>
 #include <iostream>
 #include<vector>
 #include<QDebug>
+#include <sys/types.h>
+
+#include "core/api/ringbuffer.h"
 #define ERROR_GET_INTERFACE_LIST 1
 #define MAX_MSG_LENGTH 65535
 #define READ_TIMEOUT 250
@@ -60,6 +58,26 @@ extern "C"{
  * create pointer of pcap_opts array..global..then fetch ine by one ..
  * but for now I am considering only one interface*/
 
+
+/* the following struct is setting--set by GUI */
+typedef struct _capture_opts capture_opts;
+
+struct _capture_opts{
+	//TODO indices of interfaces to capture
+	char*                     device_name;//it must be an array to hold all user specified
+	 				     //interfaces...from which they want to read data
+	bool                      save_file;/* TRUE: SAVE packet in file */
+	char*			  file_name; /* if need to save */
+	void*			  ring_buffer_handle;/* write packet */
+	//TODO BELOW FUTURE USE
+	bool			  stop_packet_set;/* TRUE: stop packet capture after certan packet captured */
+	size_t                    stop_packet_count;/* no of packet need to capture before closing*/
+	bool                      stop_byte_set; /* TRUE: stop sniffing after capturing a byte limit */
+	size_t			  stop_byte_count;/* byte limit */
+	bool			  stop_time_duration;/* TRUE: stop after a certain time duration */
+	size_t                    time_duration;/* time duration */
+	bool                      do_dissect; /* TRUE:dissect packet after capturing */
+};
 
 
 /* keep book-keeping info of all available 
@@ -80,11 +98,12 @@ struct _interface_info{
  * individual interface */
 typedef struct _pcap_options pcap_options;
 struct _pcap_options{
-	size_t    packet_received;
-	size_t    packet_dropped;
-	size_t    packet_flushed;
-	pcap_t*  pcap_h;
-	bool     error;
+	size_t          packet_received;
+	size_t          packet_dropped;
+	size_t          packet_flushed;
+	pcap_t*         pcap_h;
+	bool            error;
+	capture_opts*   cap_opts;
 //	int      interface_id;
 };
 
@@ -98,34 +117,43 @@ struct _loop_data{
 	size_t    byte_writen;
 
 };
-extern loop_data global_ld;
-
-extern unsigned long start_time;
-static std::vector<interface_info> global_available_interfaces;
-
-extern void
-init_global_interface_list( std::vector<interface_info>& int_info);
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  get_available_interface_list
- *  Description:  returns all available interface list...
- * =====================================================================================
- */
-extern std::vector<interface_info*>
-get_available_interface_list( int *error, char *error_description);
 
 
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  start_capture_loop
- *  Description:  start the capturing...is visible to outer world
- * =====================================================================================
- */
-extern bool
-start_capture_loop( struct pcap_stat* status);
-/* 
-#ifdef __cplusplus
-}
-#endif
-*/
+static std::vector<interface_info*> global_available_interfaces;
+
+class InterfaceHandler{
+	public:
+		InterfaceHandler( bool choice=false );
+		virtual ~InterfaceHandler( void ){};
+	private:
+
+		unsigned long start_time;
+
+		pcap_t* open_capture_device( interface_info * inter_info,
+				char(*errbuff)[ERRBUFF_SIZE]);
+		size_t do_capture( pcap_options *cap_options);
+		void setup_interface_list( void );
+		bool start_capture_loop( capture_opts* cap_options,
+				struct pcap_stat* status,
+				bool *status_known);
+	public:
+		static int error;
+		static char* error_description;
+		static loop_data global_ld;
+		static bool avail_interface_list;
+		static std::vector<interface_info*> interface_list;
+		static void  loop_write_ringbuffer( unsigned char* cap_options,
+				const struct pcap_pkthdr* pkhdr,
+				const unsigned char* data);
+		static std::vector<interface_info*>
+			get_available_interface_list( int *error_ , char* error_description_);
+
+
+		static interface_info*
+			get_new_interface( const char* interface_name,
+					const char* interface_description,
+					bool is_loopback=false);
+				 
+};
+
 #endif

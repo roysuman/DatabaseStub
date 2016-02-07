@@ -33,40 +33,82 @@
 
 
 #include "pcapinterface.h"
-#include "captureoptions.h"
 #include <sys/time.h>
 
-loop_data global_ld;
-unsigned long start_time = 0;
-void
-init_global_interface_list( std::vector<interface_info>& int_info ){
-	std::vector<interface_info>::iterator it;
-	for ( it = global_available_interfaces.begin() ; it != global_available_interfaces.end() ; ++it ){
-		if ( it->name != NULL)
-			free(it->name);
-		if ( it->description != NULL)
-			free( it->description);
-	}
-	global_available_interfaces.erase( global_available_interfaces.begin(), global_available_interfaces.end());
-	global_available_interfaces.resize(int_info.size());
+/* declearation of static members variable */
+int      InterfaceHandler::error = 0;
+char*    InterfaceHandler::error_description = NULL;
+bool     InterfaceHandler::avail_interface_list = false;
+std::vector<interface_info*> InterfaceHandler::interface_list;
 
-	int loop = 0;
+loop_data InterfaceHandler::global_ld;
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  InterfaceHandler
+ *  Description:  constructor of interface handler class.
+ *  		  get and inti all interface list during 
+ *  		  startup. If choice is true then init
+ *  		  system interface list. If a user wants to process 
+ *  		  already captured file then no need of 
+ *  		  interface list.
+ *  		  @return: does constructor returns anything?
+ * =====================================================================================
+ */
 
-	for ( it = int_info.begin(); it!= int_info.end(); ++it ){
-		global_available_interfaces[loop].name = strdup( it->name);
-		global_available_interfaces[loop].description = strdup( it->description);
-		global_available_interfaces[ loop ].loopback = it->loopback;
-		global_available_interfaces[ loop].promiscious_mode = false;
-		global_available_interfaces[loop].active_snaplen = true;
-		global_available_interfaces[loop].snaplen = 65536;
-		global_available_interfaces[ loop ].timeout =READ_TIMEOUT;
-
-	}
+InterfaceHandler::InterfaceHandler( bool choice ){
+	error = 0;
+	*error_description = NULL;
+	choice?(void)setup_interface_list():void(0);
 	return;
-
 }
 
 
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  setup_interface_list
+ *  Description:  get all interface list of the system
+ *                depending on the user's permission.
+ * =====================================================================================
+ */
+void
+InterfaceHandler::setup_interface_list( void ){
+	interface_info* inf_info;
+	char error_buffer[PCAP_ERRBUF_SIZE];
+	 pcap_if_t *alldevsp , *device;
+	 if ( pcap_findalldevs( &alldevsp , error_buffer ) == -1 ){
+		 qDebug()<<"Not able to fetch interface list";
+		 /* not able to read interface list from the system */
+		 InterfaceHandler::error = ERROR_GET_INTERFACE_LIST;
+		 if ( error_description != NULL ){
+			 /* not able to read interface list from the system */
+			 InterfaceHandler::error = ERROR_GET_INTERFACE_LIST;
+			 strncpy( InterfaceHandler::error_description,error_buffer,PCAP_ERRBUF_SIZE);
+		 }
+		 avail_interface_list = false;
+		 return;
+	 }else if ( alldevsp !=NULL){
+		 qDebug()<<" read interface list";
+		 /*success....got interface info of the system wunder credentials 
+		 now put each interface into the interface_list
+		 */
+		 for ( device = alldevsp ; device!= NULL ; device= device->next ){
+			 inf_info = InterfaceHandler::get_new_interface( device->name , 
+					 device->description, 
+					 (device->flags & PCAP_IF_LOOPBACK)?true:false);
+
+			 InterfaceHandler::interface_list.push_back(inf_info);
+			 
+		 }
+		 pcap_freealldevs( alldevsp);
+	 }else{ /* no interface found */
+		 *InterfaceHandler::error_description = NULL;
+		 InterfaceHandler::error = 0;
+	 }
+	 avail_interface_list = true; 
+	 return;
+
+}
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -80,9 +122,8 @@ init_global_interface_list( std::vector<interface_info>& int_info ){
  *  		@return a struct pointer of type interface_info .
   * =====================================================================================
  */
-static interface_info*
-get_new_interface( const char* interface_name , const char* interface_description,
-		bool is_loopback ){
+interface_info*
+InterfaceHandler::get_new_interface( const char* interface_name , const char* interface_description,bool is_loopback ){
 	interface_info *temp= new (std::nothrow) interface_info;
 	if ( temp == NULL ) return NULL;
 	if ( interface_name != NULL){
@@ -119,17 +160,27 @@ get_new_interface( const char* interface_name , const char* interface_descriptio
  * =====================================================================================
  */
 std::vector<interface_info*>
-get_available_interface_list( int *error, char*error_description){
-	std::vector<interface_info*> interface_list;
+InterfaceHandler::get_available_interface_list( int *error_, char*error_description_){
+//	std::vector<interface_info*> interface_list;
+
+	if (  InterfaceHandler::avail_interface_list ){
+		//interface_list = InterfaceHandler::interface_list_private;
+		*error_ = InterfaceHandler::error;
+		strncpy( error_description_ , InterfaceHandler::error_description,PCAP_ERRBUF_SIZE);
+		return interface_list; 
+
+	}
 	interface_info* inf_info;
 	char error_buffer[PCAP_ERRBUF_SIZE];
+
+
 	 pcap_if_t *alldevsp , *device;
 	 if ( pcap_findalldevs( &alldevsp , error_buffer ) == -1 ){
 		 qDebug()<<"Not able to fetch interface list";
 		 /* not able to read interface list from the system */
-		 *error = ERROR_GET_INTERFACE_LIST;
+		 *error_ = ERROR_GET_INTERFACE_LIST;
 		 if ( error_description != NULL ){
-			 strncpy( error_description,error_buffer,PCAP_ERRBUF_SIZE);
+			 strncpy( error_description_,error_buffer,PCAP_ERRBUF_SIZE);
 		 }
 	 }else if ( alldevsp !=NULL){
 		 qDebug()<<" read interface list";
@@ -137,19 +188,20 @@ get_available_interface_list( int *error, char*error_description){
 		 now put each interface into the interface_list
 		 */
 		 for ( device = alldevsp ; device!= NULL ; device= device->next ){
-			 inf_info = get_new_interface( device->name , 
+			 inf_info = InterfaceHandler::get_new_interface( device->name , 
 					 device->description, 
 					 (device->flags & PCAP_IF_LOOPBACK)?true:false);
 
-			 interface_list.push_back(inf_info);
+			 InterfaceHandler::interface_list.push_back(inf_info);
 			 
 		 }
 		 pcap_freealldevs( alldevsp);
 	 }else{ /* no interface found */
-		 *error_description = NULL;
-		 *error = 0;
+		 *error_description_ = NULL;
+		 *error_ = 0;
 	 }
-	 return interface_list;
+	 avail_interface_list = true;
+	 return InterfaceHandler::interface_list;
 }
 
 /* 
@@ -162,9 +214,10 @@ get_available_interface_list( int *error, char*error_description){
  *
  * =====================================================================================
  */
-static void
-loop_write_ringbuffer ( unsigned char* cap_options , const struct pcap_pkthdr * pkhdr, 
+void
+InterfaceHandler::loop_write_ringbuffer ( unsigned char* cap_options , const struct pcap_pkthdr * pkhdr, 
 		const unsigned char*data){
+	return;
 }
 
 
@@ -178,24 +231,24 @@ loop_write_ringbuffer ( unsigned char* cap_options , const struct pcap_pkthdr * 
  *  		  @Return: returns the number of captured packets.
  * =====================================================================================
  */
-static size_t
-do_capture( pcap_options *cap_options){
+size_t
+InterfaceHandler::do_capture( pcap_options *cap_options){
 	int inpcket;
 	int packet_count_before;
 
-	packet_count_before = global_ld.packet_count;
-	while( global_ld.is_alive){
+	packet_count_before = InterfaceHandler::global_ld.packet_count;
+	while( InterfaceHandler::global_ld.is_alive){
 		inpcket = pcap_dispatch( cap_options->pcap_h , -1 , 
-				loop_write_ringbuffer,(unsigned char*)cap_options);
+				InterfaceHandler::loop_write_ringbuffer,(unsigned char*)cap_options);
 		if ( inpcket < 0 ){
 			if ( inpcket == -1 ){
 				cap_options->error = true;
 			}
-			global_ld.is_alive = false;
+			InterfaceHandler::global_ld.is_alive = false;
 		}
 
 	}
-	return global_ld.packet_count - packet_count_before;
+	return InterfaceHandler::global_ld.packet_count - packet_count_before;
 }
 
 
@@ -206,8 +259,8 @@ do_capture( pcap_options *cap_options){
  * =====================================================================================
  */
 
-static pcap_t*
-open_capture_device( interface_info* inter_info, char (*errbuff)[ERRBUFF_SIZE]){
+pcap_t*
+InterfaceHandler::open_capture_device( interface_info* inter_info, char (*errbuff)[ERRBUFF_SIZE]){
 	pcap_t *pcap_header;
 
 	qDebug()<< "Going to call pcap_open_live using following parametrs value"
@@ -232,17 +285,22 @@ open_capture_device( interface_info* inter_info, char (*errbuff)[ERRBUFF_SIZE]){
  * =====================================================================================
  */
 
-bool
-start_capture_loop( capture_opts* cap_options,struct pcap_stat* status , bool *status_know){
+//bool
+//InterfaceHandler::start_capture_loop( capture_opts* cap_options,struct pcap_stat* status , bool *status_know, void* temp){
 	
+bool
+InterfaceHandler::start_capture_loop( capture_opts* cap_options , void* temp){
 	struct timeval  up_time, curr_time;
 	int err_close;
 	char error_msg[ ERRBUFF_SIZE];
+
+	InterfaceHandler* handle_interface = ( InterfaceHandler*)temp; 
+
 	pcap_options *pcap_opt;
 	//TODO loop for each interface
 	interface_info int_info;//TODO = get_interface_info( position );
 	pcap_opt = new pcap_options ;
-	pcap_opt->pcap_h = open_capture_device( &int_info , &error_msg);
+	pcap_opt->pcap_h = handle_interface->open_capture_device( &int_info , &error_msg);
 	if ( pcap_opt->pcap_h == NULL ){
 		/* error on opeing device for sniffing */
 		return false;
@@ -251,13 +309,14 @@ start_capture_loop( capture_opts* cap_options,struct pcap_stat* status , bool *s
 	pcap_opt->packet_dropped = 0;
 	pcap_opt->packet_flushed = 0;
 	pcap_opt->error = false;
+	pcap_opt->cap_opts = cap_options;
 
 
 	/* setup global loop options */
-	global_ld.is_alive = true;
-	global_ld.packet_count = 0;
-	global_ld.packet_max = ( cap_options->stop_packet_set? cap_options->stop_packet_count: 0 );
-	*status_know = false;
+	InterfaceHandler::global_ld.is_alive = true;
+	InterfaceHandler::global_ld.packet_count = 0;
+	InterfaceHandler::global_ld.packet_max = ( cap_options->stop_packet_set? cap_options->stop_packet_count: 0 );
+//	*status_know = false;
 	
 //	init_capture_stop_conditions();
 

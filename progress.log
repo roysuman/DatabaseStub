@@ -1,0 +1,10 @@
+Feb 2->
+TODO: (1)work on live capture gui form. set up all veriables and call live capture api with cap interface name.
+      (2)start live capture and write to ring buffer.
+      (3)For now only disector will read from the ring buffer( in future the option to write into file)
+      (4)disected packets have two options...
+          i. store into DB(depends on user flag)
+          ii. show in main-window tree view.
+                 	  
+
+

@@ -1,0 +1,22 @@
+This is my dream project. The main idea of this project is to virtualize network packets.
+
+.
+
+It's not clear enough?
+
+For example, suppose your application has a MySQL database. Now when ever you try to access your application it needs to have a database .
+Consider following conditions:
+ 1.  Suppose a tester want's to test your application but he does't have separate DB access.
+  2. Developer wants to change some code but he has no access to DB.
+   3. Application is dependent on some third party DB.
+
+   To reduce these dependencies I am developing this tool. 
+
+   How it works?
+
+   You need an existing environment, where application has full access to DB. Using pcap library capture network level packets, of all possible queries fetched by application. Now this packet's are getting used as a training data for this tool. 
+   Using these captured packet  tool TCP-STUB will be act as a original database.
+
+   TCP-STUB dissect network packets in a minimal format and store the dissected value into a sqlite3 database. It has an extra feature, using the training data the response of the query can be modified and even a new query can be added. 
+
+   I am writing a fresh copy of this project( see redesign repo), with proper architecture and clean code. I don't know whether this tool will be useful or not, but I am learning a lot through this project. Any interested contributor can contact me to understand the logic properly.

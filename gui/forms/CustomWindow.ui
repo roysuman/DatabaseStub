@@ -606,9 +606,14 @@
          <property name="acceptDrops">
           <bool>true</bool>
          </property>
+         <addaction name="ACTION_TOOLBAR_START_CAPTURE"/>
+         <addaction name="ACTION_TOOLBAR_PAUSE_CAPTURE"/>
+         <addaction name="separator"/>
          <addaction name="ACTION_TOOLBAR_SHOW_INTERFACE"/>
+         <addaction name="ACTION_TOOLBAR_SHOW_PROTOCOLS"/>
          <addaction name="separator"/>
          <addaction name="ACTION_TOOLBAR_START_SERVER"/>
+         <addaction name="ACTION_TOOLBAR_STOP_SERVER"/>
         </widget>
         <widget class="QWidget" name="page"/>
        </widget>
@@ -683,6 +688,38 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ACTION_TOOLBAR_SHOW_INTERFACE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_START_CAPTURE">
+   <property name="text">
+    <string>ACTION_TOOLBAR_START_CAPTURE</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ACTION_TOOLBAR_START_CAPTURE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_PAUSE_CAPTURE">
+   <property name="text">
+    <string>ACTION_TOOLBAR_PAUSE_CAPTURE</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ACTION_TOOLBAR_PAUSE_CAPTURE&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_SHOW_PROTOCOLS">
+   <property name="text">
+    <string>ACTION_TOOLBAR_SHOW_PROTOCOLS</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ACTION_TOOLBAR_SHOW_PROTOCOLS&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="ACTION_TOOLBAR_STOP_SERVER">
+   <property name="text">
+    <string>ACTION_TOOLBAR_STOP_SERVER</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ACTION_TOOLBAR_STOP_SERVER&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="ACTION_TOOLBAR_START_RECORDING">
@@ -865,7 +902,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>ACTION_TOOLBAR_START_RECORDING</sender>
+   <sender>ACTION_TOOLBAR_START_CAPTURE</sender>
    <signal>triggered()</signal>
    <receiver>CustomWindow</receiver>
    <slot>live_capture()</slot>

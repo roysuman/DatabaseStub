@@ -46,6 +46,7 @@
 #include "./gui/core/controls/messagebox.h"
 //#include "ui_liveCaptureDialog.h"
 #include "ui_livecapture.h"
+#include "capture/pcapinterface.h"
 
 class LiveCapture: public BaseWindow<QDialog>, Ui::liveCaptureDialog{
 	Q_OBJECT
@@ -64,6 +65,10 @@ class LiveCapture: public BaseWindow<QDialog>, Ui::liveCaptureDialog{
 		void set_style_sheet( void);
 	private slots:
 		void start_capture( void);
+    signals:
+		void start_processing( capture_opts* cap_options);
+
+
        // void on_pushButton_clicked();
 };
 

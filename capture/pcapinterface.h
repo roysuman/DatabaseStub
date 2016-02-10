@@ -64,7 +64,7 @@ typedef struct _capture_opts capture_opts;
 
 struct _capture_opts{
 	//TODO indices of interfaces to capture
-	char*                     device_name;//it must be an array to hold all user specified
+	std::string                     device_name;//it must be an array to hold all user specified
 	 				     //interfaces...from which they want to read data
 	bool                      save_file;/* TRUE: SAVE packet in file */
 	char*			  file_name; /* if need to save */
@@ -84,8 +84,8 @@ struct _capture_opts{
  * interfaces of current system */
 typedef struct _interface_info interface_info;
 struct _interface_info{
-	char* name;
-	char* description;
+	std::string name;
+	std::string description;
 	bool loopback;
 	bool promiscious_mode;
 	bool active_snaplen;
@@ -124,7 +124,7 @@ static std::vector<interface_info*> global_available_interfaces;
 class InterfaceHandler{
 	public:
 		InterfaceHandler( bool choice=false );
-		virtual ~InterfaceHandler( void ){};
+        virtual ~InterfaceHandler( void ){}
 	private:
 
 		unsigned long start_time;
@@ -133,9 +133,8 @@ class InterfaceHandler{
 				char(*errbuff)[ERRBUFF_SIZE]);
 		size_t do_capture( pcap_options *cap_options);
 		void setup_interface_list( void );
-		bool start_capture_loop( capture_opts* cap_options,
-				struct pcap_stat* status,
-				bool *status_known);
+		interface_info* get_interface_info( std::string name);
+
 	public:
 		static int error;
 		static char* error_description;
@@ -153,6 +152,9 @@ class InterfaceHandler{
 			get_new_interface( const char* interface_name,
 					const char* interface_description,
 					bool is_loopback=false);
+		bool start_capture_loop( capture_opts* cap_options,
+				char* error_msg_);
+		void stop_capture( void );
 				 
 };
 

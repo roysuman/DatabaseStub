@@ -37,6 +37,7 @@
 #include"core/vservermainwindow.h"
 #include <QDesktopWidget>
 #include "qtsingletonapplication.h"
+#include "core/xmlparser/parsermanager.h"
 
 void
 data_output( QtMsgType msg_type , const char * msg ){
@@ -61,8 +62,16 @@ data_output( QtMsgType msg_type , const char * msg ){
 	return;
 	
 }
-int main(int argc, char *argv[])
-{
+
+static bool
+parse_config( void ){
+	std::string path= "config/vserver-util.xml";
+	ParserManager ins(path);
+	return (  ins.parse_config() );
+}
+int 
+main(int argc, char *argv[]){
+
     SingTonApp app(argc, argv);
     /* get all arguments */
     QStringList arguments = SingTonApp::arguments();
@@ -94,6 +103,11 @@ int main(int argc, char *argv[])
 
     VServerMainWindow w;
     app.set_activation_window(&w);
+    if ( !parse_config() ){
+	    qDebug()<<"Parsing config file failed";
+	    return -1;
+    }
+
     if ( arguments_map["minimized"].toBool() ){
         w.showMinimized();
     }
@@ -105,6 +119,4 @@ int main(int argc, char *argv[])
 	    fclose( file_ptr );
     }
     return res;
-
-
 }

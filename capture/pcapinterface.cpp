@@ -56,8 +56,8 @@ loop_data InterfaceHandler::global_ld;
  */
 
 InterfaceHandler::InterfaceHandler( bool choice ){
-	error = 0;
-	*error_description = NULL;
+	InterfaceHandler::error = 0;
+//	*InterfaceHandler::error_description = NULL;
 	choice?(void)setup_interface_list():void(0);
 	return;
 }
@@ -127,14 +127,10 @@ InterfaceHandler::get_new_interface( const char* interface_name , const char* in
 	interface_info *temp= new (std::nothrow) interface_info;
 	if ( temp == NULL ) return NULL;
 	if ( interface_name != NULL){
-		temp->name = strdup ( interface_name);
-	}else{
-		temp->name = NULL;
+		temp->name = std::string ( interface_name);
 	}
 	if ( interface_description != NULL){
-		temp->description = strdup ( interface_description);
-	}else{
-		temp->description = NULL;
+		temp->description = std::string ( interface_description);
 	}
 	temp->loopback = is_loopback;
 	/* 
@@ -217,6 +213,7 @@ InterfaceHandler::get_available_interface_list( int *error_, char*error_descript
 void
 InterfaceHandler::loop_write_ringbuffer ( unsigned char* cap_options , const struct pcap_pkthdr * pkhdr, 
 		const unsigned char*data){
+	qDebug()<<"Write to ringbuffer";
 	return;
 }
 
@@ -238,6 +235,7 @@ InterfaceHandler::do_capture( pcap_options *cap_options){
 
 	packet_count_before = InterfaceHandler::global_ld.packet_count;
 	while( InterfaceHandler::global_ld.is_alive){
+		qDebug()<<"Calling pcap_dispatch";
 		inpcket = pcap_dispatch( cap_options->pcap_h , -1 , 
 				InterfaceHandler::loop_write_ringbuffer,(unsigned char*)cap_options);
 		if ( inpcket < 0 ){
@@ -264,12 +262,12 @@ InterfaceHandler::open_capture_device( interface_info* inter_info, char (*errbuf
 	pcap_t *pcap_header;
 
 	qDebug()<< "Going to call pcap_open_live using following parametrs value"
-		<<" Interface Name "<<inter_info->name
+        <<" Interface Name "<<inter_info->name.c_str()
 		<<" SnapLen "<<inter_info->snaplen
 		<<" Promiscious Mode "<<inter_info->promiscious_mode
 		<<"Time-Out "<<inter_info->timeout;
 
-	pcap_header = pcap_open_live ( inter_info->name , inter_info->snaplen , inter_info->promiscious_mode , inter_info->timeout, *errbuff );
+    pcap_header = pcap_open_live ( (inter_info->name).c_str() , inter_info->snaplen , inter_info->promiscious_mode , inter_info->timeout, *errbuff );
 	return pcap_header;
 }
 /* 
@@ -289,18 +287,18 @@ InterfaceHandler::open_capture_device( interface_info* inter_info, char (*errbuf
 //InterfaceHandler::start_capture_loop( capture_opts* cap_options,struct pcap_stat* status , bool *status_know, void* temp){
 	
 bool
-InterfaceHandler::start_capture_loop( capture_opts* cap_options , void* temp){
+InterfaceHandler::start_capture_loop( capture_opts* cap_options , char* error_msg_){
 	struct timeval  up_time, curr_time;
 	int err_close;
 	char error_msg[ ERRBUFF_SIZE];
 
-	InterfaceHandler* handle_interface = ( InterfaceHandler*)temp; 
 
 	pcap_options *pcap_opt;
 	//TODO loop for each interface
-	interface_info int_info;//TODO = get_interface_info( position );
+    interface_info *int_info = get_interface_info( cap_options->device_name ); 
+    if ( int_info == nullptr ) return false;
 	pcap_opt = new pcap_options ;
-	pcap_opt->pcap_h = handle_interface->open_capture_device( &int_info , &error_msg);
+    pcap_opt->pcap_h = this->open_capture_device( int_info , &error_msg);
 	if ( pcap_opt->pcap_h == NULL ){
 		/* error on opeing device for sniffing */
 		return false;
@@ -325,4 +323,29 @@ InterfaceHandler::start_capture_loop( capture_opts* cap_options , void* temp){
 	do_capture( pcap_opt); 
 	/*calculate capture time*/
 	return true;
+}
+
+interface_info*
+InterfaceHandler::get_interface_info( std::string name ){
+	interface_info*    int_inf = nullptr;
+
+	std::vector<interface_info*>::iterator it;
+	qDebug()<<"Get the interface info..."
+		<<"Search interface by Name "
+		<<name.c_str();
+
+	for ( it = InterfaceHandler::interface_list.begin();
+			it != InterfaceHandler::interface_list.end();
+			++it){
+		if  ( (*it)->name == name ){
+			int_inf= *it;
+			break;
+		}
+	}
+	return int_inf;
+}
+
+void
+InterfaceHandler::stop_capture( void ){
+	InterfaceHandler::global_ld.is_alive = false;
 }

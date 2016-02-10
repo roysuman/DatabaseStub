@@ -14,8 +14,18 @@ HEADERS +=./gui/core/viewmodel/filetreemodel.h
 HEADERS +=./gui/core/controls/messagebox.h
 #sniffing
 HEADERS +=./capture/pcapinterface.h
+HEADERS +=./capture/capturemanager.h
 #HEADERS +=./capture/captureoptions.h
 HEADERS +=./core/api/ringbuffer.h
+HEADERS +=./core/singleton.h
+
+#parse config
+HEADERS +=./core/xmlparser/parser.h
+HEADERS +=./core/xmlparser/parseringbuffer.h
+HEADERS +=./core/xmlparser/parsermanager.h
+HEADERS +=./core/api/ringbuffer.h
+HEADERS +=./core/api/apihelper.h
+
 
 SOURCES +=./gui/core/main.cpp
 SOURCES +=./gui/core/vservermainwindow.cpp
@@ -29,7 +39,17 @@ SOURCES +=./gui/core/controls/messagebox.cpp
 SOURCES +=./core/api/ringbuffer.cpp
 #sniffing
 SOURCES +=./capture/pcapinterface.cpp
+SOURCES +=./capture/capturemanager.cpp
 #SOURCES +=./capture/captureoptions.cpp
+#parse config
+SOURCES +=./core/xmlparser/parser.cpp
+SOURCES +=./core/xmlparser/parseringbuffer.cpp
+SOURCES +=./core/xmlparser/parsermanager.cpp
+SOURCES +=./core/api/ringbuffer.cpp
+
+ 
+
+
 
 FORMS += gui/forms/CustomWindow.ui
 FORMS += gui/forms/OpenDumpFileDialog.ui

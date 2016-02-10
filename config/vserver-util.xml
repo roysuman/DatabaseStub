@@ -1,7 +1,7 @@
 <!DOCTYPE UTILCONFIG>
 <CONFIG>
 	<SETUP_ENVIRONEMNT>
-	 <RING_BUFFER PATH="/home/suman/MY_PROJECT/git/DatabaseStub/config/ring-buffer.xml"/>
+	 <RING_BUFFER PATH="config/ring-buffer.xml"/>
 	 </SETUP_ENVIRONEMNT>
 	 <TEST>
 	 <IAMTESTER NAME="TEST"/>

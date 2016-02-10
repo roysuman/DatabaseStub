@@ -33,26 +33,40 @@
 #ifndef CAPTIRE_MANAGER_H
 #define CAPTIRE_MANAGER_H
 #include "core/api/ringbuffer.h"
+#include "core/singleton.h"
 #include "capture/pcapinterface.h"
 #include <iostream>
 #include<pthread.h>
-
-class CaptureManager{
+#include<QObject>
+class InterfaceHandler;
+class CaptureManager: public QObject{
+	Q_OBJECT
 	public:
-		explicit CaptureManager( void){
-			init_capture_inv();
+		CaptureManager( void){
+			interface_instance = new (std::nothrow) InterfaceHandler( false);
 		}
-		virtual CaptureManager( void );
-		
-	protected:
-		bool start_capture( capture_opts cap_options, char* error_msg );
-		static void* thread_for_capture_net_packet( capture_opts , char* error_msg);
-		stop_capture( void );
+		virtual ~CaptureManager( void );
+		void inline set_value( capture_opts* cap_opts_ , char* error_){
+			cap_options = cap_opts_;
+			error_msg = error_;
+		}
+		capture_opts* cap_options;
+		char* error_msg;
 	private:
-		void init_capture_inv( void );
-		/* I am more reliable with pthread */
-		pthread_t    pcap_thread;
-		pthread_t    dissector_thread;
-
+		InterfaceHandler*    interface_instance;
+        signals:
+	 
+	        /*emit signal when processing got finished*/	
+        	void finished( void);
+		
+		/*update the received packet count
+		  *emit this signal after a time interval*/
+		void update_packet_count( size_t packet_count);
+	public slots:
+		/*start capture*/
+		void init_pcap_process( void );
+	        /* stop capture*/
+	        void stop_capture( void );
 };
+
 #endif

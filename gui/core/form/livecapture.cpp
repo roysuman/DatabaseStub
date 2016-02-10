@@ -79,6 +79,8 @@ LiveCapture::exec( void){
 
 void
 LiveCapture::setup_actions( void){
+	connect( pb_StartSniffing , SIGNAL( clicked() ),this,SLOT( start_capture()) ); 
+
 
 }
 
@@ -87,6 +89,25 @@ LiveCapture::~LiveCapture( void){
 
 void
 LiveCapture::start_capture( void){
+	qDebug()<<"start capture";
+	capture_opts *cap= new capture_opts();
+	cap->device_name = "wlan0";
+	std::string name="suman";
+
+	cap->save_file = false;
+	cap->ring_buffer_handle = nullptr;
+	cap->stop_packet_set = false;
+	cap->stop_byte_set = false;
+	cap->stop_time_duration = false;
+	cap->do_dissect = false;
+	std::cout<<cap->device_name<<std::endl;
+
+	emit start_processing( cap);
+
+	
+
+	//TODO save values into cap_opts variable
+	//and emit start_processing signal
 }
 void
 LiveCapture::set_style_sheet( void ){
@@ -166,16 +187,16 @@ LiveCapture::fetch_available_interface( void){
 	/* display interface list @GUI(interfaceListWidget &
 	 * interfaceCombobx  */
 
-	for ( it= interfaces.begin(); it!= interfaces.end(); ++it ){
-		QListWidgetItem* item = new QListWidgetItem(QString( (*it)->name));
+    for ( it= interfaces.begin(); it!= interfaces.end(); ++it ){
+        QListWidgetItem* item = new QListWidgetItem(QString(((*it)->name).c_str()));
 		/* TODO: use checkbox when you are planning to
 		 * capture from multiple device..simultaniously */
 //		item->setCheckState(Qt::Unchecked);
 		//TODO setup icon
-//		item->setIcon(pIconDownloader->getFavicon(pFeed->url().toString()));
+        //item->setIcon(pIconDownloader->getFavicon(pFeed->url().toString()));
 
-		interfaceListWidget->addItem(item);
-		interfaceCombobx->addItem(QString((*it)->name));
+	interfaceListWidget->addItem(item);
+	interfaceCombobx->addItem(QString(((*it)->name).c_str()));
 	}
 	return;
 }

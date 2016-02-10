@@ -57,11 +57,16 @@ VServerMainWindow::VServerMainWindow(QWidget* parent)
     //update_timer->setInterval(400);
 	setAcceptDrops(true);
 	init_main_mennu_icons();
+	/*init threads for capture and process*/
+	pcap_thread = new QThread();
+	pcap_worker = new CaptureManager();
+	pcap_worker->moveToThread( pcap_thread);
+	disector_thread = new QThread();
 	create_actions();
 //	pbMin->setIcon(QIcon(":/icons/button_minimize.ico"));
 	
 //	setup_status_bar();//done
-//	setup_toolbar(); //done
+	setup_toolbar(); //done
 //	setup_scenario_tree_widget();
 //	setup_connections();
 //	setup_view_menu_state();
@@ -119,10 +124,14 @@ VServerMainWindow::setup_statusbar(){
 
 
 void VServerMainWindow::init_toolbar_icons() const{
-	/* 
-    ACTION_TOOlBAR_SHOW_INTERFACE->setIcon( mw_style_eng->getIcon("toolbar_show_interface"));
-    ACTION_TOOLBAR_START_SERVER->setIcon( mw_style_eng->getIcon("toolbar_start_server"));
-    ACTION_TOOLBAR_SETTINGS->setIcon( mw_style_eng->getIcon("toolbar_settings"));*/
+    ACTION_TOOLBAR_START_CAPTURE->setIcon( QIcon(":/icons/button_minimize.ico"));
+
+    ACTION_TOOLBAR_PAUSE_CAPTURE->setIcon( QIcon(":/icons/button_minimize.ico"));
+    ACTION_TOOLBAR_SHOW_INTERFACE->setIcon( QIcon(":/icons/button_minimize.ico"));
+    ACTION_TOOLBAR_SHOW_PROTOCOLS->setIcon( QIcon(":/icons/button_minimize.ico"));
+    ACTION_TOOLBAR_START_SERVER->setIcon( QIcon(":/icons/button_minimize.ico"));
+    ACTION_TOOLBAR_STOP_SERVER->setIcon( QIcon(":/icons/button_minimize.ico"));
+
     /*
      * ACTION FOR
      * START LIVE CAPTURING
@@ -209,9 +218,18 @@ VServerMainWindow::create_actions( void ){
 	
 	connect ( ACTION_MENUFILE_LIVE_CAPTURE ,SIGNAL ( triggered () ) , this ,
 			SLOT ( show_live_capture() ) );
+	/*all connections for thread*/
+	connect ( pcap_thread,SIGNAL (started() ),pcap_worker,SLOT( init_pcap_process() ) );
+	connect ( pcap_worker, SIGNAL(finished()),pcap_thread, SLOT(quit()));
+	connect ( pcap_worker, SIGNAL(finished()),pcap_worker,SLOT(deleteLater()));
+	connect ( pcap_thread, SIGNAL(finished()),pcap_thread,SLOT(deleteLater()));
+//	connect(,,pcap_thread,SLOT(stop_capture());
+
 
 }
-void VServerMainWindow::setup_toolbar( void){}
+void VServerMainWindow::setup_toolbar( void){
+	init_toolbar_icons();
+}
 void VServerMainWindow::setup_search_model( void){}
 
 void VServerMainWindow::save_window_state( void){}
@@ -256,6 +274,8 @@ VServerMainWindow::show_open_tcp_dump( void ){
 
 void VServerMainWindow::show_live_capture( void ){
 	LiveCapture live_capture(this);
+	/*the following slot will be called from LiveCapture gui*/
+	connect ( &live_capture,SIGNAL (start_processing( capture_opts*)) , this ,SLOT ( start_process_capture( capture_opts* ) ));
 	live_capture.exec();
 	return;
 }
@@ -273,4 +293,26 @@ void VServerMainWindow::maximize_btn_clicked(){
 void VServerMainWindow::minimize_btn_clicked(){
     BaseWindow::minimize_btn_clicked();
 }
+
+
+/*start capture and process*/
+void
+VServerMainWindow::start_process_capture( capture_opts* cap_options ){
+
+	std::cout<<"NAME1 "<<cap_options->device_name<<std::endl;
+	char*          error_msg;
+	pcap_worker->set_value( cap_options, error_msg );
+	if ( !pcap_thread->isRunning() ){
+		qDebug()<<"Starting the thread";
+
+		pcap_thread->start(QThread::NormalPriority);
+	}
+	//update config
+	//TODO logic
+	//thread1 for capture..
+	//thread2 for disector
+
+	return;
+}
+
 

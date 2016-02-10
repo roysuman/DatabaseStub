@@ -36,6 +36,7 @@
 
 #include "gui/forms/CustomWindow.h"
 #include "ui_CustomWindow.h"
+#include "capture/capturemanager.h"
 #include <QTimer>
 
 class VServerMainWindow : public BaseWindow<QWidget> , Ui::CustomWindow{
@@ -70,6 +71,10 @@ class VServerMainWindow : public BaseWindow<QWidget> , Ui::CustomWindow{
 		virtual QWidget* central_widget() override;
 		virtual QLabel* get_title_label() override;
 		virtual QLabel* get_title_icon() override;
+		/*threads for capture part */
+		QThread*       pcap_thread;
+		CaptureManager*    pcap_worker;
+		QThread*       disector_thread;
 
 	public slots:
 		void show_open_tcp_dump( void );
@@ -95,6 +100,11 @@ class VServerMainWindow : public BaseWindow<QWidget> , Ui::CustomWindow{
 		void open_configuration_dialog( void );
 		void maximize_btn_clicked() override;
 		void minimize_btn_clicked() override;
+		/*slot that will be called from open tcp dump
+		  *to start capture and process data
+		  */
+		void start_process_capture(  capture_opts* cap_options);
+
 
 
 };

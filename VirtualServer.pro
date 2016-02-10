@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,6 +21,7 @@ INCLUDEPATH += ./gui/core/viewmodel
 INCLUDEPATH += ./gui/core/controls
 INCLUDEPATH +=./capture
 INCLUDEPATH +=./core/api
+INCLUDEPATH +=./core/xmlparser
 
 include(VirtualServer.pri)
 
